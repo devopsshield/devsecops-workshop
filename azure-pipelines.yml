@@ -1,0 +1,320 @@
+# Python package
+# Create and test a Python package on multiple Python versions.
+# Add steps that analyze code, save the dist with the build record, publish to a PyPI-compatible index, and more:
+# https://docs.microsoft.com/azure/devops/pipelines/languages/python
+
+trigger:
+- main
+
+pool: 
+  vmImage: ubuntu-latest
+
+variables:
+  tag: "$(Build.BuildId)"
+  image: "bashar1993/pygoat"
+
+stages:
+ 
+- stage: build
+  jobs:
+    - job: build_and_push_app
+      displayName: Build and Push App
+      steps:
+
+      - task: UsePythonVersion@0
+        inputs:
+          versionSpec: '3.8'
+          addToPath: true
+          architecture: 'x64'
+        displayName: 'Setup Python'
+
+      - script: |
+          pip install -r requirements.txt
+        displayName: 'Install Dependencies'
+
+      - task: Docker@2
+        inputs:
+          containerRegistry: 'dockerhub'
+          repository: '$(image)'
+          command: 'buildAndPush'
+          Dockerfile: '**/Dockerfile'
+        displayName: 'Build and Push Docker image'
+          
+        
+- stage: test
+  dependsOn: build
+  jobs:
+    
+    - job: run_sca_analysis
+      displayName: Run SCA Analysis
+      steps:
+      - task: dependency-check-build-task@6
+        inputs:
+          projectName: 'pygoat'
+          scanPath: './'
+          format: 'JSON'
+          reportFilename: 'owasp-dependency-check-report.json'
+          additionalArguments: '--nvdApiKey $(nvdApiKey)'
+        displayName: 'OWASP Dependency Check'
+        
+      - task: CmdLine@2
+        inputs:
+           script: |
+             # Install the Docker Scout CLI
+             curl -sSfL https://raw.githubusercontent.com/docker/scout-cli/main/install.sh | sh -s --
+             # Login to Docker Hub required for Docker Scout CLI
+             docker login -u $(DOCKER_HUB_USER) -p $(DOCKER_HUB_PAT)
+             # Get a CVE report for the built image and fail the pipeline when critical or high CVEs are detected
+             docker scout cves $(image):$(tag) --only-severity critical,high --format sarif --output $(Pipeline.Workspace)/image-scan-report.json
+        displayName: Image Scanning
+
+      - task: PublishPipelineArtifact@1
+        inputs:
+          targetPath: '$(Pipeline.Workspace)/image-scan-report.json'
+          artifact: 'image-scan-report'
+          publishLocation: 'pipeline'
+        condition: succeededOrFailed()
+        displayName: 'Publish Image Scan Report'
+
+    - job: run_unit_tests
+      displayName: Run Unit Tests
+      steps:
+      - script: |
+          python -m pip install -r requirements.txt
+          python -m pip install pytest-azurepipelines pytest-cov
+          python -m pytest introduction/tests/unit/ --junitxml=$(Pipeline.Workspace)/TEST-output.xml --cov=. --cov-report=xml
+        displayName: 'UnitTests with PyTest'
+      - task: PublishPipelineArtifact@1
+        inputs:
+          targetPath: '$(Pipeline.Workspace)/TEST-output.xml'
+          artifact: 'unit-test-results'
+          publishLocation: 'pipeline'
+        condition: succeededOrFailed()
+        displayName: 'Publish UnitTest Report'
+
+    - job: run_sast_analysis
+      displayName: Run SAST Analysis
+      steps:
+      - task: CmdLine@2
+        inputs:
+          script: |
+            pip3 install --upgrade pip
+            pip3 install --upgrade setuptools
+            pip3 install bandit
+            bandit -ll -ii -r ./introduction -f json -o $(Pipeline.Workspace)/sast-report.json --exit-zero
+        displayName: 'Bandit Scan'
+      
+      - task: PublishPipelineArtifact@1
+        inputs:
+          targetPath: '$(Pipeline.Workspace)/sast-report.json'
+          artifact: 'bandit-sast-report'
+          publishLocation: 'pipeline'
+        condition: succeededOrFailed()
+        displayName: 'Publish SAST Scan Report'
+
+  
+    - job: upload_reports
+      dependsOn: 
+      - run_sast_analysis
+      - run_unit_tests
+      - run_sca_analysis
+      displayName: Upload Reports
+      variables:
+        DEFECTDOJO_ENGAGEMENT_PERIOD: 7
+        DEFECTDOJO_ENGAGEMENT_STATUS: "Not Started"
+        DEFECTDOJO_ENGAGEMENT_BUILD_SERVER: "null"
+        DEFECTDOJO_ENGAGEMENT_SOURCE_CODE_MANAGEMENT_SERVER: "null"
+        DEFECTDOJO_ENGAGEMENT_ORCHESTRATION_ENGINE: "null"
+        DEFECTDOJO_ENGAGEMENT_DEDUPLICATION_ON_ENGAGEMENT: "false"
+        DEFECTDOJO_ENGAGEMENT_THREAT_MODEL: "true"
+        DEFECTDOJO_ENGAGEMENT_API_TEST: "true"
+        DEFECTDOJO_ENGAGEMENT_PEN_TEST: "true"
+        DEFECTDOJO_ENGAGEMENT_CHECK_LIST: "true"
+        DEFECTDOJO_NOT_ON_MASTER: "false"
+        DEFECTDOJO_PRODUCTID: 1
+        DEFECTDOJO_SCAN_MINIMUM_SEVERITY: "Info"
+        DEFECTDOJO_SCAN_ACTIVE: "true"
+        DEFECTDOJO_SCAN_VERIFIED: "true"
+        DEFECTDOJO_SCAN_CLOSE_OLD_FINDINGS: "true"
+        DEFECTDOJO_SCAN_PUSH_TO_JIRA: "false"
+        DEFECTDOJO_SCAN_ENVIRONMENT: "Default"
+        DEFECTDOJO_ANCHORE_DISABLE: "false"
+        DEFECTDOJO_SCAN_TEST_TYPE: "SAST and SCA Scan"
+      steps:
+      - task: DownloadPipelineArtifact@2
+        inputs:
+          buildType: 'current'
+          itemPattern: '**'
+          targetPath: '$(Pipeline.Workspace)'
+        displayName: 'Download Reports From Pipeline Artifacts'
+        
+      - task: CmdLine@2
+        inputs:
+          script: |
+            TODAY=`date +%Y-%m-%d`
+            ENDDAY=$(date -d "+$(DEFECTDOJO_ENGAGEMENT_PERIOD) days" +%Y-%m-%d)
+            ENGAGEMENTID=`curl --fail --location --request POST "$(DEFECTDOJO_URL)/engagements/" \
+              --header "Authorization: Token $(DEFECTDOJO_TOKEN)" \
+              --header 'Content-Type: application/json' \
+                --data-raw "{
+                  \"tags\": [\"AZURE-DEVOPS\"],
+                  \"name\": \"pygoat-$(System.DefinitionId)\",
+                  \"description\": \"$(Build.SourceVersionMessage)\",
+                  \"version\": \"$(Build.SourceBranch)\",
+                  \"first_contacted\": \"${TODAY}\",
+                  \"target_start\": \"${TODAY}\",
+                  \"target_end\": \"${ENDDAY}\",
+                  \"reason\": \"string\",
+                  \"tracker\": \"$(Build.Repository.Uri)/\",
+                  \"threat_model\": \"$(DEFECTDOJO_ENGAGEMENT_THREAT_MODEL)\",
+                  \"api_test\": \"$(DEFECTDOJO_ENGAGEMENT_API_TEST)\",
+                  \"pen_test\": \"$(DEFECTDOJO_ENGAGEMENT_PEN_TEST)\",
+                  \"check_list\": \"$(DEFECTDOJO_ENGAGEMENT_CHECK_LIST)\",
+                  \"status\": \"$(DEFECTDOJO_ENGAGEMENT_STATUS)\",
+                  \"engagement_type\": \"CI/CD\",
+                  \"build_id\": \"$(System.DefinitionId)\",
+                  \"commit_hash\": \"$(Build.SourceVersion)\",
+                  \"branch_tag\": \"$(Build.SourceBranch)\",
+                  \"deduplication_on_engagement\": \"$(DEFECTDOJO_ENGAGEMENT_DEDUPLICATION_ON_ENGAGEMENT)\",
+                  \"product\": \"$(DEFECTDOJO_PRODUCTID)\",
+                  \"source_code_management_uri\": \"$(Build.Repository.Uri)\",
+                  \"build_server\": $(DEFECTDOJO_ENGAGEMENT_BUILD_SERVER),
+                  \"source_code_management_server\": $(DEFECTDOJO_ENGAGEMENT_SOURCE_CODE_MANAGEMENT_SERVER),
+                  \"orchestration_engine\": $(DEFECTDOJO_ENGAGEMENT_ORCHESTRATION_ENGINE)
+              }" | jq -r '.id'` &&
+              echo ${ENGAGEMENTID} > ENGAGEMENTID.env
+        displayName: 'Create DefectDojo Engagement'
+
+      - task: CmdLine@2
+        inputs:
+          script: |
+            TODAY=`date +%Y-%m-%d`
+            ENGAGEMENTID=`cat ENGAGEMENTID.env`
+            array=('type=("Dependency Check Scan" "SARIF" "Bandit Scan")' 'file=("Dependency\ Check/owasp-dependency-check-report.json" "image-scan-report/image-scan-report.json" "bandit-sast-report/sast-report.json")')
+            for elt in "${array[@]}";do eval $elt;done
+            for scan in 0 1 2; do \
+              curl --fail --location --request POST "$(DEFECTDOJO_URL)/import-scan/" \
+                --header "Authorization: Token $(DEFECTDOJO_TOKEN)" \
+                --form "scan_date=${TODAY}" \
+                --form "minimum_severity=$(DEFECTDOJO_SCAN_MINIMUM_SEVERITY)" \
+                --form "active=$(DEFECTDOJO_SCAN_ACTIVE)" \
+                --form "verified=$(DEFECTDOJO_SCAN_VERIFIED)" \
+                --form "scan_type=${type[$scan]}" \
+                --form "engagement=${ENGAGEMENTID}" \
+                --form "file=@$(Pipeline.Workspace)/${file[$scan]}" \
+                --form "close_old_findings=$(DEFECTDOJO_SCAN_CLOSE_OLD_FINDINGS)" \
+                --form "push_to_jira=$(DEFECTDOJO_SCAN_PUSH_TO_JIRA)" \
+                --form "test_type=$(DEFECTDOJO_SCAN_TEST_TYPE)" \
+                --form "environment=$(DEFECTDOJO_SCAN_ENVIRONMENT)"
+            done
+        displayName: 'Upload Reports To DefectDojo'
+
+# for this you need to create a test environment in azure pipelines and add approvers
+- stage: deploy_test
+  dependsOn: test
+  jobs:
+  - deployment: deploy_to_test_k8s_cluster
+    displayName: Deploy To Test K8S Cluster
+    environment: 'pygoat-test'
+    strategy:
+     runOnce:
+       deploy:
+         steps:
+         - download: none
+         - checkout: self
+         - task: replacetokens@5
+           inputs:
+             targetFiles: '$(System.DefaultWorkingDirectory)/k8s-*.yaml'
+             encoding: 'auto'
+             tokenPattern: 'azpipelines'
+             writeBOM: true
+             actionOnMissing: 'fail'
+             keepToken: false
+             actionOnNoFiles: 'continue'
+             enableTransforms: false
+             enableRecursion: false
+             useLegacyPattern: false
+             enableTelemetry: true
+           displayName: 'Replace K8S Image Tag'
+
+        #  - task: KubernetesManifest@1
+        #    inputs:
+        #      action: 'deploy'
+        #      connectionType: 'kubernetesServiceConnection'
+        #      kubernetesServiceConnection: 'Microk8s'
+        #      namespace: 'test'
+        #      manifests: 'k8s-*.yaml'
+        #    displayName: 'Deploy Manifests'
+    
+         - task: CmdLine@2
+           inputs:
+             script: 'sleep 30'
+           displayName: 'Sleep For 30 Seconds'
+
+- stage: dast
+  dependsOn: deploy_test
+  jobs:
+  - job: run_integration_tests
+    displayName: Run Integration Tests
+    steps:
+# for containerised apps you can run the DAST and Integration tests against a container running inside the pipeline itself (instead of deploying to an external url)
+#    - task: Docker@2
+#      inputs:
+#        containerRegistry: 'dockerhub'
+#        command: 'start'
+#        container: 'pygoat-container'
+#      displayName: 'Start Container App'
+
+    - script: |
+        python -m pip install -r requirements.txt
+        python -m pip install pytest-cov
+        python -m pytest introduction/tests/integration/ --junitxml=$(Pipeline.Workspace)/selenium-test-output.xml --cov=. --cov-report=xml
+      condition: succeededOrFailed()
+      displayName: 'Integration Tests with Selenium'
+    - task: PublishPipelineArtifact@1
+      inputs:
+        targetPath: '$(Pipeline.Workspace)/selenium-test-output.xml'
+        artifact: 'selenium-test-results'
+        publishLocation: 'pipeline'
+      condition: succeededOrFailed()
+      displayName: 'Publish Selenium Report'
+
+  - job: run_dast_scan
+    displayName: Run DAST Scan
+    steps:    
+    - task: owaspzap@1
+      inputs:
+        aggressivemode: true
+        scantype: 'targetedScan'
+        url: 'https://test.paidtal.com'
+      displayName: 'OWASP ZAP Scan'
+    
+    # - task: PublishPipelineArtifact@1
+    #   inputs:
+    #     targetPath: '$(Pipeline.Workspace)/zap-test-output.xml'
+    #     artifact: 'zap-test-results'
+    #     publishLocation: 'pipeline'
+    #   condition: succeededOrFailed()
+    #   displayName: 'Publish ZAP Report'
+
+# for this you need to create a production environment in azure pipelines and add approvers
+- stage: deploy_prod
+  dependsOn: dast
+  jobs:
+  - deployment: deploy_prod
+    displayName: Deploy To Prod K8S Cluster
+    environment: 'pygoat-prod'
+    strategy:
+     runOnce:
+       deploy:
+         steps:
+         - download: none
+         - checkout: self
+         - task: KubernetesManifest@1
+           inputs:
+             action: 'deploy'
+             connectionType: 'kubernetesServiceConnection'
+             kubernetesServiceConnection: 'Microk8s'
+             namespace: 'default'
+             manifests: 'k8s-*.yaml'
+           displayName: 'Deploy Manifests'

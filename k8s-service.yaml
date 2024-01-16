@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: pygoat-svc
+  labels:
+    app: pygoat-svc
+spec:
+  type: ClusterIP
+  selector:
+    app: pygoat-app
+  ports:
+    - port: 80
+      targetPort: 8000
