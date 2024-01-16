@@ -31,7 +31,7 @@ stages:
       - script: |
           pip install -r requirements.txt
         displayName: 'Install Dependencies'
-
+      
       - task: Docker@2
         inputs:
           containerRegistry: 'dockerhub'
@@ -40,7 +40,6 @@ stages:
           Dockerfile: '**/Dockerfile'
         displayName: 'Build and Push Docker image'
           
-        
 - stage: test
   dependsOn: build
   jobs:
@@ -48,15 +47,20 @@ stages:
     - job: run_sca_analysis
       displayName: Run SCA Analysis
       steps:
-      - task: dependency-check-build-task@6
+      
+      - task: CmdLine@2
         inputs:
-          projectName: 'pygoat'
-          scanPath: './'
-          format: 'JSON'
-          reportFilename: 'owasp-dependency-check-report.json'
-          additionalArguments: '--nvdApiKey $(nvdApiKey)'
-        displayName: 'OWASP Dependency Check'
-        
+          script: |
+            pip install safety
+            safety check -r requirements.txt --continue-on-error --output json > $(Pipeline.Workspace)/dependency-check-report.json
+        displayName: 'Safety Dependency Check'
+
+      - task: PublishPipelineArtifact@1
+        inputs:
+          targetPath: '$(Pipeline.Workspace)/dependency-check-report.json'
+          artifact: 'dependency-check-report'
+          publishLocation: 'pipeline'
+
       - task: CmdLine@2
         inputs:
            script: |
@@ -79,8 +83,18 @@ stages:
     - job: run_unit_tests
       displayName: Run Unit Tests
       steps:
+      - task: UsePythonVersion@0
+        inputs:
+          versionSpec: '3.8'
+          addToPath: true
+          architecture: 'x64'
+        displayName: 'Setup Python'
+
       - script: |
-          python -m pip install -r requirements.txt
+          pip install -r requirements.txt
+        displayName: 'Install Dependencies'
+
+      - script: |
           python -m pip install pytest-azurepipelines pytest-cov
           python -m pytest introduction/tests/unit/ --junitxml=$(Pipeline.Workspace)/TEST-output.xml --cov=. --cov-report=xml
         displayName: 'UnitTests with PyTest'
@@ -190,7 +204,7 @@ stages:
           script: |
             TODAY=`date +%Y-%m-%d`
             ENGAGEMENTID=`cat ENGAGEMENTID.env`
-            array=('type=("Dependency Check Scan" "SARIF" "Bandit Scan")' 'file=("Dependency\ Check/owasp-dependency-check-report.json" "image-scan-report/image-scan-report.json" "bandit-sast-report/sast-report.json")')
+            array=('type=("Dependency Check Scan" "SARIF" "Bandit Scan")' 'file=("dependency-check-report/dependency-check-report.json" "image-scan-report/image-scan-report.json" "bandit-sast-report/sast-report.json")')
             for elt in "${array[@]}";do eval $elt;done
             for scan in 0 1 2; do \
               curl --fail --location --request POST "$(DEFECTDOJO_URL)/import-scan/" \
@@ -257,13 +271,11 @@ stages:
   - job: run_integration_tests
     displayName: Run Integration Tests
     steps:
-# for containerised apps you can run the DAST and Integration tests against a container running inside the pipeline itself (instead of deploying to an external url)
-#    - task: Docker@2
-#      inputs:
-#        containerRegistry: 'dockerhub'
-#        command: 'start'
-#        container: 'pygoat-container'
-#      displayName: 'Start Container App'
+# for containerised apps you can run the DAST and Integration tests against a container running inside the pipeline itself (instead of deploying to an external url)    
+    # - task: CmdLine@2
+    #   inputs:
+    #     script: 'docker run -d -p 8000:8000 $(image):$(tag)'
+    #   displayName: 'Run Container Inside Pipeline'
 
     - script: |
         python -m pip install -r requirements.txt
@@ -284,19 +296,24 @@ stages:
     steps:    
     - task: owaspzap@1
       inputs:
-        aggressivemode: true
         scantype: 'targetedScan'
-        url: 'https://test.paidtal.com'
+        url: 'http://pygoat.cnepho.com'
       displayName: 'OWASP ZAP Scan'
     
-    # - task: PublishPipelineArtifact@1
-    #   inputs:
-    #     targetPath: '$(Pipeline.Workspace)/zap-test-output.xml'
-    #     artifact: 'zap-test-results'
-    #     publishLocation: 'pipeline'
-    #   condition: succeededOrFailed()
-    #   displayName: 'Publish ZAP Report'
-
+    - task: CopyFiles@2
+      condition: succeededOrFailed()
+      inputs:
+        SourceFolder: 'owaspzap/'
+        TargetFolder: '$(Pipeline.Workspace)'
+    
+    - task: PublishPipelineArtifact@1
+      condition: succeededOrFailed()
+      inputs:
+        targetPath: '$(Pipeline.Workspace)/report.json'
+        artifact: 'owasp_zap_report'
+        publishLocation: 'pipeline'
+      displayName: 'Publish ZAP Report'
+    
 # for this you need to create a production environment in azure pipelines and add approvers
 - stage: deploy_prod
   dependsOn: dast

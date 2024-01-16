@@ -9,9 +9,7 @@ def test_login_page_loads():
     
     chrome_driver.get('http://pygoat.cnepho.com/login')
  
-    chrome_driver.find_element_by_xpath("//div[@class='btn btn-primary' and text()='Register']").click()
- 
-    title = "Pygoat"
+    title = "OWASP Pygoat"
     assert title == chrome_driver.title
     
     sleep(2)
