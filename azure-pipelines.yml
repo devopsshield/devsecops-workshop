@@ -297,7 +297,7 @@ stages:
     - task: owaspzap@1
       inputs:
         scantype: 'targetedScan'
-        url: 'http://pygoat.cnepho.com'
+        url: 'http://pygoat.example.com'
       displayName: 'OWASP ZAP Scan'
     
     - task: CopyFiles@2
