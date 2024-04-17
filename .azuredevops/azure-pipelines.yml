@@ -36,8 +36,10 @@ variables:
   # OWASP ZAP
   - name: owaspImageName
     value: "softwaresecurityproject/zap-stable" # "owasp/zap2docker-stable"
-  - name: owaspzap-report
+  - name: owaspzap-report-sarif
     value: "owasp-zap.sarif"
+  - name: owaspzap-report-json
+    value: "owasp-zap.json"
   - name: containerName
     value: owaspzapproxy
   - name: owaspZapWebPort
@@ -405,17 +407,24 @@ stages:
               echo "viewing $(maxAlerts) alerts"
               curl "http://localhost:$(owaspZapApiPort)/JSON/core/view/alerts/?baseurl=$(appUrl)&start=0&count=$(maxAlerts)"
               echo ""
-              echo "generating JSON report"
-              curl "http://localhost:$(owaspZapApiPort)/OTHER/core/other/jsonreport/"
+              echo "generating JSON report $(owaspzap-report-json)"
+              #curl "http://localhost:$(owaspZapApiPort)/OTHER/core/other/jsonreport/"
+              curl "http://localhost:$(owaspZapApiPort)/JSON/reports/action/generate/?template=json&title=repoTitle&reportFileName=$(owaspzap-report-json)"
               echo ""
-              echo "generating SARIF report $(owaspzap-report).json"
-              curl "http://localhost:$(owaspZapApiPort)/JSON/reports/action/generate/?template=sarif-json&title=repoTitle&reportFileName=$(owaspzap-report).json"
+              echo "contents of $(owaspzap-report-json)"
+              docker exec $(containerName) cat /home/zap/$(owaspzap-report-json)
               echo ""
-              echo "contents of $(owaspzap-report).json"
-              docker exec $(containerName) cat /home/zap/$(owaspzap-report).json
+              echo "generating SARIF report $(owaspzap-report-sarif).json"
+              curl "http://localhost:$(owaspZapApiPort)/JSON/reports/action/generate/?template=sarif-json&title=repoTitle&reportFileName=$(owaspzap-report-sarif).json"
               echo ""
-              echo "copying $(owaspzap-report).json to artifact directory"
-              docker cp "$(containerName):/home/zap/$(owaspzap-report).json" "$(Build.ArtifactStagingDirectory)/$(owaspzap-report)"
+              echo "contents of $(owaspzap-report-sarif).json"
+              docker exec $(containerName) cat /home/zap/$(owaspzap-report-sarif).json
+              echo ""
+              echo "copying $(owaspzap-report-sarif-json) to artifact directory"
+              docker cp "$(containerName):/home/zap/$(owaspzap-report-json)" "$(Build.ArtifactStagingDirectory)/$(owaspzap-report-json)"
+              echo ""
+              echo "copying $(owaspzap-report-sarif).json to artifact directory"
+              docker cp "$(containerName):/home/zap/$(owaspzap-report-sarif).json" "$(Build.ArtifactStagingDirectory)/$(owaspzap-report-sarif)"
             displayName: load owasp detached
           - task: PublishBuildArtifacts@1
             inputs:
@@ -425,6 +434,7 @@ stages:
 
           - task: CopyFiles@2
             condition: succeededOrFailed()
+            enabled: false
             inputs:
               SourceFolder: "owaspzap/"
               TargetFolder: "$(Pipeline.Workspace)"
