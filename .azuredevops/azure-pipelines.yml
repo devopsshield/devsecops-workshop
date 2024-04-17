@@ -29,6 +29,8 @@ variables:
     value: "devopsshield"
   #- name: DOCKER_HUB_PAT
   #  value: "dckr_pat_bWb*************************"
+  - name: appUrl
+    value: "http://pygoat.example.com"
 
 stages:
   - stage: build
@@ -263,14 +265,14 @@ stages:
                     enableTelemetry: true
                   displayName: "Replace K8S Image Tag"
 
-                #  - task: KubernetesManifest@1
-                #    inputs:
-                #      action: 'deploy'
-                #      connectionType: 'kubernetesServiceConnection'
-                #      kubernetesServiceConnection: 'Microk8s'
-                #      namespace: 'test'
-                #      manifests: 'k8s-*.yaml'
-                #    displayName: 'Deploy Manifests'
+                - task: KubernetesManifest@1
+                  inputs:
+                    action: 'deploy'
+                    connectionType: 'kubernetesServiceConnection'
+                    kubernetesServiceConnection: 'Microk8s'
+                    namespace: 'test'
+                    manifests: 'k8s-*.yaml'
+                  displayName: 'Deploy Manifests'
 
                 - task: CmdLine@2
                   inputs:
@@ -309,7 +311,7 @@ stages:
           - task: owaspzap@1
             inputs:
               scantype: "targetedScan"
-              url: "http://pygoat.example.com"
+              url: "$(appUrl)"
             displayName: "OWASP ZAP Scan"
 
           - task: CopyFiles@2
