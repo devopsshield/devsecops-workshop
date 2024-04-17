@@ -11,7 +11,7 @@ pool:
 
 variables:
   tag: "$(Build.BuildId)"
-  image: "bashar1993/pygoat"
+  image: "devsecops001/pygoat"
 
 stages:
  
