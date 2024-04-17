@@ -57,7 +57,7 @@ variables:
   - name: dockerWaitTime
     value: 30s
   - name: doActiveScan
-    value: false # set to true to run active scan
+    value: true # set to true to run active scan (takes longer)
 
 stages:
   - stage: build
