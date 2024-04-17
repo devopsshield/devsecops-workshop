@@ -22,7 +22,7 @@ variables:
   - name: kubernetesServiceConnection
     value: "OSS_Microk8s"
   - name: DEFECTDOJO_URL
-    value: "https://defectdojo-002.cad4devops.com:8443"
+    value: "https://defectdojo-002.cad4devops.com:8443/api/v2"
   #- name: DEFECTDOJO_TOKEN
   #  value: "defectdojo_token"
   - name: DOCKER_HUB_USER
