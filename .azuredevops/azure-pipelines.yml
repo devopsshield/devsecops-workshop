@@ -56,6 +56,8 @@ variables:
     value: 10s
   - name: dockerWaitTime
     value: 30s
+  - name: doActiveScan
+    value: false # set to true to run active scan
 
 stages:
   - stage: build
@@ -385,31 +387,35 @@ stages:
               echo ""
               curl "http://localhost:$(owaspZapApiPort)/JSON/spider/view/status/?scanId=0"
 
-              # To start the the active scan
-              echo ""
-              curl "http://localhost:$(owaspZapApiPort)/JSON/ascan/action/scan/?url=$(appUrl)&recurse=true&inScopeOnly=&scanPolicyName=&method=&postData=&contextId="
-
-              # To view the the status of active scan
-              echo ""
-              curl "http://localhost:$(owaspZapApiPort)/JSON/ascan/view/status/?scanId=0"
-
-              # loop until response is 100
-              echo ""
-              while [ "$(curl -s http://localhost:$(owaspZapApiPort)/JSON/ascan/view/status/?scanId=0 | jq -r '.status')" != "100" ]; do
+              # To start the the active scan if doActiveScan is true
+              if [ "$(doActiveScan)" == "true" ]; then
                 echo ""
-                echo "waiting for active scan to finish with loop time $(loopWaitTime)"
-                sleep $(loopWaitTime)
-                curl -s http://localhost:$(owaspZapApiPort)/JSON/ascan/view/status/?scanId=0 | jq -r '.status'
-              done
+                echo "starting active scan"
+                curl "http://localhost:$(owaspZapApiPort)/JSON/ascan/action/scan/?url=$(appUrl)&recurse=true&inScopeOnly=&scanPolicyName=&method=&postData=&contextId="
+                
+                # To view the the status of active scan
+                echo ""
+                curl "http://localhost:$(owaspZapApiPort)/JSON/ascan/view/status/?scanId=0"
 
-              # To view the alerts of active scan
-              echo ""
-              curl "http://localhost:$(owaspZapApiPort)/JSON/ascan/view/status/?scanId=0"
+                # loop until response is 100
+                echo ""
+                while [ "$(curl -s http://localhost:$(owaspZapApiPort)/JSON/ascan/view/status/?scanId=0 | jq -r '.status')" != "100" ]; do
+                  echo ""
+                  echo "waiting for active scan to finish with loop time $(loopWaitTime)"
+                  sleep $(loopWaitTime)
+                  curl -s http://localhost:$(owaspZapApiPort)/JSON/ascan/view/status/?scanId=0 | jq -r '.status'
+                done
 
-              # To view the alerts of active scan
-              echo ""
-              echo "viewing $(maxAlerts) alerts"
-              curl "http://localhost:$(owaspZapApiPort)/JSON/core/view/alerts/?baseurl=$(appUrl)&start=0&count=$(maxAlerts)"
+                # To view the alerts of active scan
+                echo ""
+                curl "http://localhost:$(owaspZapApiPort)/JSON/ascan/view/status/?scanId=0"
+
+                # To view the alerts of active scan
+                echo ""
+                echo "viewing $(maxAlerts) alerts"
+                curl "http://localhost:$(owaspZapApiPort)/JSON/core/view/alerts/?baseurl=$(appUrl)&start=0&count=$(maxAlerts)"
+              fi
+
               echo ""
               echo "generating JSON report $(owaspzap-report-json)"
               #curl "http://localhost:$(owaspZapApiPort)/OTHER/core/other/jsonreport/"
