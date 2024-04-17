@@ -16,6 +16,8 @@ variables:
   value: "devsecops001/pygoat"
 - name: containerRegistry
   value: OSS_dockerhub
+- name: kubernetesServiceConnection
+  value: 'OSS_Microk8s'
 
 stages:
  
@@ -335,7 +337,7 @@ stages:
            inputs:
              action: 'deploy'
              connectionType: 'kubernetesServiceConnection'
-             kubernetesServiceConnection: 'Microk8s'
+             kubernetesServiceConnection: $(kubernetesServiceConnection)
              namespace: 'default'
              manifests: 'k8s-*.yaml'
            displayName: 'Deploy Manifests'
