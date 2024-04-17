@@ -31,6 +31,8 @@ variables:
   #  value: "dckr_pat_bWb*************************"
   - name: appUrl
     value: "http://pygoat-test.cad4devops.com"
+  - name: host
+    value: "pygoat-test.cad4devops.com"
 
 stages:
   - stage: build
@@ -334,6 +336,8 @@ stages:
     variables:
       - name: appUrl
         value: "http://pygoat.cad4devops.com"
+      - name: host
+        value: "pygoat.cad4devops.com"
     jobs:
       - deployment: deploy_prod
         displayName: Deploy To Prod K8S Cluster
