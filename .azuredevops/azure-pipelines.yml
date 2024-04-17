@@ -30,7 +30,7 @@ variables:
   #- name: DOCKER_HUB_PAT
   #  value: "dckr_pat_bWb*************************"
   - name: appUrl
-    value: "http://pygoat.example.com"
+    value: "http://pygoat-test.cad4devops.com"
 
 stages:
   - stage: build

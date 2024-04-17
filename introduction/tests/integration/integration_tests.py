@@ -7,7 +7,7 @@ def test_login_page_loads():
     options.add_argument('--headless')
     chrome_driver = webdriver.Chrome(options=options)
     
-    chrome_driver.get('http://pygoat.example.com/login')
+    chrome_driver.get('http://pygoat-test.cad4devops.com/login')
  
     title = "OWASP Pygoat"
     assert title == chrome_driver.title

@@ -5,7 +5,7 @@ metadata:
   labels:
     app: pygoat-svc
 spec:
-  type: ClusterIP
+  type: LoadBalancer # ClusterIP
   selector:
     app: pygoat-app
   ports:
