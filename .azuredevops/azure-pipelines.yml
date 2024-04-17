@@ -102,7 +102,7 @@ stages:
             inputs:
               script: |
                 pip install pip-audit
-                pip-audit -r requirements.txt --format json > $(Pipeline.Workspace)/dependency-check-report.json
+                pip-audit -r requirements.txt --format json --output $(Pipeline.Workspace)/dependency-check-report.json
                 cat $(Pipeline.Workspace)/dependency-check-report.json
             displayName: "Pip Audit Dependency Check"
 
