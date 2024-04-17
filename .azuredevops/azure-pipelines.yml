@@ -10,8 +10,12 @@ pool:
   vmImage: ubuntu-latest
 
 variables:
-  tag: "$(Build.BuildId)"
-  image: "devsecops001/pygoat"
+- name: tag
+  value: "$(Build.BuildId)"
+- name: image
+  value: "devsecops001/pygoat"
+- name: containerRegistry
+  value: OSS_dockerhub
 
 stages:
  
@@ -34,7 +38,7 @@ stages:
       
       - task: Docker@2
         inputs:
-          containerRegistry: 'dockerhub'
+          containerRegistry: '$(containerRegistry)'
           repository: '$(image)'
           command: 'buildAndPush'
           Dockerfile: '**/Dockerfile'
