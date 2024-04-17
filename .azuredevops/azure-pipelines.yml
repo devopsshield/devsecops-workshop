@@ -243,7 +243,7 @@ stages:
     jobs:
       - deployment: deploy_to_test_k8s_cluster
         displayName: Deploy To Test K8S Cluster
-        environment: "pygoat-test"
+        environment: "OSS_pygoat-test"
         strategy:
           runOnce:
             deploy:
@@ -269,7 +269,7 @@ stages:
                   inputs:
                     action: 'deploy'
                     connectionType: 'kubernetesServiceConnection'
-                    kubernetesServiceConnection: 'Microk8s'
+                    kubernetesServiceConnection: 'OSS_Microk8s'
                     namespace: 'test'
                     manifests: 'k8s-*.yaml'
                   displayName: 'Deploy Manifests'
@@ -334,7 +334,7 @@ stages:
     jobs:
       - deployment: deploy_prod
         displayName: Deploy To Prod K8S Cluster
-        environment: "pygoat-prod"
+        environment: "OSS_pygoat-prod"
         strategy:
           runOnce:
             deploy:
