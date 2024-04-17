@@ -34,6 +34,8 @@ variables:
   - name: host
     value: "pygoat-test.cad4devops.com"
   # OWASP ZAP
+  - name: owaspImageName
+    value: "softwaresecurityproject/zap-stable" # "owasp/zap2docker-stable"
   - name: owaspzap-report
     value: "owasp-zap.sarif"
   - name: containerName
@@ -326,7 +328,7 @@ stages:
         displayName: Run DAST Scan
         steps:
           - task: owaspzap@1
-            enabled: false # no longer works
+            enabled: false # no longer works as of April 11, 2024
             inputs:
               scantype: "targetedScan"
               url: "$(appUrl)"
@@ -336,7 +338,7 @@ stages:
               docker run --name $(containerName) -d -u zap \
                 -p $(owaspZapWebPort):$(owaspZapWebPort) \
                 -p $(owaspZapApiPort):$(owaspZapApiPort) \
-                -i owasp/zap2docker-stable zap.sh -daemon \
+                -i $(owaspImageName) zap.sh -daemon \
                 -port $(owaspZapApiPort) -host 0.0.0.0 \
                 -config api.disablekey=true \
                 -config api.addrs.addr.name=.* \
