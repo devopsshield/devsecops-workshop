@@ -331,6 +331,9 @@ stages:
   # for this you need to create a production environment in azure pipelines and add approvers
   - stage: deploy_prod
     dependsOn: dast
+    variables:
+      - name: appUrl
+        value: "http://pygoat.cad4devops.com"
     jobs:
       - deployment: deploy_prod
         displayName: Deploy To Prod K8S Cluster
@@ -341,6 +344,20 @@ stages:
               steps:
                 - download: none
                 - checkout: self
+                - task: replacetokens@5
+                  inputs:
+                    targetFiles: "$(System.DefaultWorkingDirectory)/k8s-*.yaml"
+                    encoding: "auto"
+                    tokenPattern: "azpipelines"
+                    writeBOM: true
+                    actionOnMissing: "fail"
+                    keepToken: false
+                    actionOnNoFiles: "continue"
+                    enableTransforms: false
+                    enableRecursion: false
+                    useLegacyPattern: false
+                    enableTelemetry: true
+                  displayName: "Replace K8S Image Tag"
                 - task: KubernetesManifest@1
                   inputs:
                     action: "deploy"
