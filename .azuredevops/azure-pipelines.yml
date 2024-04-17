@@ -421,6 +421,9 @@ stages:
               echo "generating SARIF report $(owaspzap-report-sarif).json"
               curl "http://localhost:$(owaspZapApiPort)/JSON/reports/action/generate/?template=$(sarifTemplate)&title=repoTitle&reportFileName=$(owaspzap-report-sarif).json"
               echo ""
+              echo "create folder for owaspzap reports"
+              mkdir -p "$(Build.ArtifactStagingDirectory)/owaspzap"
+              echo ""
               echo "contents of $(owaspzap-report-sarif).json"
               docker exec $(containerName) cat /home/zap/$(owaspzap-report-sarif).json
               echo ""
