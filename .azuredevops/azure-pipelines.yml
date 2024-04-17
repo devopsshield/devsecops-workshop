@@ -267,12 +267,12 @@ stages:
 
                 - task: KubernetesManifest@1
                   inputs:
-                    action: 'deploy'
-                    connectionType: 'kubernetesServiceConnection'
-                    kubernetesServiceConnection: 'OSS_Microk8s'
-                    namespace: 'test'
-                    manifests: 'k8s-*.yaml'
-                  displayName: 'Deploy Manifests'
+                    action: "deploy"
+                    connectionType: "kubernetesServiceConnection"
+                    kubernetesServiceConnection: "OSS_Microk8s"
+                    namespace: "pygoat-test"
+                    manifests: "k8s-*.yaml"
+                  displayName: "Deploy Manifests"
 
                 - task: CmdLine@2
                   inputs:
@@ -346,6 +346,6 @@ stages:
                     action: "deploy"
                     connectionType: "kubernetesServiceConnection"
                     kubernetesServiceConnection: $(kubernetesServiceConnection)
-                    namespace: "default"
+                    namespace: "pygoat-prod"
                     manifests: "k8s-*.yaml"
                   displayName: "Deploy Manifests"
