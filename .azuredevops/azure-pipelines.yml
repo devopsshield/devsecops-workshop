@@ -33,6 +33,21 @@ variables:
     value: "http://pygoat-test.cad4devops.com"
   - name: host
     value: "pygoat-test.cad4devops.com"
+  # OWASP ZAP
+  - name: owaspzap-report
+    value: "owasp-zap.sarif"
+  - name: containerName
+    value: owaspzapproxy
+  - name: owaspZapWebPort
+    value: 8080
+  - name: owaspZapApiPort
+    value: 8090
+  - name: maxAlerts
+    value: 5000
+  - name: loopWaitTime
+    value: 10s
+  - name: dockerWaitTime
+    value: 30s
 
 stages:
   - stage: build
@@ -311,10 +326,100 @@ stages:
         displayName: Run DAST Scan
         steps:
           - task: owaspzap@1
+            enabled: false # no longer works
             inputs:
               scantype: "targetedScan"
               url: "$(appUrl)"
             displayName: "OWASP ZAP Scan"
+
+          - script: |
+              docker run --name $(containerName) -d -u zap \
+                -p $(owaspZapWebPort):$(owaspZapWebPort) \
+                -p $(owaspZapApiPort):$(owaspZapApiPort) \
+                -i owasp/zap2docker-stable zap.sh -daemon \
+                -port $(owaspZapApiPort) -host 0.0.0.0 \
+                -config api.disablekey=true \
+                -config api.addrs.addr.name=.* \
+                -config api.addrs.addr.regex=true
+
+              # wait for docker to load
+              echo "waiting for docker to load for $(dockerWaitTime)"
+              sleep $(dockerWaitTime)
+
+              # wait for zap to start
+              echo "waiting for zap to start with loop time $(loopWaitTime)"
+              echo ""
+              while [ "$(curl -s http://localhost:$(owaspZapApiPort)/JSON/core/view/version/ | jq -r '.version')" == "null" ]; do
+                echo ""
+                echo "waiting for zap to start with loop time $(loopWaitTime)"
+                sleep $(loopWaitTime)
+                curl -s http://localhost:$(owaspZapApiPort)/JSON/core/view/version/ | jq -r '.version'
+              done
+
+              # check zap version
+              echo ""
+              curl "http://localhost:$(owaspZapApiPort)/JSON/core/view/version/"
+
+              # To start the spider scan
+              echo ""
+              curl "http://localhost:$(owaspZapApiPort)/JSON/spider/action/scan/?url=$(appUrl)"
+
+              # loop until response is 100
+              echo ""
+              while [ "$(curl -s http://localhost:$(owaspZapApiPort)/JSON/spider/view/status/?scanId=0 | jq -r '.status')" != "100" ]; do
+                echo ""
+                echo "waiting for spider to finish with loop time $(loopWaitTime)"
+                sleep $(loopWaitTime)
+                curl -s http://localhost:$(owaspZapApiPort)/JSON/spider/view/status/?scanId=0 | jq -r '.status'
+              done
+
+              # To view the status of spider
+              echo ""
+              curl "http://localhost:$(owaspZapApiPort)/JSON/spider/view/status/?scanId=0"
+
+              # To start the the active scan
+              echo ""
+              curl "http://localhost:$(owaspZapApiPort)/JSON/ascan/action/scan/?url=$(appUrl)&recurse=true&inScopeOnly=&scanPolicyName=&method=&postData=&contextId="
+
+              # To view the the status of active scan
+              echo ""
+              curl "http://localhost:$(owaspZapApiPort)/JSON/ascan/view/status/?scanId=0"
+
+              # loop until response is 100
+              echo ""
+              while [ "$(curl -s http://localhost:$(owaspZapApiPort)/JSON/ascan/view/status/?scanId=0 | jq -r '.status')" != "100" ]; do
+                echo ""
+                echo "waiting for active scan to finish with loop time $(loopWaitTime)"
+                sleep $(loopWaitTime)
+                curl -s http://localhost:$(owaspZapApiPort)/JSON/ascan/view/status/?scanId=0 | jq -r '.status'
+              done
+
+              # To view the alerts of active scan
+              echo ""
+              curl "http://localhost:$(owaspZapApiPort)/JSON/ascan/view/status/?scanId=0"
+
+              # To view the alerts of active scan
+              echo ""
+              echo "viewing $(maxAlerts) alerts"
+              curl "http://localhost:$(owaspZapApiPort)/JSON/core/view/alerts/?baseurl=$(appUrl)&start=0&count=$(maxAlerts)"
+              echo ""
+              echo "generating JSON report"
+              curl "http://localhost:$(owaspZapApiPort)/OTHER/core/other/jsonreport/"
+              echo ""
+              echo "generating SARIF report $(owaspzap-report).json"
+              curl "http://localhost:$(owaspZapApiPort)/JSON/reports/action/generate/?template=sarif-json&title=repoTitle&reportFileName=$(owaspzap-report).json"
+              echo ""
+              echo "contents of $(owaspzap-report).json"
+              docker exec $(containerName) cat /home/zap/$(owaspzap-report).json
+              echo ""
+              echo "copying $(owaspzap-report).json to artifact directory"
+              docker cp "$(containerName):/home/zap/$(owaspzap-report).json" "$(Build.ArtifactStagingDirectory)/$(owaspzap-report)"
+            displayName: load owasp detached
+          - task: PublishBuildArtifacts@1
+            inputs:
+              PathtoPublish: "$(Build.ArtifactStagingDirectory)"
+              ArtifactName: "CodeAnalysisLogs"
+              publishLocation: "Container"
 
           - task: CopyFiles@2
             condition: succeededOrFailed()
