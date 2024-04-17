@@ -91,11 +91,20 @@ stages:
         displayName: Run SCA Analysis
         steps:
           - task: CmdLine@2
+            enabled: false
             inputs:
               script: |
                 pip install safety
                 safety check -r requirements.txt --continue-on-error --output json > $(Pipeline.Workspace)/dependency-check-report.json
             displayName: "Safety Dependency Check"
+          - task: CmdLine@2
+            enabled: true
+            inputs:
+              script: |
+                pip install pip-audit
+                pip-audit -r requirements.txt --format json > $(Pipeline.Workspace)/dependency-check-report.json
+                cat $(Pipeline.Workspace)/dependency-check-report.json
+            displayName: "Pip Audit Dependency Check"
 
           - task: PublishPipelineArtifact@1
             inputs:
