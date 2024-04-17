@@ -425,28 +425,21 @@ stages:
               docker exec $(containerName) cat /home/zap/$(owaspzap-report-sarif).json
               echo ""
               echo "copying $(owaspzap-report-sarif-json) to artifact directory"
-              docker cp "$(containerName):/home/zap/$(owaspzap-report-json)" "$(Build.ArtifactStagingDirectory)/$(owaspzap-report-json)"
+              docker cp "$(containerName):/home/zap/$(owaspzap-report-json)" "$(Build.ArtifactStagingDirectory)/owaspzap/$(owaspzap-report-json)"
               echo ""
               echo "copying $(owaspzap-report-sarif).json to artifact directory"
-              docker cp "$(containerName):/home/zap/$(owaspzap-report-sarif).json" "$(Build.ArtifactStagingDirectory)/$(owaspzap-report-sarif)"
+              docker cp "$(containerName):/home/zap/$(owaspzap-report-sarif).json" "$(Build.ArtifactStagingDirectory)/owaspzap/$(owaspzap-report-sarif)"
             displayName: load owasp detached
           - task: PublishBuildArtifacts@1
             inputs:
-              PathtoPublish: "$(Build.ArtifactStagingDirectory)"
+              PathtoPublish: "$(Build.ArtifactStagingDirectory)/owaspzap"
               ArtifactName: "CodeAnalysisLogs"
               publishLocation: "Container"
-
-          - task: CopyFiles@2
-            condition: succeededOrFailed()
-            enabled: false
-            inputs:
-              SourceFolder: "owaspzap/"
-              TargetFolder: "$(Pipeline.Workspace)"
-
+            displayName: "Publish OWASP ZAP Reports"
           - task: PublishPipelineArtifact@1
             condition: succeededOrFailed()
             inputs:
-              targetPath: "$(Pipeline.Workspace)/report.json"
+              targetPath: "$(Build.ArtifactStagingDirectory)/owaspzap"
               artifact: "owasp_zap_report"
               publishLocation: "pipeline"
             displayName: "Publish ZAP Report"
