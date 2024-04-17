@@ -40,6 +40,10 @@ variables:
     value: "owasp-zap.sarif"
   - name: owaspzap-report-json
     value: "owasp-zap.json"
+  - name: sarifTemplate
+    value: "sarif-json"
+  - name: traditionalJsonTemplate
+    value: "traditional-json"
   - name: containerName
     value: owaspzapproxy
   - name: owaspZapWebPort
@@ -409,13 +413,13 @@ stages:
               echo ""
               echo "generating JSON report $(owaspzap-report-json)"
               #curl "http://localhost:$(owaspZapApiPort)/OTHER/core/other/jsonreport/"
-              curl "http://localhost:$(owaspZapApiPort)/JSON/reports/action/generate/?template=json&title=repoTitle&reportFileName=$(owaspzap-report-json)"
+              curl "http://localhost:$(owaspZapApiPort)/JSON/reports/action/generate/?template=$(traditionalJsonTemplate)&title=repoTitle&reportFileName=$(owaspzap-report-json)"
               echo ""
               echo "contents of $(owaspzap-report-json)"
               docker exec $(containerName) cat /home/zap/$(owaspzap-report-json)
               echo ""
               echo "generating SARIF report $(owaspzap-report-sarif).json"
-              curl "http://localhost:$(owaspZapApiPort)/JSON/reports/action/generate/?template=sarif-json&title=repoTitle&reportFileName=$(owaspzap-report-sarif).json"
+              curl "http://localhost:$(owaspZapApiPort)/JSON/reports/action/generate/?template=$(sarifTemplate)&title=repoTitle&reportFileName=$(owaspzap-report-sarif).json"
               echo ""
               echo "contents of $(owaspzap-report-sarif).json"
               docker exec $(containerName) cat /home/zap/$(owaspzap-report-sarif).json
