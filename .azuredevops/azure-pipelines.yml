@@ -275,7 +275,7 @@ stages:
                   echo "Uploading ${type[$scan]} report"
                   echo "Uploading ${file[$scan]}"
                   echo "Contents are:"
-                  cat ${file[$scan]}
+                  cat $(Pipeline.Workspace)/${file[$scan]}
                   curl --fail --location --request POST "$(DEFECTDOJO_URL)/import-scan/" \
                     --header "Authorization: Token $(DEFECTDOJO_TOKEN)" \
                     --form "scan_date=${TODAY}" \
