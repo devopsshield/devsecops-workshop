@@ -91,6 +91,7 @@ stages:
 
   - stage: test
     dependsOn: build
+    displayName: Test - OWASP DevSecOps Pipeline
     jobs:
       - job: run_devopsshield_scan
         displayName: Run DevOps Shield Scan
