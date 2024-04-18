@@ -331,6 +331,7 @@ stages:
                 array=('type=("SARIF" "Dependency Check Scan" "pip-audit Scan" "SARIF" "Bandit Scan")' 'file=("devops-shield-reports/DevOpsShield-SecurityScanner-Report-Fixed.sarif" "dependency-check-reports/dependency-check-report-safety-check.json" "dependency-check-reports/dependency-check-report-pip-audit.json" "image-scan-report/image-scan-report.json" "bandit-sast-report/sast-report.json")')
                 for elt in "${array[@]}";do eval $elt;done
                 for scan in 0 1 2 3 4; do \
+                  echo ""
                   echo "======================= Scan No $scan ======================="
                   echo "Uploading ${type[$scan]} report"
                   echo "Uploading ${file[$scan]}"
