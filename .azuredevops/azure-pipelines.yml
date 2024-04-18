@@ -10,7 +10,7 @@ pool:
   vmImage: ubuntu-latest
 
 variables:
-  - group: OSS_devsecops_pygoat_secrets
+  - group: OSS_devsecops_pygoat_secrets # Prerequisite: this is a variable group that contains the secrets
   - name: tag
     value: "$(Build.BuildId)"
   #- name: image
@@ -37,7 +37,7 @@ variables:
     value: "pygoat-test.cad4devops.com"
   # OWASP ZAP
   - name: owaspImageName
-    value: "softwaresecurityproject/zap-stable" # "owasp/zap2docker-stable"
+    value: "softwaresecurityproject/zap-stable" # "owasp/zap2docker-stable" - no longer used since April 11, 2024
   - name: owaspzap-report-sarif
     value: "owasp-zap.sarif"
   - name: owaspzap-report-json
@@ -309,7 +309,7 @@ stages:
                     connectionType: "kubernetesServiceConnection"
                     kubernetesServiceConnection: "OSS_Microk8s"
                     namespace: "pygoat-test"
-                    manifests: "k8s-*.yaml"
+                    manifests: "manifests/k8s-*.yaml"
                   displayName: "Deploy Manifests"
 
                 - task: CmdLine@2
@@ -502,5 +502,5 @@ stages:
                     connectionType: "kubernetesServiceConnection"
                     kubernetesServiceConnection: $(kubernetesServiceConnection)
                     namespace: "pygoat"
-                    manifests: "k8s-*.yaml"
+                    manifests: "manifests/k8s-*.yaml"
                   displayName: "Deploy Manifests"
