@@ -23,6 +23,8 @@ variables:
     value: "OSS_Microk8s"
   - name: DEFECTDOJO_URL
     value: "https://defectdojo-002.cad4devops.com:8443/api/v2"
+  - name: DEFECTDOJO_PRODUCTID
+    value: 2 # Prerequisite: You need to create a product in DefectDojo and get the product id
   #- name: DEFECTDOJO_TOKEN
   #  value: "defectdojo_token"
   - name: DOCKER_HUB_USER
@@ -57,7 +59,7 @@ variables:
   - name: dockerWaitTime
     value: 30s
   - name: doActiveScan
-    value: true # set to true to run active scan (takes longer)
+    value: false # set to true to run active scan (takes longer)
 
 stages:
   - stage: build
@@ -189,13 +191,13 @@ stages:
           DEFECTDOJO_ENGAGEMENT_BUILD_SERVER: "null"
           DEFECTDOJO_ENGAGEMENT_SOURCE_CODE_MANAGEMENT_SERVER: "null"
           DEFECTDOJO_ENGAGEMENT_ORCHESTRATION_ENGINE: "null"
-          DEFECTDOJO_ENGAGEMENT_DEDUPLICATION_ON_ENGAGEMENT: "false"
+          DEFECTDOJO_ENGAGEMENT_DEDUPLICATION_ON_ENGAGEMENT: "true" # "false"
           DEFECTDOJO_ENGAGEMENT_THREAT_MODEL: "true"
           DEFECTDOJO_ENGAGEMENT_API_TEST: "true"
           DEFECTDOJO_ENGAGEMENT_PEN_TEST: "true"
           DEFECTDOJO_ENGAGEMENT_CHECK_LIST: "true"
           DEFECTDOJO_NOT_ON_MASTER: "false"
-          DEFECTDOJO_PRODUCTID: 1
+          #DEFECTDOJO_PRODUCTID: 1
           DEFECTDOJO_SCAN_MINIMUM_SEVERITY: "Info"
           DEFECTDOJO_SCAN_ACTIVE: "true"
           DEFECTDOJO_SCAN_VERIFIED: "true"
@@ -499,6 +501,6 @@ stages:
                     action: "deploy"
                     connectionType: "kubernetesServiceConnection"
                     kubernetesServiceConnection: $(kubernetesServiceConnection)
-                    namespace: "pygoat-prod"
+                    namespace: "pygoat"
                     manifests: "k8s-*.yaml"
                   displayName: "Deploy Manifests"
