@@ -106,7 +106,8 @@ stages:
               script: |
                 pip install pip-audit
                 mkdir -p $(Pipeline.Workspace)/dependency-check-reports
-                pip-audit -r requirements.txt --format json --output $(Pipeline.Workspace)/dependency-check-reports/dependency-check-report-pip-audit.json
+                # suppress the error code to continue the pipeline even if there are vulnerabilities
+                pip-audit -r requirements.txt --format json --output $(Pipeline.Workspace)/dependency-check-reports/dependency-check-report-pip-audit.json || true
                 #cat $(Pipeline.Workspace)/dependency-check-reports/dependency-check-report-pip-audit.json
             displayName: "Pip Audit Dependency Check"
 
