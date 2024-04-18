@@ -93,25 +93,27 @@ stages:
         displayName: Run SCA Analysis
         steps:
           - task: CmdLine@2
-            enabled: false
+            enabled: true
             inputs:
               script: |
                 pip install safety
-                safety check -r requirements.txt --continue-on-error --output json > $(Pipeline.Workspace)/dependency-check-report.json
+                mkdir -p $(Pipeline.Workspace)/dependency-check-reports
+                safety check -r requirements.txt --continue-on-error --output json > $(Pipeline.Workspace)/dependency-check-reports/dependency-check-report-safety-check.json
             displayName: "Safety Dependency Check"
           - task: CmdLine@2
             enabled: true
             inputs:
               script: |
                 pip install pip-audit
-                pip-audit -r requirements.txt --format json --output $(Pipeline.Workspace)/dependency-check-report.json
+                mkdir -p $(Pipeline.Workspace)/dependency-check-reports
+                pip-audit -r requirements.txt --format json --output $(Pipeline.Workspace)/dependency-check-reports/dependency-check-report-pip-audit.json
                 cat $(Pipeline.Workspace)/dependency-check-report.json
             displayName: "Pip Audit Dependency Check"
 
           - task: PublishPipelineArtifact@1
             inputs:
-              targetPath: "$(Pipeline.Workspace)/dependency-check-report.json"
-              artifact: "dependency-check-report"
+              targetPath: "$(Pipeline.Workspace)/dependency-check-reports"
+              artifact: "dependency-check-reports"
               publishLocation: "pipeline"
 
           - task: CmdLine@2
@@ -256,9 +258,14 @@ stages:
               script: |
                 TODAY=`date +%Y-%m-%d`
                 ENGAGEMENTID=`cat ENGAGEMENTID.env`
-                array=('type=("Dependency Check Scan" "SARIF" "Bandit Scan")' 'file=("dependency-check-report/dependency-check-report.json" "image-scan-report/image-scan-report.json" "bandit-sast-report/sast-report.json")')
+                array=('type=("Dependency Check Scan" "pip-audit Scan" "docker scout Scan (SARIF)" "Bandit Scan")' 'file=("dependency-check-reports/dependency-check-report-safety-check.json" "dependency-check-reports/dependency-check-report-pip-audit.json" "image-scan-report/image-scan-report.json" "bandit-sast-report/sast-report.json")')
                 for elt in "${array[@]}";do eval $elt;done
-                for scan in 0 1 2; do \
+                for scan in 0 1 2 3; do \
+                  echo "======================= Scan No $scan ======================="
+                  echo "Uploading ${type[$scan]} report"
+                  echo "Uploading ${file[$scan]}"
+                  echo "Contents are:"
+                  cat ${file[$scan]}
                   curl --fail --location --request POST "$(DEFECTDOJO_URL)/import-scan/" \
                     --header "Authorization: Token $(DEFECTDOJO_TOKEN)" \
                     --form "scan_date=${TODAY}" \
