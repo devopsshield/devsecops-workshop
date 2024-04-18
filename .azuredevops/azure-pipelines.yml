@@ -80,15 +80,23 @@ stages:
 
           - task: Docker@2
             inputs:
-              containerRegistry: "$(containerRegistry)"
-              repository: "$(image)"
-              command: "buildAndPush"
-              Dockerfile: "**/Dockerfile"
+              containerRegistry: '$(containerRegistry)'
+              repository: '$(image)'
+              command: 'buildAndPush'
+              Dockerfile: '**/Dockerfile'
+              tags: |
+                $(Build.BuildId)
+                latest
             displayName: "Build and Push Docker image"
 
   - stage: test
     dependsOn: build
     jobs:
+      - job: run_devopsshield_scan
+        displayName: Run DevOps Shield Scan
+        steps:
+          - task: DevOpsShield-SecurityScanner@1
+
       - job: run_sca_analysis
         displayName: Run SCA Analysis
         steps:
@@ -184,6 +192,7 @@ stages:
 
       - job: upload_reports
         dependsOn:
+          - run_devopsshield_scan
           - run_sast_analysis
           - run_unit_tests
           - run_sca_analysis
