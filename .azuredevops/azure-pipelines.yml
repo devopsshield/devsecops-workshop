@@ -290,7 +290,7 @@ stages:
                 - checkout: self
                 - task: replacetokens@5
                   inputs:
-                    targetFiles: "$(System.DefaultWorkingDirectory)/k8s-*.yaml"
+                    targetFiles: "$(System.DefaultWorkingDirectory)/manifests/k8s-*.yaml"
                     encoding: "auto"
                     tokenPattern: "azpipelines"
                     writeBOM: true
@@ -484,7 +484,7 @@ stages:
                 - checkout: self
                 - task: replacetokens@5
                   inputs:
-                    targetFiles: "$(System.DefaultWorkingDirectory)/k8s-*.yaml"
+                    targetFiles: "$(System.DefaultWorkingDirectory)/manifests/k8s-*.yaml"
                     encoding: "auto"
                     tokenPattern: "azpipelines"
                     writeBOM: true
