@@ -80,10 +80,10 @@ stages:
 
           - task: Docker@2
             inputs:
-              containerRegistry: '$(containerRegistry)'
-              repository: '$(image)'
-              command: 'buildAndPush'
-              Dockerfile: '**/Dockerfile'
+              containerRegistry: "$(containerRegistry)"
+              repository: "$(image)"
+              command: "buildAndPush"
+              Dockerfile: "**/Dockerfile"
               tags: |
                 $(Build.BuildId)
                 latest
@@ -225,16 +225,65 @@ stages:
               itemPattern: "**"
               targetPath: "$(Pipeline.Workspace)"
             displayName: "Download Reports From Pipeline Artifacts"
+          - script: |
+              mkdir -p "$(Pipeline.Workspace)/devops-shield-reports"
+            displayName: "Create DevOps Shield Reports Directory"
           - task: PowerShell@2
             inputs:
-              targetType: 'inline'
+              targetType: "inline"
               script: |
-                # Write your PowerShell commands here.
-                
-                Write-Host "Hello World"
-                
-                fix stuff
+                Write-Host "Fixing DOS Sarif"
+                # read sarif and fix it
+                $SarifFile = "$(Pipeline.Workspace)/CodeAnalysisLogs/DevOpsShield-SecurityScanner-Report.sarif"                
+                $SarifFileFixed = "$(Pipeline.Workspace)/devops-shield-reports/DevOpsShield-SecurityScanner-Report-Fixed.sarif"
+
+                $sarifObject = Get-Content -Path $SarifFile | ConvertFrom-Json -Depth 100
+
+                foreach ($run in $sarifObject.runs) {
+                    foreach ($result in $run.results) {
+                        # echo ruleId
+                        Write-Host $result.ruleId
+                        # loop through fixes
+                        foreach ($fix in $result.fixes) {
+                            # echo fix
+                            Write-Host $fix
+                            # echo fix description
+                            $description = $fix.description
+                            # echo description id
+                            $descriptionId = $description.id
+                            Write-Host `t`t$descriptionId
+                            # echo description arguments
+                            $descriptionArguments = $description.arguments
+                            foreach ($argument in $descriptionArguments) {
+                                Write-Host `t`t`t$argument
+                            }
+                            # check if there are more than one argument
+                            if ($descriptionArguments.Count -gt 1) {
+                                # throw error
+                                Write-Error "Error: More than one argument found"
+                                exit 1
+                            }
+                            # prepare new description text
+                            $newText = "$descriptionId - $($descriptionArguments[0])"
+                            $fix.description = $newText
+                            # echo new fix description
+                            Write-Host `t`t$newText
+
+                            # change description object
+                            # create new custom object for description with a single text property
+                            $newDescription = [PSCustomObject]@{ text = $newText }
+                            # replace description object with new object
+                            $fix.description = $newDescription
+                        }
+                    }
+                }
+                $sarifObject | ConvertTo-Json -Depth 100 | Set-Content -Path $SarifFileFixed
               pwsh: true
+          - task: PublishPipelineArtifact@1
+            inputs:
+              targetPath: "$(Pipeline.Workspace)/devops-shield-reports"
+              artifact: "devops-shield-reports"
+              publishLocation: "pipeline"
           - task: CmdLine@2
             inputs:
               script: |
@@ -277,9 +326,9 @@ stages:
               script: |
                 TODAY=`date +%Y-%m-%d`
                 ENGAGEMENTID=`cat ENGAGEMENTID.env`
-                array=('type=("Dependency Check Scan" "pip-audit Scan" "SARIF" "Bandit Scan")' 'file=("dependency-check-reports/dependency-check-report-safety-check.json" "dependency-check-reports/dependency-check-report-pip-audit.json" "image-scan-report/image-scan-report.json" "bandit-sast-report/sast-report.json")')
+                array=('type=("SARIF" "Dependency Check Scan" "pip-audit Scan" "SARIF" "Bandit Scan")' 'file=("devops-shield-reports/DevOpsShield-SecurityScanner-Report-Fixed.sarif" "dependency-check-reports/dependency-check-report-safety-check.json" "dependency-check-reports/dependency-check-report-pip-audit.json" "image-scan-report/image-scan-report.json" "bandit-sast-report/sast-report.json")')
                 for elt in "${array[@]}";do eval $elt;done
-                for scan in 0 1 2 3; do \
+                for scan in 0 1 2 3 4; do \
                   echo "======================= Scan No $scan ======================="
                   echo "Uploading ${type[$scan]} report"
                   echo "Uploading ${file[$scan]}"
