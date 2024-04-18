@@ -230,6 +230,7 @@ stages:
               mkdir -p "$(Pipeline.Workspace)/devops-shield-reports"
             displayName: "Create DevOps Shield Reports Directory"
           - task: PowerShell@2
+            displayName: "Fix DOS SARIF (temporary workaround)"
             inputs:
               targetType: "inline"
               script: |
@@ -333,8 +334,8 @@ stages:
                   echo "======================= Scan No $scan ======================="
                   echo "Uploading ${type[$scan]} report"
                   echo "Uploading ${file[$scan]}"
-                  echo "Contents are:"
-                  cat $(Pipeline.Workspace)/${file[$scan]}
+                  #echo "Contents are:"
+                  #cat $(Pipeline.Workspace)/${file[$scan]}
                   curl --fail --location --request POST "$(DEFECTDOJO_URL)/import-scan/" \
                     --header "Authorization: Token $(DEFECTDOJO_TOKEN)" \
                     --form "scan_date=${TODAY}" \
