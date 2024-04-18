@@ -268,7 +268,7 @@ stages:
               script: |
                 TODAY=`date +%Y-%m-%d`
                 ENGAGEMENTID=`cat ENGAGEMENTID.env`
-                array=('type=("Dependency Check Scan" "pip-audit Scan" "docker scout Scan (SARIF)" "Bandit Scan")' 'file=("dependency-check-reports/dependency-check-report-safety-check.json" "dependency-check-reports/dependency-check-report-pip-audit.json" "image-scan-report/image-scan-report.json" "bandit-sast-report/sast-report.json")')
+                array=('type=("Dependency Check Scan" "pip-audit Scan" "SARIF" "Bandit Scan")' 'file=("dependency-check-reports/dependency-check-report-safety-check.json" "dependency-check-reports/dependency-check-report-pip-audit.json" "image-scan-report/image-scan-report.json" "bandit-sast-report/sast-report.json")')
                 for elt in "${array[@]}";do eval $elt;done
                 for scan in 0 1 2 3; do \
                   echo "======================= Scan No $scan ======================="
