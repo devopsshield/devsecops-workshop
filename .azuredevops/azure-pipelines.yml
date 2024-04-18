@@ -107,7 +107,7 @@ stages:
                 pip install pip-audit
                 mkdir -p $(Pipeline.Workspace)/dependency-check-reports
                 pip-audit -r requirements.txt --format json --output $(Pipeline.Workspace)/dependency-check-reports/dependency-check-report-pip-audit.json
-                cat $(Pipeline.Workspace)/dependency-check-report.json
+                #cat $(Pipeline.Workspace)/dependency-check-reports/dependency-check-report-pip-audit.json
             displayName: "Pip Audit Dependency Check"
 
           - task: PublishPipelineArtifact@1
