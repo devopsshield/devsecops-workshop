@@ -225,7 +225,16 @@ stages:
               itemPattern: "**"
               targetPath: "$(Pipeline.Workspace)"
             displayName: "Download Reports From Pipeline Artifacts"
-
+          - task: PowerShell@2
+            inputs:
+              targetType: 'inline'
+              script: |
+                # Write your PowerShell commands here.
+                
+                Write-Host "Hello World"
+                
+                fix stuff
+              pwsh: true
           - task: CmdLine@2
             inputs:
               script: |
