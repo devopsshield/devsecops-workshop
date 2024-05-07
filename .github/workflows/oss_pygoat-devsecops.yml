@@ -183,6 +183,8 @@ jobs:
       - build-build_and_push_app
     runs-on: ubuntu-latest
     env:
+      DEFECTDOJO_PRODUCTID: 4
+      DEFECTDOJO_URL: https://defectdojo-002.cad4devops.com:8443/api/v2
       DEFECTDOJO_ANCHORE_DISABLE: "false"
       DEFECTDOJO_ENGAGEMENT_API_TEST: "true"
       DEFECTDOJO_ENGAGEMENT_BUILD_SERVER: "null"
