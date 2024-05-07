@@ -7,10 +7,8 @@ on:
 env:
   DEFECTDOJO_PRODUCTID: 4
   DEFECTDOJO_URL: https://defectdojo-002.cad4devops.com:8443/api/v2
-  #DOCKER_HUB_USER: devopsshield
   appUrl: http://pygoat-test.cad4devops.com
   containerName: owaspzapproxy
-  #containerRegistry: OSS_dockerhub_devops_shield
   doActiveScan: false
   dockerWaitTime: 30s
   host: pygoat-test.cad4devops.com
@@ -344,10 +342,6 @@ jobs:
   deploy_test-deploy_to_test_k8s_cluster:
     name: Deploy To Test K8S Cluster
     needs:
-      # - test-run_devopsshield_scan
-      # - test-run_sca_analysis
-      # - test-run_unit_tests
-      # - test-run_sast_analysis
       - test-upload_reports
     runs-on: ubuntu-latest
     environment:
