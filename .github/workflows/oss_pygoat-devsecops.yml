@@ -352,6 +352,7 @@ jobs:
     env:
       RESOURCE_GROUP: rg-k8s-pygoat-dev-001
       CLUSTER_NAME: aks-k8s-pygoat-dev-001
+      NAMESPACE: pygoat-test
     environment:
       name: OSS_pygoat-test
     steps:
@@ -389,20 +390,13 @@ jobs:
             az aks install-cli
             kubectl get nodes
             kubectl get namespaces
-            # create test namespace if it does not exist
-            kubectl create namespace pygoat-test --dry-run=client -o yaml | kubectl apply -f -
-            # create production namespace if it does not exist
-            kubectl create namespace pygoat --dry-run=client -o yaml | kubectl apply -f -
+            # create namespace if it does not exist
+            kubectl create namespace ${{ env.NAMESPACE }} --dry-run=client -o yaml | kubectl apply -f -            
             # apply the manifests
-            kubectl apply -f ${{ github.workspace }}/manifests/k8s-*.yaml
-      - name: Deploys application
-        uses: Azure/k8s-deploy@v1
-        with:
-          manifests: ${{ github.workspace }}/manifests/k8s-*.yaml
-          # images: |
-          #   ${{ env.AZURE_CONTAINER_REGISTRY }}.azurecr.io/${{ env.PROJECT_NAME }}:${{ github.sha }}
-          # imagepullsecrets: |
-          #   ${{ env.PROJECT_NAME }}
+            kubectl apply -f ${{ github.workspace }}/manifests/k8s-deployment.yaml            
+            kubectl apply -f ${{ github.workspace }}/manifests/k8s-service.yaml
+            kubectl apply -f ${{ github.workspace }}/manifests/k8s-ingress.yaml
+            kubectl get pods -n ${{ env.NAMESPACE }}
       #     # This item has no matching transformer
       #     - task: KubernetesManifest@1
       #       inputs:
@@ -466,6 +460,9 @@ jobs:
     env:
       appUrl: http://gh-pygoat.cad4devops.com
       host: gh-pygoat.cad4devops.com
+      RESOURCE_GROUP: rg-k8s-pygoat-dev-001
+      CLUSTER_NAME: aks-k8s-pygoat-dev-001
+      NAMESPACE: pygoat
     steps:
       - name: checkout
         uses: actions/checkout@v4.1.0
@@ -497,7 +494,17 @@ jobs:
           azcliversion: latest
           inlineScript: |
             az account show
-            az aks get-credentials --resource-group rg-k8s-pygoat-dev-001 --name k8s-pygoat-dev-001
+            az aks get-credentials --resource-group ${{ env.RESOURCE_GROUP }} --name ${{ env.CLUSTER_NAME }}
+            az aks install-cli
+            kubectl get nodes
+            kubectl get namespaces
+            # create namespace if it does not exist
+            kubectl create namespace ${{ env.NAMESPACE }} --dry-run=client -o yaml | kubectl apply -f -            
+            # apply the manifests
+            kubectl apply -f ${{ github.workspace }}/manifests/k8s-deployment.yaml            
+            kubectl apply -f ${{ github.workspace }}/manifests/k8s-service.yaml
+            kubectl apply -f ${{ github.workspace }}/manifests/k8s-ingress.yaml
+            kubectl get pods -n ${{ env.NAMESPACE }}
 
 #     # This item has no matching transformer
 #     - task: KubernetesManifest@1
