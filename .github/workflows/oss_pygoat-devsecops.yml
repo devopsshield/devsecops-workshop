@@ -444,7 +444,6 @@ jobs:
     env:
       appUrl: http://pygoat.cad4devops.com
       host: pygoat.cad4devops.com
-    if: github.RUN_NUMBER == 1
     steps:
       - name: checkout
         uses: actions/checkout@v4.1.0
