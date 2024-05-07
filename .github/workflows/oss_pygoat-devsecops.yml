@@ -310,9 +310,9 @@ jobs:
           ENGAGEMENTID=`cat ENGAGEMENTID.env`
           echo "TODAY: $TODAY"
           echo "ENGAGEMENTID: $ENGAGEMENTID"          
-          array=('type=("Dependency Check Scan" "pip-audit Scan" "SARIF" "Bandit Scan")' 'file=("dependency-check-reports/dependency-check-report-safety-check.json" "dependency-check-reports/dependency-check-report-pip-audit.json" "image-scan-report/image-scan-report.json" "bandit-sast-report/sast-report.json")')
+          array=('type=("pip-audit Scan" "SARIF" "Bandit Scan")' 'file=("dependency-check-reports/dependency-check-report-pip-audit.json" "image-scan-report/image-scan-report.json" "bandit-sast-report/sast-report.json")')
           for elt in "${array[@]}";do eval $elt;done
-          for scan in 0 1 2 3; do \
+          for scan in 0 1 2; do \
             echo ""
             echo "======================= Scan No $scan ======================="
             echo "Uploading ${type[$scan]} report"
