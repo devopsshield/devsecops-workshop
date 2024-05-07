@@ -386,8 +386,8 @@ jobs:
           inlineScript: |
             az account show
             az aks get-credentials --resource-group ${{ env.RESOURCE_GROUP }} --name ${{ env.CLUSTER_NAME }}
-            kubectl get nodes
-            kubectl get namespaces
+            #kubectl get nodes
+            #kubectl get namespaces
       - name: Gets K8s context
         uses: azure/aks-set-context@v1
         with:

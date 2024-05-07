@@ -33,6 +33,14 @@ Set-Content -Path credential.json -Value '{"name":"oss-pygoat-devsecops-main-gh"
 
 az ad app federated-credential create --id $appObjectId --parameters credential.json
 
+# Create a new federated identity credential
+Set-Content -Path credential.json -Value '{"name":"oss-pygoat-devsecops-environment-OSS_pygoat-test","issuer":"https://token.actions.githubusercontent.com","description":"Access to environment OSS_pygoat-test","subject":"repo:devopsabcs-engineering/oss-pygoat-devsecops:environment:OSS_pygoat-test","audiences":["api://AzureADTokenExchange"]}'
+az ad app federated-credential create --id $appObjectId --parameters credential.json
+
+# Create a new federated identity credential
+Set-Content -Path credential.json -Value '{"name":"oss-pygoat-devsecops-environment-OSS_pygoat-prod","issuer":"https://token.actions.githubusercontent.com","description":"Access to environment OSS_pygoat-prod","subject":"repo:devopsabcs-engineering/oss-pygoat-devsecops:environment:OSS_pygoat-prod","audiences":["api://AzureADTokenExchange"]}'
+az ad app federated-credential create --id $appObjectId --parameters credential.json
+
 
 # create GitHub environment
 gh api --method PUT -H "Accept: application/vnd.github+json" repos/devopsabcs-engineering/oss-pygoat-devsecops/environments/OSS_pygoat-test
