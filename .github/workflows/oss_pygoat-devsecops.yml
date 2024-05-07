@@ -396,6 +396,8 @@ jobs:
             kubectl create namespace pygoat-test --dry-run=client -o yaml | kubectl apply -f -
             # create production namespace if it does not exist
             kubectl create namespace pygoat --dry-run=client -o yaml | kubectl apply -f -
+            # apply the manifests
+            kubectl apply -f ${{ github.workspace }}/manifests/k8s-*.yaml
       - name: Deploys application
         uses: Azure/k8s-deploy@v1
         with:
