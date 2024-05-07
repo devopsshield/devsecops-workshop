@@ -58,10 +58,10 @@ jobs:
           password: "${{ secrets.DOCKER_PASSWORD }}"
       # Unable to determine registry '$(containerRegistry)' type. The service connection was not found or the authentication type not supported.
       - name: Build and Push Docker image
-        run: docker build . --file "Dockerfile" -t ${{ env.DOCKER_REGISTRY }}/${{ env.image }}:${{ github.run_id }} -t ${{ env.DOCKER_REGISTRY }}/${{ env.image }}:latest
+        run: docker build . --file "Dockerfile" -t ${{ env.image }}:${{ github.run_id }} -t ${{ env.image }}:latest
       # Unable to determine registry '$(containerRegistry)' type. The service connection was not found or the authentication type not supported.
       - name: Build and Push Docker image
-        run: docker push ${{ env.DOCKER_REGISTRY }}/${{ env.image }}:${{ github.run_id }}
+        run: docker push ${{ env.image }}:${{ github.run_id }}
   test-run_devopsshield_scan:
     name: Run DevOps Shield Scan
     needs:
