@@ -346,7 +346,6 @@ jobs:
     runs-on: ubuntu-latest
     environment:
       name: OSS_pygoat-test
-    if: github.RUN_NUMBER == 1
     steps:
       - name: checkout
         uses: actions/checkout@v4.1.0
