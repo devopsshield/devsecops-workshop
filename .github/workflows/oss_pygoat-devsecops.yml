@@ -180,6 +180,7 @@ jobs:
       - build-build_and_push_app
     runs-on: ubuntu-latest
     env:
+      DEFECTDOJO_ENGAGEMENT_REASON: "CI/CD Pipeline Scan"
       DEFECTDOJO_ANCHORE_DISABLE: "false"
       DEFECTDOJO_ENGAGEMENT_API_TEST: "true"
       DEFECTDOJO_ENGAGEMENT_BUILD_SERVER: "null"
@@ -271,14 +272,14 @@ jobs:
             --header "Authorization: Token ${{ secrets.DEFECTDOJO_TOKEN }}" \
             --header 'Content-Type: application/json' \
               --data-raw "{
-                \"tags\": [\"AZURE-DEVOPS\"],
+                \"tags\": [\"GITHUB\"],
                 \"name\": \"pygoat-${{ github.run_id }}\",
                 \"description\": \"${{ github.event.head_commit.message }}\",
                 \"version\": \"${{ github.ref }}\",
                 \"first_contacted\": \"${TODAY}\",
                 \"target_start\": \"${TODAY}\",
                 \"target_end\": \"${ENDDAY}\",
-                \"reason\": \"string\",
+                \"reason\": \"${{ env.DEFECTDOJO_ENGAGEMENT_REASON }}\",
                 \"tracker\": \"${{ github.server_url }}/${{ github.repository }}/\",
                 \"threat_model\": \"${{ env.DEFECTDOJO_ENGAGEMENT_THREAT_MODEL }}\",
                 \"api_test\": \"${{ env.DEFECTDOJO_ENGAGEMENT_API_TEST }}\",
@@ -297,6 +298,12 @@ jobs:
                 \"orchestration_engine\": ${{ env.DEFECTDOJO_ENGAGEMENT_ORCHESTRATION_ENGINE }}
             }" | jq -r '.id'` &&
             echo ${ENGAGEMENTID} > ENGAGEMENTID.env
+      - name: list artifacts
+        run: |-
+          ls -l ${{ runner.workspace }}
+          ls -l ${{ runner.workspace }}/image-scan-report
+          ls -l ${{ runner.workspace }}/dependency-check-reports
+          ls -l ${{ runner.workspace }}/bandit-sast-report
       - name: Upload Reports To DefectDojo
         run: |-
           TODAY=`date +%Y-%m-%d`
