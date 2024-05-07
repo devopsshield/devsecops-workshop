@@ -5,12 +5,12 @@ on:
       - main
   workflow_dispatch:
 env:
-  DEFECTDOJO_PRODUCTID: 2
+  DEFECTDOJO_PRODUCTID: 4
   DEFECTDOJO_URL: https://defectdojo-002.cad4devops.com:8443/api/v2
-  DOCKER_HUB_USER: devopsshield
+  #DOCKER_HUB_USER: devopsshield
   appUrl: http://pygoat-test.cad4devops.com
   containerName: owaspzapproxy
-  containerRegistry: OSS_dockerhub_devops_shield
+  #containerRegistry: OSS_dockerhub_devops_shield
   doActiveScan: false
   dockerWaitTime: 30s
   host: pygoat-test.cad4devops.com
@@ -49,17 +49,14 @@ jobs:
         run: |-
           echo "DOCKER_REGISTRY: ${{ env.DOCKER_REGISTRY}}, DOCKER_USERNAME: ${{ env.DOCKER_USERNAME}}"
           echo "DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD}}"
-      # Unable to determine registry '$(containerRegistry)' type. The service connection was not found or the authentication type not supported.
       - name: Docker Login
         uses: docker/login-action@v3.0.0
         with:
           registry: "${{ env.DOCKER_REGISTRY }}"
           username: "${{ env.DOCKER_USERNAME }}"
           password: "${{ secrets.DOCKER_PASSWORD }}"
-      # Unable to determine registry '$(containerRegistry)' type. The service connection was not found or the authentication type not supported.
       - name: Build and Push Docker image
         run: docker build . --file "Dockerfile" -t ${{ env.image }}:${{ github.run_id }} -t ${{ env.image }}:latest
-      # Unable to determine registry '$(containerRegistry)' type. The service connection was not found or the authentication type not supported.
       - name: Build and Push Docker image
         run: docker push ${{ env.image }}:${{ github.run_id }}
       - name: Build and Push Docker image
@@ -183,8 +180,6 @@ jobs:
       - build-build_and_push_app
     runs-on: ubuntu-latest
     env:
-      DEFECTDOJO_PRODUCTID: 4
-      DEFECTDOJO_URL: https://defectdojo-002.cad4devops.com:8443/api/v2
       DEFECTDOJO_ANCHORE_DISABLE: "false"
       DEFECTDOJO_ENGAGEMENT_API_TEST: "true"
       DEFECTDOJO_ENGAGEMENT_BUILD_SERVER: "null"
