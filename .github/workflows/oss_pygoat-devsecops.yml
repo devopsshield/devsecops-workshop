@@ -380,8 +380,8 @@ jobs:
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
       - uses: azure/setup-kubectl@v3
-        #with:
-        #    version: '<version>' # default is latest stable
+        with:
+          version: "latest" # default is latest stable
         id: install
       - name: Azure CLI script
         uses: azure/cli@v2
@@ -392,15 +392,10 @@ jobs:
             az aks get-credentials --resource-group ${{ env.RESOURCE_GROUP }} --name ${{ env.CLUSTER_NAME }}
             kubectl get nodes
             kubectl get namespaces
-      - name: Gets K8s context
-        uses: azure/aks-set-context@v1
-        with:
-          client-id: ${{ secrets.AZURE_CLIENT_ID }}
-          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-          resource-group: ${{ env.RESOURCE_GROUP }}
-          cluster-name: ${{ env.CLUSTER_NAME }}
-        id: login
+            # create test namespace if it does not exist
+            kubectl create namespace pygoat-test --dry-run=client -o yaml | kubectl apply -f -
+            # create production namespace if it does not exist
+            kubectl create namespace pygoat --dry-run=client -o yaml | kubectl apply -f -
       - name: Deploys application
         uses: Azure/k8s-deploy@v1
         with:
