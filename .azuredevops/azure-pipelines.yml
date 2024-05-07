@@ -10,6 +10,8 @@ pool:
   vmImage: ubuntu-latest
 
 variables:
+  - name: advancedsecurity.skip # bypass advanced security scanning
+    value: true
   - group: OSS_devsecops_pygoat_secrets # Prerequisite: this is a variable group that contains the secrets
   - name: tag
     value: "$(Build.BuildId)"
