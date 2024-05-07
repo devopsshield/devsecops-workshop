@@ -3,6 +3,7 @@ on:
   push:
     branches:
     - main
+  workflow_dispatch:
 env:
   DEFECTDOJO_PRODUCTID: 2
   DEFECTDOJO_URL: https://defectdojo-002.cad4devops.com:8443/api/v2
@@ -27,9 +28,11 @@ env:
   traditionalJsonTemplate: traditional-json
 jobs:
   build-build_and_push_app:
-    env:
-      DOCKER_REGISTRY:
-      DOCKER_USERNAME:
+    # env:
+    #   DOCKER_REGISTRY:
+    #   DOCKER_USERNAME:
+    environment:
+      name: dev
     name: Build and Push App
     runs-on: ubuntu-latest
     steps:
