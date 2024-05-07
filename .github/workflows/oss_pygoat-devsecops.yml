@@ -317,8 +317,15 @@ jobs:
             echo "======================= Scan No $scan ======================="
             echo "Uploading ${type[$scan]} report"
             echo "Uploading ${file[$scan]}"
-            echo "Contents are:"
-            cat ${{ runner.workspace }}/${file[$scan]}
+            #echo "Contents are:"
+            #cat ${{ runner.workspace }}/${file[$scan]}
+            # check if the file exists
+            if [ -f ${{ runner.workspace }}/${file[$scan]} ]; then
+              echo "File exists"
+            else
+              echo "File does not exist"
+              continue
+            fi
             curl --fail --location --request POST "${{ env.DEFECTDOJO_URL }}/import-scan/" \
               --header "Authorization: Token ${{ secrets.DEFECTDOJO_TOKEN }}" \
               --form "scan_date=${TODAY}" \
