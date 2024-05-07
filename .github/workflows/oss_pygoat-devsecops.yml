@@ -84,6 +84,11 @@ jobs:
     needs:
       - build-build_and_push_app
     runs-on: ubuntu-latest
+    env:
+      DOCKER_REGISTRY: ${{ vars.DOCKER_REGISTRY}}
+      DOCKER_USERNAME: ${{ vars.DOCKER_USERNAME}}
+    environment:
+      name: dev
     steps:
       - name: checkout
         uses: actions/checkout@v4.1.0
