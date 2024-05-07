@@ -69,6 +69,11 @@ jobs:
     needs:
       - build-build_and_push_app
     runs-on: ubuntu-latest
+    env:
+      DOCKER_REGISTRY: ${{ vars.DOCKER_REGISTRY}}
+      DOCKER_USERNAME: ${{ vars.DOCKER_USERNAME}}
+    environment:
+      name: dev
     steps:
       - name: checkout
         uses: actions/checkout@v4.1.0
@@ -103,7 +108,7 @@ jobs:
           # Install the Docker Scout CLI
           curl -sSfL https://raw.githubusercontent.com/docker/scout-cli/main/install.sh | sh -s --
           # Login to Docker Hub required for Docker Scout CLI
-          docker login -u ${{ env.DOCKER_HUB_USER }} -p ${{ secrets.DOCKER_HUB_PAT }}
+          docker login -u ${{ vars.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
           # Get a CVE report for the built image and fail the pipeline when critical or high CVEs are detected
           docker scout cves ${{ env.image }}:${{ env.tag }} --only-severity critical,high --format sarif --output ${{ runner.workspace }}/image-scan-report.json
       - name: Publish Image Scan Report
