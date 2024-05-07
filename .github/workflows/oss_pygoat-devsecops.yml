@@ -325,10 +325,10 @@ jobs:
   deploy_test-deploy_to_test_k8s_cluster:
     name: Deploy To Test K8S Cluster
     needs:
-      - test-run_devopsshield_scan
-      - test-run_sca_analysis
-      - test-run_unit_tests
-      - test-run_sast_analysis
+      # - test-run_devopsshield_scan
+      # - test-run_sca_analysis
+      # - test-run_unit_tests
+      # - test-run_sast_analysis
       - test-upload_reports
     runs-on: ubuntu-latest
     environment:
