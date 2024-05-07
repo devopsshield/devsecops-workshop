@@ -43,3 +43,8 @@ gh secret set --repo "https://github.com/devopsabcs-engineering/oss-pygoat-devse
 gh secret set --repo "https://github.com/devopsabcs-engineering/oss-pygoat-devsecops" --env OSS_pygoat-test AZURE_TENANT_ID -b (az account show --query tenantId -o tsv)
 gh secret set --repo "https://github.com/devopsabcs-engineering/oss-pygoat-devsecops" --env OSS_pygoat-test AZURE_SUBSCRIPTION_ID -b $subId
 gh secret set --repo "https://github.com/devopsabcs-engineering/oss-pygoat-devsecops" --env OSS_pygoat-test USER_OBJECT_ID -b $spId
+
+gh secret set --repo "https://github.com/devopsabcs-engineering/oss-pygoat-devsecops" AZURE_CLIENT_ID -b $app[0]
+gh secret set --repo "https://github.com/devopsabcs-engineering/oss-pygoat-devsecops" AZURE_TENANT_ID -b (az account show --query tenantId -o tsv)
+gh secret set --repo "https://github.com/devopsabcs-engineering/oss-pygoat-devsecops" AZURE_SUBSCRIPTION_ID -b $subId
+gh secret set --repo "https://github.com/devopsabcs-engineering/oss-pygoat-devsecops" USER_OBJECT_ID -b $spId
