@@ -7,11 +7,12 @@ on:
 env:
   DEFECTDOJO_PRODUCTID: 4
   DEFECTDOJO_URL: https://defectdojo-002.cad4devops.com:8443/api/v2
-  appUrl: http://pygoat-test.cad4devops.com
+  appUrl: http://gh-pygoat-test.cad4devops.com
   containerName: owaspzapproxy
   doActiveScan: false
   dockerWaitTime: 30s
-  host: pygoat-test.cad4devops.com
+  tag: "${{ github.run_id }}"
+  host: gh-pygoat-test.cad4devops.com
   image: devopsshield/devsecops-pygoat
   kubernetesServiceConnection: OSS_Microk8s
   loopWaitTime: 10s
@@ -22,7 +23,6 @@ env:
   owaspzap-report-json: owasp-zap.json
   owaspzap-report-sarif: owasp-zap.sarif
   sarifTemplate: sarif-json
-  tag: "${{ github.run_id }}"
   traditionalJsonTemplate: traditional-json
 jobs:
   build-build_and_push_app:
@@ -359,6 +359,20 @@ jobs:
       #         github_token: "${{ secrets.GITHUB_TOKEN }}"
       #         repo: "${{ github.repository }}"
       - uses: actions/checkout@v4.1.0
+      - uses: cschleiden/replace-tokens@v1
+        with:
+          tokenPrefix: "#{"
+          tokenSuffix: "}#"
+          files: '["${{ github.workspace }}/manifests/k8s-*.yaml"]'
+        env:
+          host: ${{ env.host }}
+          image: ${{ env.image }}
+          tag: ${{ env.tag }}
+      # cat ${{ github.workspace }}/manifests/k8s-*.yaml
+      - name: See the files
+        run: |-
+          cat ${{ github.workspace }}/manifests/k8s-deployment.yaml
+          cat ${{ github.workspace }}/manifests/k8s-ingress.yaml
       #     # This item has no matching transformer
       #     - task: replacetokens@5
       #       inputs:
@@ -442,8 +456,8 @@ jobs:
     environment:
       name: OSS_pygoat-prod
     env:
-      appUrl: http://pygoat.cad4devops.com
-      host: pygoat.cad4devops.com
+      appUrl: http://gh-pygoat.cad4devops.com
+      host: gh-pygoat.cad4devops.com
     steps:
       - name: checkout
         uses: actions/checkout@v4.1.0
@@ -457,6 +471,20 @@ jobs:
       #         github_token: "${{ secrets.GITHUB_TOKEN }}"
       #         repo: "${{ github.repository }}"
       - uses: actions/checkout@v4.1.0
+      - uses: cschleiden/replace-tokens@v1
+        with:
+          tokenPrefix: "#{"
+          tokenSuffix: "}#"
+          files: '["${{ github.workspace }}/manifests/k8s-*.yaml"]'
+        env:
+          host: ${{ env.host }}
+          image: ${{ env.image }}
+          tag: ${{ env.tag }}
+      - name: See the files
+        run: |-
+          cat ${{ github.workspace }}/manifests/k8s-deployment.yaml
+          cat ${{ github.workspace }}/manifests/k8s-ingress.yaml
+
 #     # This item has no matching transformer
 #     - task: replacetokens@5
 #       inputs:
