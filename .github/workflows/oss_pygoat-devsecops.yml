@@ -299,6 +299,7 @@ jobs:
             }" | jq -r '.id'` &&
             echo ${ENGAGEMENTID} > ENGAGEMENTID.env
       - name: list artifacts
+        if: false
         run: |-
           ls -l ${{ runner.workspace }}
           ls -l ${{ runner.workspace }}/image-scan-report
