@@ -4,6 +4,11 @@ on:
     branches:
       - main
   workflow_dispatch:
+
+permissions:
+  id-token: write
+  contents: read
+
 env:
   DEFECTDOJO_PRODUCTID: 4
   DEFECTDOJO_URL: https://defectdojo-002.cad4devops.com:8443/api/v2
@@ -344,6 +349,9 @@ jobs:
     needs:
       - test-upload_reports
     runs-on: ubuntu-latest
+    env:
+      RESOURCE_GROUP: rg-k8s-pygoat-dev-001
+      CLUSTER_NAME: k8s-pygoat-dev-001
     environment:
       name: OSS_pygoat-test
     steps:
@@ -377,7 +385,26 @@ jobs:
           azcliversion: latest
           inlineScript: |
             az account show
-            az aks get-credentials --resource-group rg-k8s-pygoat-dev-001 --name k8s-pygoat-dev-001
+            az aks get-credentials --resource-group ${{ env.RESOURCE_GROUP }} --name ${{ env.CLUSTER_NAME }}
+            kubectl get nodes
+            kubectl get namespaces
+      - name: Gets K8s context
+        uses: azure/aks-set-context@v1
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+          resource-group: ${{ env.RESOURCE_GROUP }}
+          cluster-name: ${{ env.CLUSTER_NAME }}
+        id: login
+      - name: Deploys application
+        uses: Azure/k8s-deploy@v1
+        with:
+          manifests: ${{ github.workspace }}/manifests/k8s-*.yaml
+          # images: |
+          #   ${{ env.AZURE_CONTAINER_REGISTRY }}.azurecr.io/${{ env.PROJECT_NAME }}:${{ github.sha }}
+          # imagepullsecrets: |
+          #   ${{ env.PROJECT_NAME }}
       #     # This item has no matching transformer
       #     - task: KubernetesManifest@1
       #       inputs:
