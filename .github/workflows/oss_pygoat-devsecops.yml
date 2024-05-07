@@ -62,6 +62,8 @@ jobs:
       # Unable to determine registry '$(containerRegistry)' type. The service connection was not found or the authentication type not supported.
       - name: Build and Push Docker image
         run: docker push ${{ env.image }}:${{ github.run_id }}
+      - name: Build and Push Docker image
+        run: docker push ${{ env.image }}:latest
   test-run_devopsshield_scan:
     name: Run DevOps Shield Scan
     needs:
