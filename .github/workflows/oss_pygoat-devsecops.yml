@@ -202,6 +202,8 @@ jobs:
       DEFECTDOJO_SCAN_PUSH_TO_JIRA: "false"
       DEFECTDOJO_SCAN_TEST_TYPE: SAST and SCA Scan
       DEFECTDOJO_SCAN_VERIFIED: "true"
+    environment:
+      name: dev
     steps:
       - name: checkout
         uses: actions/checkout@v4.1.0
