@@ -399,11 +399,12 @@ jobs:
             # apply the manifests
             kubectl apply -f ${{ github.workspace }}/manifests/k8s-deployment.yaml -n ${{ env.NAMESPACE }}           
             kubectl apply -f ${{ github.workspace }}/manifests/k8s-service.yaml -n ${{ env.NAMESPACE }}
-            kubectl apply -f ${{ github.workspace }}/manifests/k8s-ingress.yaml -n ${{ env.NAMESPACE }}
-            kubectl get pods -n ${{ env.NAMESPACE }}
-            kubectl get services -n ${{ env.NAMESPACE }}
+            kubectl apply -f ${{ github.workspace }}/manifests/k8s-ingress.yaml -n ${{ env.NAMESPACE }}            
             # wait for the service to be ready
             kubectl wait --for=condition=available --timeout=600s deployment.apps/pygoat-app -n ${{ env.NAMESPACE }}
+            kubectl get pods -n ${{ env.NAMESPACE }}
+            kubectl get services -n ${{ env.NAMESPACE }}
+            kuebctl get ingress -n ${{ env.NAMESPACE }}
             # get external IP from the service
             externalIp=$(kubectl get service ${{ env.Pygoat_Service }} -n ${{ env.NAMESPACE }} -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
             echo "External IP: $externalIp"
@@ -513,11 +514,12 @@ jobs:
             # apply the manifests
             kubectl apply -f ${{ github.workspace }}/manifests/k8s-deployment.yaml -n ${{ env.NAMESPACE }}         
             kubectl apply -f ${{ github.workspace }}/manifests/k8s-service.yaml -n ${{ env.NAMESPACE }}
-            kubectl apply -f ${{ github.workspace }}/manifests/k8s-ingress.yaml -n ${{ env.NAMESPACE }}
-            kubectl get pods -n ${{ env.NAMESPACE }}
-            kubectl get services -n ${{ env.NAMESPACE }}
+            kubectl apply -f ${{ github.workspace }}/manifests/k8s-ingress.yaml -n ${{ env.NAMESPACE }}            
             # wait for the service to be ready
             kubectl wait --for=condition=available --timeout=600s deployment.apps/pygoat-app -n ${{ env.NAMESPACE }}
+            kubectl get pods -n ${{ env.NAMESPACE }}
+            kubectl get services -n ${{ env.NAMESPACE }}
+            kuebctl get ingress -n ${{ env.NAMESPACE }}
             # get external IP from the service
             externalIp=$(kubectl get service ${{ env.Pygoat_Service }} -n ${{ env.NAMESPACE }} -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
             echo "External IP: $externalIp"
