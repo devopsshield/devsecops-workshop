@@ -392,6 +392,8 @@ jobs:
             az account show
             az aks get-credentials --resource-group ${{ env.RESOURCE_GROUP }} --name ${{ env.CLUSTER_NAME }}
             az aks install-cli
+            echo "Sleeping for 10 seconds - waiting for kubectl to be ready"
+            sleep 10
             kubectl get nodes
             kubectl get namespaces
             # create namespace if it does not exist
@@ -507,6 +509,8 @@ jobs:
             az account show
             az aks get-credentials --resource-group ${{ env.RESOURCE_GROUP }} --name ${{ env.CLUSTER_NAME }}
             az aks install-cli
+            echo "Sleeping for 10 seconds - waiting for kubectl to be ready"
+            sleep 10
             kubectl get nodes
             kubectl get namespaces
             # create namespace if it does not exist
