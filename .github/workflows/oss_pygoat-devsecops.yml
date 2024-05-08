@@ -395,11 +395,11 @@ jobs:
             kubectl get nodes
             kubectl get namespaces
             # create namespace if it does not exist
-            kubectl create namespace ${{ env.NAMESPACE }} --dry-run=client -o yaml | kubectl apply -f -            
+            kubectl create namespace ${{ env.NAMESPACE }} --dry-run=client -o yaml | kubectl apply -f -
             # apply the manifests
-            kubectl apply -f ${{ github.workspace }}/manifests/k8s-deployment.yaml -n ${{ env.NAMESPACE }}           
+            kubectl apply -f ${{ github.workspace }}/manifests/k8s-deployment.yaml -n ${{ env.NAMESPACE }}
             kubectl apply -f ${{ github.workspace }}/manifests/k8s-service.yaml -n ${{ env.NAMESPACE }}
-            kubectl apply -f ${{ github.workspace }}/manifests/k8s-ingress.yaml -n ${{ env.NAMESPACE }}            
+            kubectl apply -f ${{ github.workspace }}/manifests/k8s-ingress.yaml -n ${{ env.NAMESPACE }}
             # wait for the service to be ready
             kubectl wait --for=condition=available --timeout=600s deployment.apps/pygoat-app -n ${{ env.NAMESPACE }}
             kubectl get pods -n ${{ env.NAMESPACE }}
@@ -428,7 +428,7 @@ jobs:
         run: |-
           python -m pip install -r requirements.txt
           python -m pip install pytest-cov
-            python -m pytest introduction/tests/integration/ --junitxml=${{ github.workspace }}/selenium-test-output.xml --cov=. --cov-report=xml
+          python -m pytest introduction/tests/integration/ --junitxml=${{ github.workspace }}/selenium-test-output.xml --cov=. --cov-report=xml
       - name: Publish Selenium Report
         if: success() || failure()
         uses: actions/upload-artifact@v4.1.0
@@ -510,11 +510,11 @@ jobs:
             kubectl get nodes
             kubectl get namespaces
             # create namespace if it does not exist
-            kubectl create namespace ${{ env.NAMESPACE }} --dry-run=client -o yaml | kubectl apply -f -            
+            kubectl create namespace ${{ env.NAMESPACE }} --dry-run=client -o yaml | kubectl apply -f -
             # apply the manifests
-            kubectl apply -f ${{ github.workspace }}/manifests/k8s-deployment.yaml -n ${{ env.NAMESPACE }}         
+            kubectl apply -f ${{ github.workspace }}/manifests/k8s-deployment.yaml -n ${{ env.NAMESPACE }}
             kubectl apply -f ${{ github.workspace }}/manifests/k8s-service.yaml -n ${{ env.NAMESPACE }}
-            kubectl apply -f ${{ github.workspace }}/manifests/k8s-ingress.yaml -n ${{ env.NAMESPACE }}            
+            kubectl apply -f ${{ github.workspace }}/manifests/k8s-ingress.yaml -n ${{ env.NAMESPACE }}
             # wait for the service to be ready
             kubectl wait --for=condition=available --timeout=600s deployment.apps/pygoat-app -n ${{ env.NAMESPACE }}
             kubectl get pods -n ${{ env.NAMESPACE }}
