@@ -384,7 +384,7 @@ jobs:
           client-id: ${{ secrets.AZURE_CLIENT_ID }}
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-      - name: Azure CLI script
+      - name: Create k8s namespace ${{ env.NAMESPACE }}
         uses: azure/cli@v2
         with:
           azcliversion: latest
@@ -399,6 +399,17 @@ jobs:
             kubectl get namespaces
             # create namespace if it does not exist
             kubectl create namespace ${{ env.NAMESPACE }} --dry-run=client -o yaml | kubectl apply -f -
+      - name: Install k8s manifests - namespace ${{ env.NAMESPACE }}
+        uses: azure/cli@v2
+        with:
+          azcliversion: latest
+          inlineScript: |
+            az account show
+            az aks get-credentials --resource-group ${{ env.RESOURCE_GROUP }} --name ${{ env.CLUSTER_NAME }}
+            az aks install-cli
+            echo "Sleeping for 10 seconds - waiting for kubectl to be ready"
+            sleep 10
+            kubectl version --client            
             # apply the manifests
             kubectl apply -f ${{ github.workspace }}/manifests/k8s-deployment.yaml -n ${{ env.NAMESPACE }}
             kubectl apply -f ${{ github.workspace }}/manifests/k8s-service.yaml -n ${{ env.NAMESPACE }}
@@ -416,8 +427,30 @@ jobs:
               -z ${{ env.zoneName }} \
               -n ${{ env.dnsRecordSetName }} \
               -a $externalIp
-      - name: Sleep For 30 Seconds
-        run: sleep 30
+      - name: Adjust DNS for environment
+        uses: azure/cli@v2
+        with:
+          azcliversion: latest
+          inlineScript: |
+            az account show
+            az aks get-credentials --resource-group ${{ env.RESOURCE_GROUP }} --name ${{ env.CLUSTER_NAME }}
+            az aks install-cli
+            echo "Sleeping for 10 seconds - waiting for kubectl to be ready"
+            sleep 10
+            kubectl version --client            
+            # wait for the service to be ready
+            kubectl wait --for=condition=available --timeout=600s deployment.apps/pygoat-app -n ${{ env.NAMESPACE }}
+            kubectl get pods -n ${{ env.NAMESPACE }}
+            kubectl get services -n ${{ env.NAMESPACE }}
+            kuebctl get ingress -n ${{ env.NAMESPACE }}
+            # get external IP from the service
+            externalIp=$(kubectl get service ${{ env.Pygoat_Service }} -n ${{ env.NAMESPACE }} -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
+            echo "External IP: $externalIp"
+            az network dns record-set a add-record \
+              -g ${{ env.DnsResourceGroup }} \
+              -z ${{ env.zoneName }} \
+              -n ${{ env.dnsRecordSetName }} \
+              -a $externalIp
   dast-run_integration_tests:
     name: Run Integration Tests
     needs:
@@ -502,7 +535,7 @@ jobs:
           client-id: ${{ secrets.AZURE_CLIENT_ID }}
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-      - name: Azure CLI script
+      - name: Create k8s namespace ${{ env.NAMESPACE }}
         uses: azure/cli@v2
         with:
           azcliversion: latest
@@ -517,10 +550,45 @@ jobs:
             kubectl get namespaces
             # create namespace if it does not exist
             kubectl create namespace ${{ env.NAMESPACE }} --dry-run=client -o yaml | kubectl apply -f -
+      - name: Install k8s manifests - namespace ${{ env.NAMESPACE }}
+        uses: azure/cli@v2
+        with:
+          azcliversion: latest
+          inlineScript: |
+            az account show
+            az aks get-credentials --resource-group ${{ env.RESOURCE_GROUP }} --name ${{ env.CLUSTER_NAME }}
+            az aks install-cli
+            echo "Sleeping for 10 seconds - waiting for kubectl to be ready"
+            sleep 10
+            kubectl version --client            
             # apply the manifests
             kubectl apply -f ${{ github.workspace }}/manifests/k8s-deployment.yaml -n ${{ env.NAMESPACE }}
             kubectl apply -f ${{ github.workspace }}/manifests/k8s-service.yaml -n ${{ env.NAMESPACE }}
             kubectl apply -f ${{ github.workspace }}/manifests/k8s-ingress.yaml -n ${{ env.NAMESPACE }}
+            # wait for the service to be ready
+            kubectl wait --for=condition=available --timeout=600s deployment.apps/pygoat-app -n ${{ env.NAMESPACE }}
+            kubectl get pods -n ${{ env.NAMESPACE }}
+            kubectl get services -n ${{ env.NAMESPACE }}
+            kuebctl get ingress -n ${{ env.NAMESPACE }}
+            # get external IP from the service
+            externalIp=$(kubectl get service ${{ env.Pygoat_Service }} -n ${{ env.NAMESPACE }} -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
+            echo "External IP: $externalIp"
+            az network dns record-set a add-record \
+              -g ${{ env.DnsResourceGroup }} \
+              -z ${{ env.zoneName }} \
+              -n ${{ env.dnsRecordSetName }} \
+              -a $externalIp
+      - name: Adjust DNS for environment
+        uses: azure/cli@v2
+        with:
+          azcliversion: latest
+          inlineScript: |
+            az account show
+            az aks get-credentials --resource-group ${{ env.RESOURCE_GROUP }} --name ${{ env.CLUSTER_NAME }}
+            az aks install-cli
+            echo "Sleeping for 10 seconds - waiting for kubectl to be ready"
+            sleep 10
+            kubectl version --client            
             # wait for the service to be ready
             kubectl wait --for=condition=available --timeout=600s deployment.apps/pygoat-app -n ${{ env.NAMESPACE }}
             kubectl get pods -n ${{ env.NAMESPACE }}
