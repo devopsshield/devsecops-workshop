@@ -372,7 +372,7 @@ stages:
                   inputs:
                     targetFiles: "$(System.DefaultWorkingDirectory)/manifests/k8s-*.yaml"
                     encoding: "auto"
-                    tokenPattern: "azpipelines"
+                    tokenPattern: "default"
                     writeBOM: true
                     actionOnMissing: "fail"
                     keepToken: false
@@ -566,7 +566,7 @@ stages:
                   inputs:
                     targetFiles: "$(System.DefaultWorkingDirectory)/manifests/k8s-*.yaml"
                     encoding: "auto"
-                    tokenPattern: "azpipelines"
+                    tokenPattern: "default"
                     writeBOM: true
                     actionOnMissing: "fail"
                     keepToken: false
