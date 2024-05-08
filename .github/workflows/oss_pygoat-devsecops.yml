@@ -353,6 +353,10 @@ jobs:
       RESOURCE_GROUP: rg-k8s-pygoat-dev-001
       CLUSTER_NAME: aks-k8s-pygoat-dev-001
       NAMESPACE: pygoat-test
+      Pygoat_Service: pygoat-svc
+      DnsResourceGroup: rg-dns-prod
+      zoneName: cad4devops.com
+      dnsRecordSetName: gh-pygoat-test
     environment:
       name: OSS_pygoat-test
     steps:
@@ -397,15 +401,17 @@ jobs:
             kubectl apply -f ${{ github.workspace }}/manifests/k8s-service.yaml -n ${{ env.NAMESPACE }}
             kubectl apply -f ${{ github.workspace }}/manifests/k8s-ingress.yaml -n ${{ env.NAMESPACE }}
             kubectl get pods -n ${{ env.NAMESPACE }}
-      #     # This item has no matching transformer
-      #     - task: KubernetesManifest@1
-      #       inputs:
-      #         action: deploy
-      #         connectionType: kubernetesServiceConnection
-      #         kubernetesServiceConnection: OSS_Microk8s
-      #         namespace: pygoat-test
-      #         manifests: manifests/k8s-*.yaml
-      #       displayName: Deploy Manifests
+            kubectl get services -n ${{ env.NAMESPACE }}
+            # wait for the service to be ready
+            kubectl wait --for=condition=available --timeout=600s deployment.apps/pygoat-app -n ${{ env.NAMESPACE }}
+            # get external IP from the service
+            externalIp=$(kubectl get service ${{ env.Pygoat_Service }} -n ${{ env.NAMESPACE }} -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
+            echo "External IP: $externalIp"
+            az network dns record-set a add-record \
+              -g ${{ env.DnsResourceGroup }} \
+              -z ${{ env.zoneName }} \
+              -n ${{ env.dnsRecordSetName }} \
+              -a $externalIp
       - name: Sleep For 30 Seconds
         run: sleep 30
   dast-run_integration_tests:
@@ -463,6 +469,10 @@ jobs:
       RESOURCE_GROUP: rg-k8s-pygoat-dev-001
       CLUSTER_NAME: aks-k8s-pygoat-dev-001
       NAMESPACE: pygoat
+      Pygoat_Service: pygoat-svc
+      DnsResourceGroup: rg-dns-prod
+      zoneName: cad4devops.com
+      dnsRecordSetName: gh-pygoat
     steps:
       - name: checkout
         uses: actions/checkout@v4.1.0
@@ -505,13 +515,14 @@ jobs:
             kubectl apply -f ${{ github.workspace }}/manifests/k8s-service.yaml -n ${{ env.NAMESPACE }}
             kubectl apply -f ${{ github.workspace }}/manifests/k8s-ingress.yaml -n ${{ env.NAMESPACE }}
             kubectl get pods -n ${{ env.NAMESPACE }}
-
-#     # This item has no matching transformer
-#     - task: KubernetesManifest@1
-#       inputs:
-#         action: deploy
-#         connectionType: kubernetesServiceConnection
-#         kubernetesServiceConnection: "${{ env.kubernetesServiceConnection }}"
-#         namespace: pygoat
-#         manifests: manifests/k8s-*.yaml
-#       displayName: Deploy Manifests
+            kubectl get services -n ${{ env.NAMESPACE }}
+            # wait for the service to be ready
+            kubectl wait --for=condition=available --timeout=600s deployment.apps/pygoat-app -n ${{ env.NAMESPACE }}
+            # get external IP from the service
+            externalIp=$(kubectl get service ${{ env.Pygoat_Service }} -n ${{ env.NAMESPACE }} -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
+            echo "External IP: $externalIp"
+            az network dns record-set a add-record \
+              -g ${{ env.DnsResourceGroup }} \
+              -z ${{ env.zoneName }} \
+              -n ${{ env.dnsRecordSetName }} \
+              -a $externalIp
