@@ -85,15 +85,13 @@ jobs:
       #     password: "${{ secrets.DOCKER_PASSWORD }}"
       - name: DevOps Shield Security Scanner
         run: |-
-          # Run DevOps Shield CLI with dosType=GitHub for current repository
-          current_repo=$(echo ${{ github.repository }} | tr '[:upper:]' '[:lower:]')
-          echo "Current Repo: $current_repo"
-          current_org=$(echo ${{ github.repository_owner }} | tr '[:upper:]' '[:lower:]')
-          echo "Current Org: $current_org"
+          # Run DevOps Shield CLI with dosType=GitHub for current repository          
+          echo "Current Repo: ${{ github.repository }}"
+          echo "Current Org: ${{ github.repository_owner }}"
           # docker run --name devopsshield \
           #   -v "${{ github.workspace }}:/devopsshield" \
           #   --rm -t \
-          #   -e dosOrganizationName=$current_org \
+          #   -e dosOrganizationName=${{ github.repository_owner }} \
           #   -e dosPatToken=${{ secrets.GITHUB_TOKEN }} \
           #   -e dosType=GitHub \
           #   devopsshield/devopsshield
@@ -104,6 +102,7 @@ jobs:
             -e dosPatToken=${{ secrets.GITHUB_TOKEN }} `
             -e dosType=GitHub `
             devopsshield/devopsshield:latest-nanoserver-ltsc2022
+        shell: pwsh
   test-run_sca_analysis:
     name: Run SCA Analysis
     needs:
