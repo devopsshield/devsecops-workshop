@@ -106,13 +106,15 @@ jobs:
             ls ${{ github.workspace }}
             cat ${{ github.workspace }}/DevOpsShield-SecurityScanner-Report.sarif
             cat ${{ github.workspace }}/DevOpsShield-SecurityScanner-Report.csv
+            mkdir "${{ github.workspace }}/devops-shield-reports"
+            cp ${{ github.workspace }}/DevOpsShield-SecurityScanner-Report.sarif "${{ github.workspace }}/devops-shield-reports"
+            cp ${{ github.workspace }}/DevOpsShield-SecurityScanner-Report.csv "${{ github.workspace }}/devops-shield-reports"
         shell: pwsh
-      - name: Upload DevOps Shield Report
-        if: false
+      - name: Upload DevOps Shield Reports
         uses: actions/upload-artifact@v4.1.0
         with:
-          name: devopsshield-report
-          path: "${{ github.workspace }}/CodeAnalysisLogs"
+          name: devops-shield-reports
+          path: "${{ github.workspace }}/devops-shield-reports"
   test-run_sca_analysis:
     name: Run SCA Analysis
     needs:
