@@ -103,7 +103,16 @@ jobs:
             -e dosPatToken=${{ secrets.TOKEN_FOR_DOS }} `
             -e dosType=GitHub `
             devopsshield/devopsshield:latest-nanoserver-ltsc2022
+            ls ${{ github.workspace }}
+            cat ${{ github.workspace }}/DevOpsShield-SecurityScanner-Report.sarif
+            cat ${{ github.workspace }}/DevOpsShield-SecurityScanner-Report.csv
         shell: pwsh
+      - name: Upload DevOps Shield Report
+        if: false
+        uses: actions/upload-artifact@v4.1.0
+        with:
+          name: devopsshield-report
+          path: "${{ github.workspace }}/CodeAnalysisLogs"
   test-run_sca_analysis:
     name: Run SCA Analysis
     needs:
