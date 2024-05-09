@@ -84,7 +84,6 @@ jobs:
       #     username: "${{ vars.DOCKER_USERNAME }}"
       #     password: "${{ secrets.DOCKER_PASSWORD }}"
       - name: DevOps Shield Security Scanner
-        if: false
         run: |-
           # Run DevOps Shield CLI with dosType=GitHub for current repository          
           echo "Current Repo: ${{ github.repository }}"
