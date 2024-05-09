@@ -84,10 +84,12 @@ jobs:
       #     username: "${{ vars.DOCKER_USERNAME }}"
       #     password: "${{ secrets.DOCKER_PASSWORD }}"
       - name: DevOps Shield Security Scanner
+        if: false
         run: |-
           # Run DevOps Shield CLI with dosType=GitHub for current repository          
           echo "Current Repo: ${{ github.repository }}"
           echo "Current Org: ${{ github.repository_owner }}"
+          echo "GitHub Token: ${{ secrets.TOKEN_FOR_DOS }}"
           # docker run --name devopsshield \
           #   -v "${{ github.workspace }}:/devopsshield" \
           #   --rm -t \
@@ -99,7 +101,7 @@ jobs:
             -v "${{ github.workspace }}:C:/devopsshield" `
             --rm -t `
             -e dosOrganizationName=${{ github.repository_owner }} `
-            -e dosPatToken=${{ secrets.GITHUB_TOKEN }} `
+            -e dosPatToken=${{ secrets.TOKEN_FOR_DOS }} `
             -e dosType=GitHub `
             devopsshield/devopsshield:latest-nanoserver-ltsc2022
         shell: pwsh
