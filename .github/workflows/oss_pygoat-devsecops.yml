@@ -68,7 +68,7 @@ jobs:
     name: Run DevOps Shield Scan
     needs:
       - build-build_and_push_app
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     # env:
     #   DOCKER_REGISTRY: ${{ vars.DOCKER_REGISTRY}}
     #   DOCKER_USERNAME: ${{ vars.DOCKER_USERNAME}}
@@ -90,13 +90,20 @@ jobs:
           echo "Current Repo: $current_repo"
           current_org=$(echo ${{ github.repository_owner }} | tr '[:upper:]' '[:lower:]')
           echo "Current Org: $current_org"
-          docker run --name devopsshield \
-            -v "${{ github.workspace }}:/devopsshield" \
-            --rm -t \
-            -e dosOrganizationName=$current_org \
-            -e dosPatToken=${{ secrets.GITHUB_TOKEN }} \
-            -e dosType=GitHub \
-            devopsshield/devopsshield
+          # docker run --name devopsshield \
+          #   -v "${{ github.workspace }}:/devopsshield" \
+          #   --rm -t \
+          #   -e dosOrganizationName=$current_org \
+          #   -e dosPatToken=${{ secrets.GITHUB_TOKEN }} \
+          #   -e dosType=GitHub \
+          #   devopsshield/devopsshield
+          docker run --name devopsshield `
+            -v "${{ github.workspace }}:C:/devopsshield" `
+            --rm -t `
+            -e dosOrganizationName=${{ github.repository_owner }} `
+            -e dosPatToken=${{ secrets.GITHUB_TOKEN }} `
+            -e dosType=GitHub `
+            devopsshield/devopsshield:latest-nanoserver-ltsc2022
   test-run_sca_analysis:
     name: Run SCA Analysis
     needs:
