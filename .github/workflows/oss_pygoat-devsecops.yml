@@ -89,20 +89,29 @@ jobs:
           echo "Current Repo: ${{ github.repository }}"
           echo "Current Org: ${{ github.repository_owner }}"
           echo "GitHub Token: ${{ secrets.TOKEN_FOR_DOS }}"
-          docker run --name devopsshield \
-            -v "${{ github.workspace }}:/devopsshield" \
-            --rm -t \
-            -e dosOrganizationName=${{ github.repository_owner }} \
-            -e dosPatToken=${{ secrets.GITHUB_TOKEN }} \
-            -e dosType=GitHub \
-            devopsshield/devopsshield
-          # docker run --name devopsshield `
-          #   -v "${{ github.workspace }}:C:/devopsshield" `
-          #   --rm -t `
-          #   -e dosOrganizationName=${{ github.repository_owner }} `
-          #   -e dosPatToken=${{ secrets.TOKEN_FOR_DOS }} `
-          #   -e dosType=GitHub `
-          #   devopsshield/devopsshield:latest-nanoserver-ltsc2022
+          # check os linux or windows
+          if ($IsWindows) {
+              Write-Host "Windows OS"
+              docker run --name devopsshield `
+                -v "${{ github.workspace }}:C:/devopsshield" `
+                --rm -t `
+                -e dosOrganizationName=${{ github.repository_owner }} `
+                -e dosPatToken=${{ secrets.TOKEN_FOR_DOS }} `
+                -e dosType=GitHub `
+                devopsshield/devopsshield:latest-nanoserver-ltsc2022
+          } elseif ($IsLinux) {
+              Write-Host "Linux OS"
+              docker run --name devopsshield `
+                -v "${{ github.workspace }}:/devopsshield" `
+                --rm -t `
+                -e dosOrganizationName=${{ github.repository_owner }} `
+                -e dosPatToken=${{ secrets.GITHUB_TOKEN }} `
+                -e dosType=GitHub `
+                devopsshield/devopsshield
+          } else {
+              Write-Host "OS not supported"
+              throw "OS not supported"
+          }          
           ls ${{ github.workspace }}
           cat ${{ github.workspace }}/DevOpsShield-SecurityScanner-Report.sarif
           cat ${{ github.workspace }}/DevOpsShield-SecurityScanner-Report.csv
