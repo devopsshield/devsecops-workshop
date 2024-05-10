@@ -456,6 +456,7 @@ jobs:
     needs:
       - test-run_devopsshield_scan_windows
       - test-run_devopsshield_scan_linux
+      - test-run_devopsshield_scan_linux_pscore
       - test-run_sast_analysis
       - test-run_unit_tests
       - test-run_sca_analysis
@@ -589,6 +590,7 @@ jobs:
           ls -l ${{ github.workspace }}/bandit-sast-report
           ls -l ${{ github.workspace }}/devops-shield-reports-windows
           ls -l ${{ github.workspace }}/devops-shield-reports-linux
+          ls -l ${{ github.workspace }}/devops-shield-reports-linux-pscore
       - name: Upload Reports To DefectDojo
         run: |-
           TODAY=`date +%Y-%m-%d`
