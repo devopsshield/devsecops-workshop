@@ -196,7 +196,7 @@ jobs:
           echo "Linux OS"
           docker run --name devopsshield \
             -v "${{ github.workspace }}:/devopsshield" \
-            --rm -t `
+            --rm -t \
             -e dosOrganizationName=${{ github.repository_owner }} \
             -e dosPatToken=${{ secrets.GITHUB_TOKEN }} \
             -e dosType=GitHub \
@@ -499,7 +499,7 @@ jobs:
           TODAY=`date +%Y-%m-%d`
           ENGAGEMENTID=`cat ENGAGEMENTID.env`
           echo "TODAY: $TODAY"
-          echo "ENGAGEMENTID: $ENGAGEMENTID"          
+          echo "ENGAGEMENTID: $ENGAGEMENTID"
           array=('type=("SARIF" "pip-audit Scan" "SARIF" "Bandit Scan")' 'file=("devops-shield-reports-windows/DevOpsShield-SecurityScanner-Report-Fixed.sarif" "dependency-check-reports/dependency-check-report-pip-audit.json" "image-scan-report/image-scan-report.json" "bandit-sast-report/sast-report.json")')
           for elt in "${array[@]}";do eval $elt;done
           for scan in 0 1 2 3; do \
