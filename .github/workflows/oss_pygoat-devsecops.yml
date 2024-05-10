@@ -68,7 +68,7 @@ jobs:
     name: Run DevOps Shield Scan
     needs:
       - build-build_and_push_app
-    runs-on: windows-latest
+    runs-on: ubuntu-latest # windows-latest
     # env:
     #   DOCKER_REGISTRY: ${{ vars.DOCKER_REGISTRY}}
     #   DOCKER_USERNAME: ${{ vars.DOCKER_USERNAME}}
@@ -85,36 +85,36 @@ jobs:
       #     password: "${{ secrets.DOCKER_PASSWORD }}"
       - name: DevOps Shield Security Scanner
         run: |-
-          # Run DevOps Shield CLI with dosType=GitHub for current repository          
+          # Run DevOps Shield CLI with dosType=GitHub for current repository
           echo "Current Repo: ${{ github.repository }}"
           echo "Current Org: ${{ github.repository_owner }}"
           echo "GitHub Token: ${{ secrets.TOKEN_FOR_DOS }}"
-          # docker run --name devopsshield \
-          #   -v "${{ github.workspace }}:/devopsshield" \
-          #   --rm -t \
-          #   -e dosOrganizationName=${{ github.repository_owner }} \
-          #   -e dosPatToken=${{ secrets.GITHUB_TOKEN }} \
-          #   -e dosType=GitHub \
-          #   devopsshield/devopsshield
-          docker run --name devopsshield `
-            -v "${{ github.workspace }}:C:/devopsshield" `
-            --rm -t `
-            -e dosOrganizationName=${{ github.repository_owner }} `
-            -e dosPatToken=${{ secrets.TOKEN_FOR_DOS }} `
-            -e dosType=GitHub `
-            devopsshield/devopsshield:latest-nanoserver-ltsc2022
-            ls ${{ github.workspace }}
-            cat ${{ github.workspace }}/DevOpsShield-SecurityScanner-Report.sarif
-            cat ${{ github.workspace }}/DevOpsShield-SecurityScanner-Report.csv
-            mkdir "${{ github.workspace }}/devops-shield-reports"
-            cp ${{ github.workspace }}/DevOpsShield-SecurityScanner-Report.sarif "${{ github.workspace }}/devops-shield-reports"
-            cp ${{ github.workspace }}/DevOpsShield-SecurityScanner-Report.csv "${{ github.workspace }}/devops-shield-reports"
+          docker run --name devopsshield \
+            -v "${{ github.workspace }}:/devopsshield" \
+            --rm -t \
+            -e dosOrganizationName=${{ github.repository_owner }} \
+            -e dosPatToken=${{ secrets.GITHUB_TOKEN }} \
+            -e dosType=GitHub \
+            devopsshield/devopsshield
+          # docker run --name devopsshield `
+          #   -v "${{ github.workspace }}:C:/devopsshield" `
+          #   --rm -t `
+          #   -e dosOrganizationName=${{ github.repository_owner }} `
+          #   -e dosPatToken=${{ secrets.TOKEN_FOR_DOS }} `
+          #   -e dosType=GitHub `
+          #   devopsshield/devopsshield:latest-nanoserver-ltsc2022
+          ls ${{ github.workspace }}
+          cat ${{ github.workspace }}/DevOpsShield-SecurityScanner-Report.sarif
+          cat ${{ github.workspace }}/DevOpsShield-SecurityScanner-Report.csv
+          mkdir "${{ github.workspace }}/devops-shield-reports"
+          cp ${{ github.workspace }}/DevOpsShield-SecurityScanner-Report.sarif "${{ github.workspace }}/devops-shield-reports"
+          cp ${{ github.workspace }}/DevOpsShield-SecurityScanner-Report.csv "${{ github.workspace }}/devops-shield-reports"
         shell: pwsh
       - name: Fix DOS SARIF (temporary workaround)
         run: |-
           Write-Host "Fixing DOS Sarif"
           # read sarif and fix it
-          $SarifFile = "${{ github.workspace }}/devops-shield-reports/DevOpsShield-SecurityScanner-Report.sarif"                
+          $SarifFile = "${{ github.workspace }}/devops-shield-reports/DevOpsShield-SecurityScanner-Report.sarif"
           $SarifFileFixed = "${{ github.workspace }}/devops-shield-reports/DevOpsShield-SecurityScanner-Report-Fixed.sarif"
 
           $sarifObject = Get-Content -Path $SarifFile | ConvertFrom-Json -Depth 100
