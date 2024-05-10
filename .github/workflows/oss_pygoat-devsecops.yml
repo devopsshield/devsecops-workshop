@@ -68,7 +68,7 @@ jobs:
     name: Run DevOps Shield Scan
     needs:
       - build-build_and_push_app
-    runs-on: ubuntu-latest # windows-latest
+    runs-on: windows-latest # ubuntu-latest
     # env:
     #   DOCKER_REGISTRY: ${{ vars.DOCKER_REGISTRY}}
     #   DOCKER_USERNAME: ${{ vars.DOCKER_USERNAME}}
