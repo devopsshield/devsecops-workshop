@@ -198,7 +198,7 @@ jobs:
             -v "${{ github.workspace }}:/devopsshield" \
             --rm -t \
             -e dosOrganizationName=${{ github.repository_owner }} \
-            -e dosPatToken=${{ secrets.GITHUB_TOKEN }} \
+            -e dosPatToken=${{ secrets.TOKEN_FOR_DOS }} \
             -e dosType=GitHub \
             devopsshield/devopsshield                
           ls ${{ github.workspace }}
@@ -262,6 +262,101 @@ jobs:
         with:
           name: devops-shield-reports-linux
           path: "${{ github.workspace }}/devops-shield-reports-linux"
+  test-run_devopsshield_scan_linux_pscore:
+    name: Run DevOps Shield Scan Linux PS Core
+    needs:
+      - build-build_and_push_app
+    runs-on: ubuntu-latest
+    # env:
+    #   DOCKER_REGISTRY: ${{ vars.DOCKER_REGISTRY}}
+    #   DOCKER_USERNAME: ${{ vars.DOCKER_USERNAME}}
+    environment:
+      name: dev
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4.1.0
+      # - name: Docker Login
+      #   uses: docker/login-action@v3.0.0
+      #   with:
+      #     registry: "${{ vars.DOCKER_REGISTRY }}"
+      #     username: "${{ vars.DOCKER_USERNAME }}"
+      #     password: "${{ secrets.DOCKER_PASSWORD }}"
+      - name: DevOps Shield Security Scanner Linux PS Core
+        run: |-
+          # Run DevOps Shield CLI with dosType=GitHub for current repository
+          echo "Current Repo: ${{ github.repository }}"
+          echo "Current Org: ${{ github.repository_owner }}"
+          echo "GitHub Token: ${{ secrets.TOKEN_FOR_DOS }}"
+          # check os linux or windows
+          echo "Linux OS"
+          docker run --name devopsshield `
+            -v "${{ github.workspace }}:/devopsshield" `
+            --rm -t `
+            -e dosOrganizationName=${{ github.repository_owner }} `
+            -e dosPatToken=${{ secrets.TOKEN_FOR_DOS }} `
+            -e dosType=GitHub `
+            devopsshield/devopsshield                
+          ls ${{ github.workspace }}
+          cat ${{ github.workspace }}/DevOpsShield-SecurityScanner-Report.sarif
+          cat ${{ github.workspace }}/DevOpsShield-SecurityScanner-Report.csv
+          mkdir "${{ github.workspace }}/devops-shield-reports-linux-pscore"
+          cp ${{ github.workspace }}/DevOpsShield-SecurityScanner-Report.sarif "${{ github.workspace }}/devops-shield-reports-linux-pscore"
+          cp ${{ github.workspace }}/DevOpsShield-SecurityScanner-Report.csv "${{ github.workspace }}/devops-shield-reports-linux-pscore"
+        shell: pwsh
+      - name: Fix DOS SARIF (temporary workaround)
+        run: |-
+          Write-Host "Fixing DOS Sarif"
+          # read sarif and fix it
+          $SarifFile = "${{ github.workspace }}/devops-shield-reports-linux-pscore/DevOpsShield-SecurityScanner-Report.sarif"
+          $SarifFileFixed = "${{ github.workspace }}/devops-shield-reports-linux-pscore/DevOpsShield-SecurityScanner-Report-Fixed.sarif"
+
+          $sarifObject = Get-Content -Path $SarifFile | ConvertFrom-Json -Depth 100
+
+          foreach ($run in $sarifObject.runs) {
+              foreach ($result in $run.results) {
+                  # echo ruleId
+                  Write-Host $result.ruleId
+                  # loop through fixes
+                  foreach ($fix in $result.fixes) {
+                      # echo fix
+                      Write-Host $fix
+                      # echo fix description
+                      $description = $fix.description
+                      # echo description id
+                      $descriptionId = $description.id
+                      Write-Host `t`t$descriptionId
+                      # echo description arguments
+                      $descriptionArguments = $description.arguments
+                      foreach ($argument in $descriptionArguments) {
+                          Write-Host `t`t`t$argument
+                      }
+                      # check if there are more than one argument
+                      if ($descriptionArguments.Count -gt 1) {
+                          # throw error
+                          Write-Error "Error: More than one argument found"
+                          exit 1
+                      }
+                      # prepare new description text
+                      $newText = "$descriptionId - $($descriptionArguments[0])"
+                      $fix.description = $newText
+                      # echo new fix description
+                      Write-Host `t`t$newText
+
+                      # change description object
+                      # create new custom object for description with a single text property
+                      $newDescription = [PSCustomObject]@{ text = $newText }
+                      # replace description object with new object
+                      $fix.description = $newDescription
+                  }
+              }
+          }
+          $sarifObject | ConvertTo-Json -Depth 100 | Set-Content -Path $SarifFileFixed
+        shell: pwsh
+      - name: Upload DevOps Shield Reports
+        uses: actions/upload-artifact@v4.1.0
+        with:
+          name: devops-shield-reports-linux-pscore
+          path: "${{ github.workspace }}/devops-shield-reports-linux-pscore"
   test-run_sca_analysis:
     name: Run SCA Analysis
     needs:
