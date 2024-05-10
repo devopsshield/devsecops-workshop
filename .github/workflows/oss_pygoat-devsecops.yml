@@ -64,11 +64,11 @@ jobs:
         run: docker push ${{ env.image }}:${{ github.run_id }}
       - name: Build and Push Docker image
         run: docker push ${{ env.image }}:latest
-  test-run_devopsshield_scan:
-    name: Run DevOps Shield Scan
+  test-run_devopsshield_scan_windows:
+    name: Run DevOps Shield Scan Windows
     needs:
       - build-build_and_push_app
-    runs-on: windows-latest # ubuntu-latest
+    runs-on: windows-latest
     # env:
     #   DOCKER_REGISTRY: ${{ vars.DOCKER_REGISTRY}}
     #   DOCKER_USERNAME: ${{ vars.DOCKER_USERNAME}}
@@ -83,7 +83,7 @@ jobs:
       #     registry: "${{ vars.DOCKER_REGISTRY }}"
       #     username: "${{ vars.DOCKER_USERNAME }}"
       #     password: "${{ secrets.DOCKER_PASSWORD }}"
-      - name: DevOps Shield Security Scanner
+      - name: DevOps Shield Security Scanner Windows
         run: |-
           # Run DevOps Shield CLI with dosType=GitHub for current repository
           echo "Current Repo: ${{ github.repository }}"
@@ -101,13 +101,7 @@ jobs:
                 devopsshield/devopsshield:latest-nanoserver-ltsc2022
           } elseif ($IsLinux) {
               Write-Host "Linux OS"
-              docker run --name devopsshield `
-                -v "${{ github.workspace }}:/devopsshield" `
-                --rm -t `
-                -e dosOrganizationName=${{ github.repository_owner }} `
-                -e dosPatToken=${{ secrets.GITHUB_TOKEN }} `
-                -e dosType=GitHub `
-                devopsshield/devopsshield
+              throw "OS not supported"
           } else {
               Write-Host "OS not supported"
               throw "OS not supported"
@@ -115,16 +109,16 @@ jobs:
           ls ${{ github.workspace }}
           cat ${{ github.workspace }}/DevOpsShield-SecurityScanner-Report.sarif
           cat ${{ github.workspace }}/DevOpsShield-SecurityScanner-Report.csv
-          mkdir "${{ github.workspace }}/devops-shield-reports"
-          cp ${{ github.workspace }}/DevOpsShield-SecurityScanner-Report.sarif "${{ github.workspace }}/devops-shield-reports"
-          cp ${{ github.workspace }}/DevOpsShield-SecurityScanner-Report.csv "${{ github.workspace }}/devops-shield-reports"
+          mkdir "${{ github.workspace }}/devops-shield-reports-windows"
+          cp ${{ github.workspace }}/DevOpsShield-SecurityScanner-Report.sarif "${{ github.workspace }}/devops-shield-reports-windows"
+          cp ${{ github.workspace }}/DevOpsShield-SecurityScanner-Report.csv "${{ github.workspace }}/devops-shield-reports-windows"
         shell: pwsh
       - name: Fix DOS SARIF (temporary workaround)
         run: |-
           Write-Host "Fixing DOS Sarif"
           # read sarif and fix it
-          $SarifFile = "${{ github.workspace }}/devops-shield-reports/DevOpsShield-SecurityScanner-Report.sarif"
-          $SarifFileFixed = "${{ github.workspace }}/devops-shield-reports/DevOpsShield-SecurityScanner-Report-Fixed.sarif"
+          $SarifFile = "${{ github.workspace }}/devops-shield-reports-windows/DevOpsShield-SecurityScanner-Report.sarif"
+          $SarifFileFixed = "${{ github.workspace }}/devops-shield-reports-windows/DevOpsShield-SecurityScanner-Report-Fixed.sarif"
 
           $sarifObject = Get-Content -Path $SarifFile | ConvertFrom-Json -Depth 100
 
@@ -171,8 +165,103 @@ jobs:
       - name: Upload DevOps Shield Reports
         uses: actions/upload-artifact@v4.1.0
         with:
-          name: devops-shield-reports
-          path: "${{ github.workspace }}/devops-shield-reports"
+          name: devops-shield-reports-windows
+          path: "${{ github.workspace }}/devops-shield-reports-windows"
+  test-run_devopsshield_scan_linux:
+    name: Run DevOps Shield Scan Linux
+    needs:
+      - build-build_and_push_app
+    runs-on: ubuntu-latest
+    # env:
+    #   DOCKER_REGISTRY: ${{ vars.DOCKER_REGISTRY}}
+    #   DOCKER_USERNAME: ${{ vars.DOCKER_USERNAME}}
+    environment:
+      name: dev
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4.1.0
+      # - name: Docker Login
+      #   uses: docker/login-action@v3.0.0
+      #   with:
+      #     registry: "${{ vars.DOCKER_REGISTRY }}"
+      #     username: "${{ vars.DOCKER_USERNAME }}"
+      #     password: "${{ secrets.DOCKER_PASSWORD }}"
+      - name: DevOps Shield Security Scanner Linux
+        run: |-
+          # Run DevOps Shield CLI with dosType=GitHub for current repository
+          echo "Current Repo: ${{ github.repository }}"
+          echo "Current Org: ${{ github.repository_owner }}"
+          echo "GitHub Token: ${{ secrets.TOKEN_FOR_DOS }}"
+          # check os linux or windows
+          echo "Linux OS"
+          docker run --name devopsshield \
+            -v "${{ github.workspace }}:/devopsshield" \
+            --rm -t `
+            -e dosOrganizationName=${{ github.repository_owner }} \
+            -e dosPatToken=${{ secrets.GITHUB_TOKEN }} \
+            -e dosType=GitHub \
+            devopsshield/devopsshield                
+          ls ${{ github.workspace }}
+          cat ${{ github.workspace }}/DevOpsShield-SecurityScanner-Report.sarif
+          cat ${{ github.workspace }}/DevOpsShield-SecurityScanner-Report.csv
+          mkdir "${{ github.workspace }}/devops-shield-reports-linux"
+          cp ${{ github.workspace }}/DevOpsShield-SecurityScanner-Report.sarif "${{ github.workspace }}/devops-shield-reports-linux"
+          cp ${{ github.workspace }}/DevOpsShield-SecurityScanner-Report.csv "${{ github.workspace }}/devops-shield-reports-linux"
+        shell: bash
+      - name: Fix DOS SARIF (temporary workaround)
+        run: |-
+          Write-Host "Fixing DOS Sarif"
+          # read sarif and fix it
+          $SarifFile = "${{ github.workspace }}/devops-shield-reports-linux/DevOpsShield-SecurityScanner-Report.sarif"
+          $SarifFileFixed = "${{ github.workspace }}/devops-shield-reports-linux/DevOpsShield-SecurityScanner-Report-Fixed.sarif"
+
+          $sarifObject = Get-Content -Path $SarifFile | ConvertFrom-Json -Depth 100
+
+          foreach ($run in $sarifObject.runs) {
+              foreach ($result in $run.results) {
+                  # echo ruleId
+                  Write-Host $result.ruleId
+                  # loop through fixes
+                  foreach ($fix in $result.fixes) {
+                      # echo fix
+                      Write-Host $fix
+                      # echo fix description
+                      $description = $fix.description
+                      # echo description id
+                      $descriptionId = $description.id
+                      Write-Host `t`t$descriptionId
+                      # echo description arguments
+                      $descriptionArguments = $description.arguments
+                      foreach ($argument in $descriptionArguments) {
+                          Write-Host `t`t`t$argument
+                      }
+                      # check if there are more than one argument
+                      if ($descriptionArguments.Count -gt 1) {
+                          # throw error
+                          Write-Error "Error: More than one argument found"
+                          exit 1
+                      }
+                      # prepare new description text
+                      $newText = "$descriptionId - $($descriptionArguments[0])"
+                      $fix.description = $newText
+                      # echo new fix description
+                      Write-Host `t`t$newText
+
+                      # change description object
+                      # create new custom object for description with a single text property
+                      $newDescription = [PSCustomObject]@{ text = $newText }
+                      # replace description object with new object
+                      $fix.description = $newDescription
+                  }
+              }
+          }
+          $sarifObject | ConvertTo-Json -Depth 100 | Set-Content -Path $SarifFileFixed
+        shell: pwsh
+      - name: Upload DevOps Shield Reports
+        uses: actions/upload-artifact@v4.1.0
+        with:
+          name: devops-shield-reports-linux
+          path: "${{ github.workspace }}/devops-shield-reports-linux"
   test-run_sca_analysis:
     name: Run SCA Analysis
     needs:
@@ -270,7 +359,8 @@ jobs:
   test-upload_reports:
     name: Upload Reports
     needs:
-      - test-run_devopsshield_scan
+      - test-run_devopsshield_scan_windows
+      - test-run_devopsshield_scan_linux
       - test-run_sast_analysis
       - test-run_unit_tests
       - test-run_sca_analysis
@@ -402,13 +492,15 @@ jobs:
           ls -l ${{ github.workspace }}/image-scan-report
           ls -l ${{ github.workspace }}/dependency-check-reports
           ls -l ${{ github.workspace }}/bandit-sast-report
+          ls -l ${{ github.workspace }}/devops-shield-reports-windows
+          ls -l ${{ github.workspace }}/devops-shield-reports-linux
       - name: Upload Reports To DefectDojo
         run: |-
           TODAY=`date +%Y-%m-%d`
           ENGAGEMENTID=`cat ENGAGEMENTID.env`
           echo "TODAY: $TODAY"
           echo "ENGAGEMENTID: $ENGAGEMENTID"          
-          array=('type=("SARIF" "pip-audit Scan" "SARIF" "Bandit Scan")' 'file=("devops-shield-reports/DevOpsShield-SecurityScanner-Report-Fixed.sarif" "dependency-check-reports/dependency-check-report-pip-audit.json" "image-scan-report/image-scan-report.json" "bandit-sast-report/sast-report.json")')
+          array=('type=("SARIF" "pip-audit Scan" "SARIF" "Bandit Scan")' 'file=("devops-shield-reports-windows/DevOpsShield-SecurityScanner-Report-Fixed.sarif" "dependency-check-reports/dependency-check-report-pip-audit.json" "image-scan-report/image-scan-report.json" "bandit-sast-report/sast-report.json")')
           for elt in "${array[@]}";do eval $elt;done
           for scan in 0 1 2 3; do \
             echo ""
