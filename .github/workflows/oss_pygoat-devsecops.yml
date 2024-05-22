@@ -69,6 +69,7 @@ jobs:
     needs:
       - build-build_and_push_app
     runs-on: windows-latest
+    if: false
     # env:
     #   DOCKER_REGISTRY: ${{ vars.DOCKER_REGISTRY}}
     #   DOCKER_USERNAME: ${{ vars.DOCKER_USERNAME}}
@@ -83,7 +84,7 @@ jobs:
       #     registry: "${{ vars.DOCKER_REGISTRY }}"
       #     username: "${{ vars.DOCKER_USERNAME }}"
       #     password: "${{ secrets.DOCKER_PASSWORD }}"
-      - name: DevOps Shield Security Scanner Windows
+      - name: DevOps Shield Security Scanner Windows        
         run: |-
           # Run DevOps Shield CLI with dosType=GitHub for current repository
           echo "Current Repo: ${{ github.repository }}"
@@ -264,6 +265,7 @@ jobs:
           path: "${{ github.workspace }}/devops-shield-reports-linux"
   test-run_devopsshield_scan_linux_pscore:
     name: Run DevOps Shield Scan Linux PS Core
+    if: false
     needs:
       - build-build_and_push_app
     runs-on: ubuntu-latest
