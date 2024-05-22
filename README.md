@@ -1,5 +1,7 @@
-# gh-abcs-actions
-> The GitHub ABCs actions training with workflow templates, examples, hands-on labs and additional learning resources.
+# oss-pygoat-devsecops
+> Welcome to our presentation on DevSecOps! In this talk we will uncover the benefits, challenges, and best practices of introducing security into your software development lifecycle (SDLC). DevSecOps from Zero to Hero! - devopsdays Montréal 2024 DevSecOps from Zero to Hero!
+
+Initially presented at [DevOps Days Montreal 2024](https://devopsdays.org/events/2024-montreal/welcome/)
 
 ## Examples & Hands-on Labs
 
