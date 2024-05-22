@@ -1,128 +1,110 @@
-# PyGoat
-<!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-9-orange.svg?style=flat-square)](#contributors-)
-<!-- ALL-CONTRIBUTORS-BADGE:END -->
+# gh-abcs-actions
+> The GitHub ABCs actions training with workflow templates, examples, hands-on labs and additional learning resources.
 
-intentionally vuln web Application Security in django.
-our roadmap build intentionally vuln web Application in django. The Vulnerability can based on OWASP top ten
-<br>
+## Examples & Hands-on Labs
 
-Table of Contents
-=================
+### Hands-on Labs Setup
+- [ ] [Lab Setup](/labs/setup.md)
 
-* [pygoat](#pygoat)
-   * [Installation](#installation)
-      * [From Sources](#from-sources)
-      * [Docker Container](#docker-container)
-      * [Installation Video](#installation-video)
-   * [Uninstallation](#uninstallation)
-   * [Solutions](/Solutions/solution.md)
-   * [For Developers](/docs/dev_guide.md)
+### Module 1: Introduction to GitHub Actions
+- Example: [github-actions-demo.yml](/.github/workflows/github-actions-demo.yml)
+- Example: [greet-everyone.yml](/.github/workflows/greet-everyone.yml)
+- [ ] _Hands-on Lab:_ :point_right: [Activity 1](/labs/lab01.md)
 
-## Installation
+### Module 2: Syntax
+- Example: [simple-workflow.yml](/.github/workflows/simple-workflow.yml)
+- Example: [job-dependencies.yml](/.github/workflows/job-dependencies.yml)
+- [ ] _Hands-on Lab:_ :point_right: [Activity 2](/labs/lab02.md)
 
-### From Sources
+### Module 3: Environments and Secrets
+- Example: [environments-secrets.yml](/.github/workflows/environments-secrets.yml)
+- [ ] _Hands-on Lab:_ :point_right: [Activity 3](/labs/lab03.md)
 
-To setup the project on your local machine:
-<br>
+### Module 4: Workflow Templates
+- Example: [reusable-workflow-template.yml](/.github/workflows/reusable-workflow-template.yml)
+- Example: [super-linter.yml](/.github/workflows/super-linter.yml)
+- [ ] _Hands-on Lab:_ :point_right: [Activity 4](/labs/lab04.md)
 
-First, Clone the repository using GitHub website or git in Terminal
-```
-  git clone https://github.com/adeyosemanputra/pygoat.git
-  ### To Download a specific branch
-  git clone -b <branch_name> https://github.com/adeyosemanputra/pygoat.git
-```
+### Module 5: Custom actions
+- Example: [github-script.yml](/.github/workflows/github-script.yml)
+- Example: [hello-world-composite.yml](/.github/workflows/hello-world-composite.yml)
+- Example: [use-custom-actions.yml](/.github/workflows/use-custom-actions.yml)
+- Repo: [githubabcs/hello-world-composite-action](https://github.com/githubabcs/hello-world-composite-action)
+- Repo: [write-docker-actions](https://github.com/CalinL/write-docker-actions)
+- Repo: [write-javascript-actions](https://github.com/CalinL/writing-javascript-actions)
+- [ ] _Hands-on Lab:_ :point_right: [Activity 5](/labs/lab05.md)
 
-#### Method 1
+### Module 6: Self-hosted runners
+- Example: [self-hosted-linux.yml](/.github/workflows/self-hosted-linux.yml)
+- [ ] _Hands-on Lab:_ :point_right: [Activity 6](/labs/lab06.md)
 
-1. Install all app and python requirements using installer file - `bash installer.sh`
-2. Apply the migrations `python3 manage.py migrate`.<br>
-3. Finally, run the development server `python3 manage.py runserver`.<br>
-4. The project will be available at <http://127.0.0.1:8000> 
+### Module 7: CI/CD
+- Example: [ci-workflow.yml](/.github/workflows/ci-workflow.yml)
+- Example: [cd-workflow.yml](/.github/workflows/cd-workflow.yml)
+- Repo: [github-actions-for-packages](https://github.com/CalinL/github-actions-for-packages)
+- Repo: [github-actions-for-ci](https://github.com/CalinL/github-actions-for-ci)
+- [ ] _Hands-on Lab:_ :point_right: [Activity 7](/labs/lab07.md)
 
-#### Method 2
+---
 
-1. Install python3 requirements `pip install -r requirements.txt`.<br> 
-2. Apply the migrations `python3 manage.py migrate`.<br>
-3. Finally, run the development server `python3 manage.py runserver`.<br>
-4. The project will be available at <http://127.0.0.1:8000> 
+## Learning Path
+- [Automate your workflow with GitHub Actions](https://learn.microsoft.com/en-us/training/paths/automate-workflow-github-actions/)
+- [Manage GitHub Actions in the enterprise](https://learn.microsoft.com/en-us/training/modules/manage-github-actions-enterprise/)
 
-#### Method 3
+---
 
-1. Install all app and python requirements using `setup.py` file - `pip3 install .`
-2. Apply the migrations `python3 manage.py migrate`.<br>
-3. Finally, run the development server `python3 manage.py runserver`.<br>
-4. The project will be available at <http://127.0.0.1:8000> 
+## Additional Resources
+> Additional resources to continue your GitHub Actions learning journey.
 
-### Docker Container
-1. Install [Docker](https://www.docker.com)
-2. Run `docker pull bashar1993/pygoat` or `docker pull bashar1993/pygoat:latest`
-3. Run `docker run --rm -p 8000:8000 bashar1993/pygoat:latest`
-4. Browse to <http://127.0.0.1:8000> 
-5. Remove existing image using `docker image rm bashar1993/pygoat` and pull again incase of any error
+### Training Manual
+- [GitHub Actions Training Manual](https://githubtraining.github.io/actions-facilitator-guide/#/)
 
-### From Docker-Compose 
-1. Install [Docker](https://www.docker.com)
-2. Run `docker-compose up` or `docker-compose up -d`
+### GitHub Skills
+- [GitHub Skills](https://github.com/skills)
+- [GitHub Actions: Continuous Delivery with Azure](https://github.com/skills/continuous-delivery-azure)
+- [Publish to GitHub Packages](https://github.com/skills/publish-packages)
 
-### Build Docker Image and Run
-1. Clone the repository  &ensp; `git clone https://github.com/adeyosemanputra/pygoat.git` 
-2. Build the docker image from Dockerfile using &ensp; `docker build -f Dockerfile -t pygoat .`
-3. Run the docker image &ensp;`docker run --rm -p 8000:8000 pygoat:latest`
-4. Browse to <http://127.0.0.1:8000> or <http://0.0.0.0:8000> 
+### GitHub Actions Documentation
+- [GitHub Actions](https://docs.github.com/en/actions)
+- [GitHub Actions guides](https://docs.github.com/en/actions/guides)
+- [Authenticating with GitHub Apps](https://docs.github.com/en/developers/apps/building-github-apps/authenticating-with-github-apps#generating-a-private-key)
+- [Starter Workflows](https://github.com/actions/starter-workflows)
+- [GitHub Actions Toolkit](https://github.com/actions/toolkit)
+- [Reusing workflows](https://docs.github.com/en/enterprise-cloud@latest/actions/using-workflows/reusing-workflows)
+- [How to start using reusable workflows with GitHub Actions](https://github.blog/2022-02-10-using-reusable-workflows-github-actions/)
+- [Required workflows](https://docs.github.com/en/actions/using-workflows/required-workflows)
+- [Defining configuration variables for multiple workflows](https://docs.github.com/en/actions/learn-github-actions/variables#defining-configuration-variables-for-multiple-workflows)
+- [Creating Actions](https://docs.github.com/en/actions/creating-actions)
+- [Security guides](https://docs.github.com/en/actions/security-guides)
+- [GitHub Blog](https://github.blog/)
+- [Awesome Actions](https://github.com/sdras/awesome-actions)
 
-### Installation video 
+### GitHub self-hosted runners on Kubernetes
+- [Autoscaling with self-hosted runners](https://docs.github.com/en/actions/hosting-your-own-runners/autoscaling-with-self-hosted-runners)
+- [Managing self-hosted runners with Actions Runner Controller](https://docs.github.com/en/actions/hosting-your-own-runners/managing-self-hosted-runners-with-actions-runner-controller)
+- [actions-runner-controller - A Kubernetes controller for GitHub Actions self-hosted runners.](https://github.com/actions/actions-runner-controller)
+- [GitHub Self-Hosted Runner Autoscaling with Kubernetes](https://tgrall.github.io/blog/2022/10/16/github-self-hosted-runner-autoscaling-with-kubernetes)
+- [GitHub Actions: Dive into actions-runner-controller (ARC)](https://www.youtube.com/watch?v=_F5ocPrv6io)
 
-1. From Source using `installer.sh`
- - [Installing PyGoat from Source](https://www.youtube.com/watch?v=7bYBJXG3FRQ)
-2. Without using `installer.sh`
- - [![](http://img.youtube.com/vi/rfzQiMeiwso/0.jpg)](http://www.youtube.com/watch?v=rfzQiMeiwso "Installation Pygoat")
+### Actions Changelog
+- [Changelog](https://github.blog/changelog/label/actions/)
+- [GitHub Actions - Sharing actions and reusable workflows from private repositories is now GA](https://github.blog/changelog/2022-12-14-github-actions-sharing-actions-and-reusable-workflows-from-private-repositories-is-now-ga/)
+- [GitHub Actions: Restrict workflows to specific runners using runner group names](https://github.blog/changelog/2022-11-01-github-actions-restrict-workflows-to-specific-runners-using-runner-group-names/)
+- [GitHub Actions: Use the GITHUB_TOKEN with workflow_dispatch and repository_dispatch](https://github.blog/changelog/2022-09-08-github-actions-use-github_token-with-workflow_dispatch-and-repository_dispatch/)
+- [GitHub Actions: Improvements to reusable workflows](https://github.blog/changelog/2022-08-22-github-actions-improvements-to-reusable-workflows-2/)
+- [GitHub Actions: Enhance your actions with job summaries](https://github.blog/changelog/2022-05-09-github-actions-enhance-your-actions-with-job-summaries/)
+- [Reusable workflows can be referenced locally](https://github.blog/changelog/2022-01-25-github-actions-reusable-workflows-can-be-referenced-locally/)
+- [Share GitHub Actions within your enterprise](https://github.blog/changelog/2022-01-21-share-github-actions-within-your-enterprise/)
+- [GitHub Actions: Prevent GitHub Actions from approving pull requests](https://github.blog/changelog/2022-01-14-github-actions-prevent-github-actions-from-approving-pull-requests/)
+- [Reduce duplication with action composition](https://github.blog/changelog/2021-08-25-github-actions-reduce-duplication-with-action-composition/)
+- [GitHub Actions: Control permissions for GITHUB_TOKEN](https://github.blog/changelog/2021-04-20-github-actions-control-permissions-for-github_token/)
 
-## Uninstallation
-
-### On Debian/Ubuntu Based Systems
-- On Debian/Ubuntu based systems, you can use the `uninstaller.sh` script to uninstall `pygoat` along with all it's dependencies.
-- To uninstall `pygoat`, simply run:
-```bash
-$ bash ./uninstaller.sh
-```
-
-### On Other Systems
-- On other systems, you can use the `uninstaller.py` script to uninstall `pygoat` along with all it's dependencies
-- To uninstall `pygoat`, simply run:
-```bash
-$ python3 uninstaller.py
-```
-
-## Solutions 
-<a href="/Solutions/solution.md">Solutions to all challenges</a>
-
-## Contributors ✨
-
-Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/docs/en/emoji-key)):
-
-<!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
-<!-- prettier-ignore-start -->
-<!-- markdownlint-disable -->
-<table>
-  <tr>
-    <td align="center"><a href="https://github.com/pwned-17"><img src="https://avatars.githubusercontent.com/u/61360833?v=4?s=100" width="100px;" alt=""/><br /><sub><b>pwned-17</b></sub></a><br /><a href="https://github.com/adeyosemanputra/pygoat/commits?author=pwned-17" title="Code">💻</a></td>
-    <td align="center"><a href="https://github.com/prince-7"><img src="https://avatars.githubusercontent.com/u/53997924?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Aman Singh</b></sub></a><br /><a href="https://github.com/adeyosemanputra/pygoat/commits?author=prince-7" title="Code">💻</a></td>
-    <td align="center"><a href="https://github.com/adeyosemanputra"><img src="https://avatars.githubusercontent.com/u/24958168?v=4?s=100" width="100px;" alt=""/><br /><sub><b>adeyosemanputra</b></sub></a><br /><a href="https://github.com/adeyosemanputra/pygoat/commits?author=adeyosemanputra" title="Code">💻</a> <a href="https://github.com/adeyosemanputra/pygoat/commits?author=adeyosemanputra" title="Documentation">📖</a></td>
-    <td align="center"><a href="https://github.com/gaurav618618"><img src="https://avatars.githubusercontent.com/u/29380890?v=4?s=100" width="100px;" alt=""/><br /><sub><b>gaurav618618</b></sub></a><br /><a href="https://github.com/adeyosemanputra/pygoat/commits?author=gaurav618618" title="Code">💻</a> <a href="https://github.com/adeyosemanputra/pygoat/commits?author=gaurav618618" title="Documentation">📖</a></td>
-    <td align="center"><a href="https://github.com/kUSHAL0601"><img src="https://avatars.githubusercontent.com/u/29600964?v=4?s=100" width="100px;" alt=""/><br /><sub><b>MajAK</b></sub></a><br /><a href="https://github.com/adeyosemanputra/pygoat/commits?author=kUSHAL0601" title="Code">💻</a></td>
-    <td align="center"><a href="https://github.com/JustinDPerkins"><img src="https://avatars.githubusercontent.com/u/60413733?v=4?s=100" width="100px;" alt=""/><br /><sub><b>JustinPerkins</b></sub></a><br /><a href="https://github.com/adeyosemanputra/pygoat/commits?author=JustinDPerkins" title="Code">💻</a></td>
-    <td align="center"><a href="https://github.com/Hkakashi"><img src="https://avatars.githubusercontent.com/u/43193113?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Liu Peng</b></sub></a><br /><a href="https://github.com/adeyosemanputra/pygoat/commits?author=Hkakashi" title="Code">💻</a></td>
-  </tr>
-  <tr>
-    <td align="center"><a href="https://github.com/RupakBiswas-2304"><img src="https://avatars.githubusercontent.com/u/75058161?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Metaphor</b></sub></a><br /><a href="https://github.com/adeyosemanputra/pygoat/commits?author=RupakBiswas-2304" title="Code">💻</a></td>
-    <td align="center"><a href="https://whokilleddb.github.io"><img src="https://avatars.githubusercontent.com/u/56482137?v=4?s=100" width="100px;" alt=""/><br /><sub><b>whokilleddb</b></sub></a><br /><a href="https://github.com/adeyosemanputra/pygoat/commits?author=whokilleddb" title="Code">💻</a></td>
-  </tr>
-</table>
-
-<!-- markdownlint-restore -->
-<!-- prettier-ignore-end -->
-
-<!-- ALL-CONTRIBUTORS-LIST:END -->
-
-This project follows the [all-contributors](https://github.com/all-contributors/all-contributors) specification. Contributions of any kind welcome!
+### Articles
+- [GitHub Actions & Security: Best practices](https://devopsjournal.io/blog/2021/02/06/GitHub-Actions)
+- [Setup an internal GitHub Actions Marketplace](https://devopsjournal.io/blog/2021/10/14/GitHub-Actions-Internal-Marketplace)
+- [How to build a CI/CD pipeline with GitHub Actions in four simple steps](https://github.blog/2022-02-02-build-ci-cd-pipeline-github-actions-four-steps/)
+- [Supercharging GitHub Actions with Job Summaries](https://github.blog/2022-05-09-supercharging-github-actions-with-job-summaries/)
+- [Keeping your actions up to date with Dependabot](https://docs.github.com/en/code-security/dependabot/working-with-dependabot/keeping-your-actions-up-to-date-with-dependabot)
+- [GitHub Actions for security and compliance](https://github.blog/2021-10-22-github-actions-for-security-compliance/)
+- [Triggering a workflow from a workflow](https://docs.github.com/en/actions/using-workflows/triggering-a-workflow#triggering-a-workflow-from-a-workflow)
+- [Introducing required workflows and configuration variables to GitHub Actions](https://github.blog/2023-01-10-introducing-required-workflows-and-configuration-variables-to-github-actions/)
