@@ -2,7 +2,7 @@ param (
     [string] $ghOwner = "devopsabcs-engineering",
     [string] $ghRepo = "oss-pygoat-devsecops",
     [string] $dockerName = "crs001fwmpo7kn3hnty",
-    [string] $dockerPassword = "Dgv2tJ4epWBrQpRNhdwYm/mqf6l5myJ5qGeTrl4K/H+ACRAZCxeS"
+    [string] $dockerPassword
 )
 function New-Environment {
     param (
@@ -10,7 +10,7 @@ function New-Environment {
         [string] $ghOwner = "devopsabcs-engineering",
         [string] $ghRepo = "oss-pygoat-devsecops",
         [string] $dockerName = "crs001fwmpo7kn3hnty",
-        [string] $dockerPassword = "Dgv2tJ4epWBrQpRNhdwYm/mqf6l5myJ5qGeTrl4K/H+ACRAZCxeS"
+        [string] $dockerPassword
     )
 
     # create GitHub environment
