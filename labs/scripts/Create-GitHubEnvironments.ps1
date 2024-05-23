@@ -2,7 +2,10 @@ param (
     [string] $ghOwner = "devopsabcs-engineering",
     [string] $ghRepo = "oss-pygoat-devsecops",
     [string] $dockerName = "crs001fwmpo7kn3hnty",
-    [string] $dockerPassword
+    [string] $dockerPassword,
+    [string] $defectDojoProductId,
+    [string] $defectDojoToken,
+    [string] $githubReadOnlyPersonalAccessTokenClassic
 )
 function New-Environment {
     param (
@@ -10,7 +13,10 @@ function New-Environment {
         [string] $ghOwner = "devopsabcs-engineering",
         [string] $ghRepo = "oss-pygoat-devsecops",
         [string] $dockerName = "crs001fwmpo7kn3hnty",
-        [string] $dockerPassword
+        [string] $dockerPassword,
+        [string] $defectDojoProductId,
+        [string] $defectDojoToken,
+        [string] $githubReadOnlyPersonalAccessTokenClassic
     )
 
     # create GitHub environment
@@ -30,7 +36,10 @@ New-Environment -EnvironmentName "OSS_pygoat-prod" -ghOwner $ghOwner -ghRepo $gh
 
 # create GitHub environment variables
 gh variable set DOCKER_REGISTRY --body "$dockerName.azurecr.io" --repo "https://github.com/$ghOwner/$ghRepo" --env dev
+gh variable set DEFECTDOJO_PRODUCTID --body $defectDojoProductId --repo "https://github.com/$ghOwner/$ghRepo" --env dev
 gh variable set DOCKER_REGISTRY --body "$dockerName.azurecr.io" --repo "https://github.com/$ghOwner/$ghRepo" --env "OSS_pygoat-test"
 gh variable set DOCKER_REGISTRY --body "$dockerName.azurecr.io" --repo "https://github.com/$ghOwner/$ghRepo" --env "OSS_pygoat-prod"
 gh variable set DOCKER_USERNAME --body "$dockerName" --repo "https://github.com/$ghOwner/$ghRepo" --env dev
 gh secret set DOCKER_PASSWORD --body "$dockerPassword" --repo "https://github.com/$ghOwner/$ghRepo" --env dev
+gh secret set DEFECTDOJO_TOKEN --body "$defectDojoToken" --repo "https://github.com/$ghOwner/$ghRepo" --env dev
+gh secret set TOKEN_FOR_DOS --body "$githubReadOnlyPersonalAccessTokenClassic" --repo "https://github.com/$ghOwner/$ghRepo" --env dev

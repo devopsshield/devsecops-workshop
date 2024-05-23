@@ -10,7 +10,7 @@ permissions:
   contents: read
 
 env:
-  DEFECTDOJO_PRODUCTID: 4
+  #DEFECTDOJO_PRODUCTID: 4
   DEFECTDOJO_URL: https://defectdojo-002.cad4devops.com:8443/api/v2
   appUrl: http://gh-pygoat-test.cad4devops.com
   containerName: owaspzapproxy
@@ -266,6 +266,7 @@ jobs:
       - build-build_and_push_app
     runs-on: ubuntu-latest
     env:
+      DEFECTDOJO_PRODUCTID: ${{ vars.DEFECTDOJO_PRODUCTID }}
       DEFECTDOJO_ENGAGEMENT_REASON: "CI/CD Pipeline Scan"
       DEFECTDOJO_ANCHORE_DISABLE: "false"
       DEFECTDOJO_ENGAGEMENT_API_TEST: "true"
