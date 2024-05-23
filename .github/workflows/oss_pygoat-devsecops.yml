@@ -18,7 +18,7 @@ env:
   dockerWaitTime: 30s
   tag: "${{ github.run_id }}"
   host: gh-pygoat-test.cad4devops.com
-  image: devopsshield/devsecops-pygoat
+  #image: devopsshield/devsecops-pygoat
   kubernetesServiceConnection: OSS_Microk8s
   loopWaitTime: 10s
   maxAlerts: 5000
@@ -33,7 +33,8 @@ jobs:
   build-build_and_push_app:
     name: Build and Push App
     runs-on: ubuntu-latest
-    # env:
+    env:
+      image: ${{ vars.DOCKER_REGISTRY}}/devsecops-pygoat
     #   DOCKER_REGISTRY: ${{ vars.DOCKER_REGISTRY}}
     #   DOCKER_USERNAME: ${{ vars.DOCKER_USERNAME}}
     environment:
@@ -164,7 +165,8 @@ jobs:
     needs:
       - build-build_and_push_app
     runs-on: ubuntu-latest
-    # env:
+    env:
+      image: ${{ vars.DOCKER_REGISTRY}}/devsecops-pygoat
     #   DOCKER_REGISTRY: ${{ vars.DOCKER_REGISTRY}}
     #   DOCKER_USERNAME: ${{ vars.DOCKER_USERNAME}}
     environment:
@@ -195,6 +197,7 @@ jobs:
           username: "${{ vars.DOCKER_USERNAME }}"
           password: "${{ secrets.DOCKER_PASSWORD }}"
       - name: Image Scanning
+        if: false
         run: |-
           # Install the Docker Scout CLI
           curl -sSfL https://raw.githubusercontent.com/docker/scout-cli/main/install.sh | sh -s --
@@ -383,6 +386,7 @@ jobs:
       DnsResourceGroup: rg-dns-prod
       zoneName: cad4devops.com
       dnsRecordSetName: gh-pygoat-test
+      image: ${{ vars.DOCKER_REGISTRY}}/devsecops-pygoat
     environment:
       name: OSS_pygoat-test
     steps:
@@ -522,6 +526,7 @@ jobs:
       DnsResourceGroup: rg-dns-prod
       zoneName: cad4devops.com
       dnsRecordSetName: gh-pygoat
+      image: ${{ vars.DOCKER_REGISTRY}}/devsecops-pygoat
     steps:
       - name: checkout
         uses: actions/checkout@v4.1.0
