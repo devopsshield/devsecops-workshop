@@ -1,8 +1,6 @@
 # # Example:
-# New-Students.ps1 -NumberOfStudents 25 `
-#     -Password "P@ssw0rd!1" `
-#     -DojoUrl "https://defectdojo-002.cad4devops.com:8443/" `
-#     -ApiKey "your-api-key"
+# .\New-StudentResources.ps1 -NumberOfStudents 25
+
 param (
     [int]    $NumberOfStudents = 5,
     [string] $keyVaultName = "kv-w001-rbf6xriugto5s",
@@ -64,25 +62,18 @@ function New-StudentResource {
     Write-Host "Adding SSH public key to key vault"
     $publicKeySecretName = "wrkshp-$WorkshopNumber-student-$StudentNumber-ssh-public-key"
     az keyvault secret set --vault-name $keyVaultName --name $publicKeySecretName --file $publicKeyPath --encoding ascii
-    #To download from key vault:
-    #az keyvault secret download --vault-name $keyVaultName --name $sshKeyName --file "$sshKeyName.pem"
-    #To change permissions in order to use:
-    #chmod 600 ./<name of key downloaded from vault>
-
-    # Create an Azure Kubernetes Service (AKS) cluster
-    # az aks create --resource-group $resourceGroupName `
-    #     --name aks-$WorkshopNumber-student-$StudentNumber `
-    #     --node-count 1 --enable-addons monitoring --generate
-
+    
     # Create an Azure Kubernetes Service (AKS) cluster
     $dnsPrefix = "s$StudentNumber"
     $clusterName = "aks-wrkshp-$WorkshopNumber-s-$StudentNumber"
+    $containerRegistryBaseName = "crs$StudentNumber"
     Write-Host "Creating AKS cluster $clusterName with DNS prefix $dnsPrefix"
     az deployment group create --resource-group $resourceGroupName `
         --template-file main.bicep `
         --parameters dnsPrefix=$dnsPrefix `
         --parameters clusterName=$clusterName `
-        --parameters sshRSAPublicKey="$publicKey"
+        --parameters sshRSAPublicKey="$publicKey" `
+        --parameters containerRegistryBaseName=$containerRegistryBaseName
 
     # Get the credentials for the AKS cluster
     $kubeConfigFileName = "wrkshp-$WorkshopNumber-student-$StudentNumber-config-$clusterName"
