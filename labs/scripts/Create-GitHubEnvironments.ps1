@@ -5,7 +5,8 @@ param (
     [string] $dockerPassword,
     [string] $defectDojoProductId,
     [string] $defectDojoToken,
-    [string] $githubReadOnlyPersonalAccessTokenClassic
+    [string] $githubReadOnlyPersonalAccessTokenClassic,
+    [string] $kubeConfigFileName
 )
 function New-Environment {
     param (
@@ -16,7 +17,8 @@ function New-Environment {
         [string] $dockerPassword,
         [string] $defectDojoProductId,
         [string] $defectDojoToken,
-        [string] $githubReadOnlyPersonalAccessTokenClassic
+        [string] $githubReadOnlyPersonalAccessTokenClassic,
+        [string] $kubeConfigFileName
     )
 
     # create GitHub environment
@@ -43,3 +45,12 @@ gh variable set DOCKER_USERNAME --body "$dockerName" --repo "https://github.com/
 gh secret set DOCKER_PASSWORD --body "$dockerPassword" --repo "https://github.com/$ghOwner/$ghRepo" --env dev
 gh secret set DEFECTDOJO_TOKEN --body "$defectDojoToken" --repo "https://github.com/$ghOwner/$ghRepo" --env dev
 gh secret set TOKEN_FOR_DOS --body "$githubReadOnlyPersonalAccessTokenClassic" --repo "https://github.com/$ghOwner/$ghRepo" --env dev
+
+# get kubeconfig contents
+$kubeContent = Get-Content $kubeConfigFileName -Raw
+
+# convert kubeconfig to base64
+$kubeConfigBase64 = [Convert]::ToBase64String([System.Text.Encoding]::UTF8.GetBytes($kubeContent))
+ 
+gh secret set KUBE_CONFIG --body "$kubeConfigBase64" --repo "https://github.com/$ghOwner/$ghRepo" --env "OSS_pygoat-test"
+gh secret set KUBE_CONFIG --body "$kubeConfigBase64" --repo "https://github.com/$ghOwner/$ghRepo" --env "OSS_pygoat-prod"
