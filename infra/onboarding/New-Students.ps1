@@ -85,21 +85,23 @@ function New-Student {
     Write-Host "Created product $($createdProduct.name) with id $createdProductId"
     $createdProduct | ConvertTo-Json -Depth $jsonDepth
 
+    $addUserToWorkshopGroup = $false
+    if ($addUserToWorkshopGroup) {
+        $headers = New-Object "System.Collections.Generic.Dictionary[[String],[String]]"
+        $headers.Add("Authorization", "Token $ApiKey")
+        $headers.Add("Content-Type", "application/json")
 
-    $headers = New-Object "System.Collections.Generic.Dictionary[[String],[String]]"
-    $headers.Add("Authorization", "Token $ApiKey")
-    $headers.Add("Content-Type", "application/json")
+        $groupMember = @{
+            group = $groupId
+            user  = $createdUserId
+            role  = 2 # Writer
+        }
 
-    $groupMember = @{
-        group = $groupId
-        user  = $createdUserId
-        role  = 2 # Writer
+        $groupMemberJson = $groupMember | ConvertTo-Json -Depth $jsonDepth
+
+        $createdGroupMember = Invoke-RestMethod "$DojoUrl/api/v2/dojo_group_members/" -Method 'POST' -Headers $headers -Body $groupMemberJson
+        $createdGroupMember | ConvertTo-Json -Depth $jsonDepth
     }
-
-    $groupMemberJson = $groupMember | ConvertTo-Json -Depth $jsonDepth
-
-    $createdGroupMember = Invoke-RestMethod "$DojoUrl/api/v2/dojo_group_members/" -Method 'POST' -Headers $headers -Body $groupMemberJson
-    $createdGroupMember | ConvertTo-Json -Depth $jsonDepth
 
 
     $headers = New-Object "System.Collections.Generic.Dictionary[[String],[String]]"
