@@ -436,7 +436,7 @@ jobs:
         with:
           base64-kube-config: ${{ secrets.KUBE_CONFIG }}
           kubectl-version: v1.28.9
-      - name: Create k8s namespace ${{ env.NAMESPACE }} 
+      - name: Create k8s namespace ${{ env.NAMESPACE }}
         run: |-
           kubectl version --client
           kubectl get nodes
@@ -461,7 +461,7 @@ jobs:
             kubectl apply -f ${{ github.workspace }}/manifests/k8s-ingress.yaml -n ${{ env.NAMESPACE }}
             # wait for the service to be ready
             kubectl wait --for=condition=available --timeout=600s deployment.apps/pygoat-app -n ${{ env.NAMESPACE }}
-      - name: Install k8s manifests - namespace ${{ env.NAMESPACE }} 
+      - name: Install k8s manifests - namespace ${{ env.NAMESPACE }}
         run: |-
           kubectl version --client
           # apply the manifests
@@ -572,12 +572,14 @@ jobs:
           cat ${{ github.workspace }}/manifests/k8s-deployment.yaml
           cat ${{ github.workspace }}/manifests/k8s-ingress.yaml
       - name: Azure login
+        if: false
         uses: azure/login@v2
         with:
           client-id: ${{ secrets.AZURE_CLIENT_ID }}
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
       - name: Create k8s namespace ${{ env.NAMESPACE }}
+        if: false
         uses: azure/cli@v2
         with:
           azcliversion: latest
@@ -592,7 +594,19 @@ jobs:
             kubectl get namespaces
             # create namespace if it does not exist
             kubectl create namespace ${{ env.NAMESPACE }} --dry-run=client -o yaml | kubectl apply -f -
+      - uses: tale/kubectl-action@v1
+        with:
+          base64-kube-config: ${{ secrets.KUBE_CONFIG }}
+          kubectl-version: v1.28.9
+      - name: Create k8s namespace ${{ env.NAMESPACE }}
+        run: |-
+          kubectl version --client
+          kubectl get nodes
+          kubectl get namespaces
+          # create namespace if it does not exist
+          kubectl create namespace ${{ env.NAMESPACE }} --dry-run=client -o yaml | kubectl apply -f -
       - name: Install k8s manifests - namespace ${{ env.NAMESPACE }}
+        if: false
         uses: azure/cli@v2
         with:
           azcliversion: latest
@@ -609,7 +623,17 @@ jobs:
             kubectl apply -f ${{ github.workspace }}/manifests/k8s-ingress.yaml -n ${{ env.NAMESPACE }}
             # wait for the service to be ready
             kubectl wait --for=condition=available --timeout=600s deployment.apps/pygoat-app -n ${{ env.NAMESPACE }}
+      - name: Install k8s manifests - namespace ${{ env.NAMESPACE }}
+        run: |-
+          kubectl version --client
+          # apply the manifests
+          kubectl apply -f ${{ github.workspace }}/manifests/k8s-deployment.yaml -n ${{ env.NAMESPACE }}
+          kubectl apply -f ${{ github.workspace }}/manifests/k8s-service.yaml -n ${{ env.NAMESPACE }}
+          kubectl apply -f ${{ github.workspace }}/manifests/k8s-ingress.yaml -n ${{ env.NAMESPACE }}
+          # wait for the service to be ready
+          kubectl wait --for=condition=available --timeout=600s deployment.apps/pygoat-app -n ${{ env.NAMESPACE }}
       - name: Adjust DNS for environment
+        if: false
         uses: azure/cli@v2
         with:
           azcliversion: latest
