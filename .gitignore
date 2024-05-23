@@ -8,3 +8,5 @@ venv
 app.log
 bin
 pygoatvenv/
+/.vs
+/infra/onboarding/wrkshp-001-student-*
