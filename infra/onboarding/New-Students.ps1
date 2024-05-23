@@ -10,7 +10,7 @@
 
 param (
     [int]    $NumberOfStudents = 25,
-    [string] $Password,    
+    [string] $Password,
     [string] $DojoUrl,
     [string] $ApiKey,
     [string] $groupId = 1, # workshop group
@@ -20,7 +20,7 @@ param (
 function New-Student {
     param (
         [string] $StudentNumber,
-        [string] $Password,    
+        [string] $Password,
         [string] $DojoUrl,
         [string] $ApiKey,
         [string] $groupId = 1, # workshop group
