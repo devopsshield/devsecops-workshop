@@ -12,13 +12,7 @@ function New-Environment {
     param (
         [string] $EnvironmentName = "OSS_pygoat-test",
         [string] $ghOwner = "devopsabcs-engineering",
-        [string] $ghRepo = "oss-pygoat-devsecops",
-        [string] $dockerName = "crs001fwmpo7kn3hnty",
-        [string] $dockerPassword,
-        [string] $defectDojoProductId,
-        [string] $defectDojoToken,
-        [string] $githubReadOnlyPersonalAccessTokenClassic,
-        [string] $kubeConfigFileName
+        [string] $ghRepo = "oss-pygoat-devsecops"
     )
 
     # create GitHub environment
