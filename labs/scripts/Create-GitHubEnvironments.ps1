@@ -1,3 +1,13 @@
+# # Example:
+# .\Create-GitHubEnvironments.ps1 -ghOwner emmanuel-knafo `
+#     -ghRepo oss-pygoat-devsecops `
+#     -dockerName crs001fwmpo7kn3hnty `
+#     -dockerPassword "Dgv*************************************************" `
+#     -defectDojoProductId 6 `
+#     -defectDojoToken "607*************************************" `
+#     -githubReadOnlyPersonalAccessTokenClassic "ghp_pPK*********************************" `
+#     -kubeConfigFileName "E:\src\GitHub\devopsshield\oss-pygoat-devsecops\infra\onboarding\wrkshp-001-student-001-config-aks-wrkshp-001-s-001"
+
 param (
     [string] $ghOwner = "devopsabcs-engineering",
     [string] $ghRepo = "oss-pygoat-devsecops",
