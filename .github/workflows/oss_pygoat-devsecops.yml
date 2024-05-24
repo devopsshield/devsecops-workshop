@@ -11,6 +11,11 @@ permissions:
 
 env:
   #DEFECTDOJO_PRODUCTID: 4
+  continue-on-error: true # for DEMO purposes
+  useAzureCliForK8s: false
+  doImageScanWithDockerHubScout: false
+  adjustDNS: false
+  listArtifacts: true
   DEFECTDOJO_URL: https://defectdojo-002.cad4devops.com:8443/api/v2
   appUrl: http://gh-pygoat-test.cad4devops.com
   containerName: owaspzapproxy
@@ -183,7 +188,7 @@ jobs:
           username: "${{ vars.DOCKER_USERNAME }}"
           password: "${{ secrets.DOCKER_PASSWORD }}"
       - name: Image Scanning
-        if: false
+        if: ${{ env.doImageScanWithDockerHubScout }}
         run: |-
           # Install the Docker Scout CLI
           curl -sSfL https://raw.githubusercontent.com/docker/scout-cli/main/install.sh | sh -s --
@@ -317,7 +322,7 @@ jobs:
             }" | jq -r '.id'` &&
             echo ${ENGAGEMENTID} > ENGAGEMENTID.env
       - name: list artifacts
-        if: false
+        if: ${{ env.listArtifacts }}
         run: |-
           ls -l ${{ github.workspace }}
           ls -l ${{ github.workspace }}/image-scan-report
@@ -396,14 +401,14 @@ jobs:
           cat ${{ github.workspace }}/manifests/k8s-deployment.yaml
           cat ${{ github.workspace }}/manifests/k8s-ingress.yaml
       - name: Azure login
-        if: false
+        if: ${{ env.useAzureCliForK8s }}
         uses: azure/login@v2
         with:
           client-id: ${{ secrets.AZURE_CLIENT_ID }}
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
       - name: Create k8s namespace ${{ env.NAMESPACE }}
-        if: false
+        if: ${{ env.useAzureCliForK8s }}
         uses: azure/cli@v2
         with:
           azcliversion: latest
@@ -419,10 +424,12 @@ jobs:
             # create namespace if it does not exist
             kubectl create namespace ${{ env.NAMESPACE }} --dry-run=client -o yaml | kubectl apply -f -
       - uses: tale/kubectl-action@v1
+        continue-on-error: ${{ env.continue-on-error }}
         with:
           base64-kube-config: ${{ secrets.KUBE_CONFIG }}
           kubectl-version: v1.28.9
       - name: Create k8s namespace ${{ env.NAMESPACE }}
+        continue-on-error: ${{ env.continue-on-error }}
         run: |-
           kubectl version --client
           kubectl get nodes
@@ -430,7 +437,7 @@ jobs:
           # create namespace if it does not exist
           kubectl create namespace ${{ env.NAMESPACE }} --dry-run=client -o yaml | kubectl apply -f -
       - name: Install k8s manifests - namespace ${{ env.NAMESPACE }}
-        if: false
+        if: ${{ env.useAzureCliForK8s }}
         uses: azure/cli@v2
         with:
           azcliversion: latest
@@ -448,6 +455,7 @@ jobs:
             # wait for the service to be ready
             kubectl wait --for=condition=available --timeout=600s deployment.apps/pygoat-app -n ${{ env.NAMESPACE }}
       - name: Install k8s manifests - namespace ${{ env.NAMESPACE }}
+        continue-on-error: ${{ env.continue-on-error }}
         run: |-
           kubectl version --client
           # apply the manifests
@@ -457,7 +465,7 @@ jobs:
           # wait for the service to be ready
           kubectl wait --for=condition=available --timeout=600s deployment.apps/pygoat-app -n ${{ env.NAMESPACE }}
       - name: Adjust DNS for environment
-        if: false
+        if: ${{ env.adjustDNS }}
         uses: azure/cli@v2
         with:
           azcliversion: latest
@@ -478,6 +486,15 @@ jobs:
               -z ${{ env.zoneName }} \
               -n ${{ env.dnsRecordSetName }} \
               -a $externalIp
+      - name: Get Resources - namespace ${{ env.NAMESPACE }}
+        continue-on-error: ${{ env.continue-on-error }}
+        run: |-
+          kubectl version --client
+          kubectl get pods -n ${{ env.NAMESPACE }}
+          kubectl get services -n ${{ env.NAMESPACE }}
+          # get external IP from the service
+          externalIp=$(kubectl get service ${{ env.Pygoat_Service }} -n ${{ env.NAMESPACE }} -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
+          echo "External IP: $externalIp"
   dast-run_integration_tests:
     name: Run Integration Tests
     needs:
@@ -558,14 +575,14 @@ jobs:
           cat ${{ github.workspace }}/manifests/k8s-deployment.yaml
           cat ${{ github.workspace }}/manifests/k8s-ingress.yaml
       - name: Azure login
-        if: false
+        if: ${{ env.useAzureCliForK8s }}
         uses: azure/login@v2
         with:
           client-id: ${{ secrets.AZURE_CLIENT_ID }}
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
       - name: Create k8s namespace ${{ env.NAMESPACE }}
-        if: false
+        if: ${{ env.useAzureCliForK8s }}
         uses: azure/cli@v2
         with:
           azcliversion: latest
@@ -581,10 +598,12 @@ jobs:
             # create namespace if it does not exist
             kubectl create namespace ${{ env.NAMESPACE }} --dry-run=client -o yaml | kubectl apply -f -
       - uses: tale/kubectl-action@v1
+        continue-on-error: ${{ env.continue-on-error }}
         with:
           base64-kube-config: ${{ secrets.KUBE_CONFIG }}
           kubectl-version: v1.28.9
       - name: Create k8s namespace ${{ env.NAMESPACE }}
+        continue-on-error: ${{ env.continue-on-error }}
         run: |-
           kubectl version --client
           kubectl get nodes
@@ -592,7 +611,7 @@ jobs:
           # create namespace if it does not exist
           kubectl create namespace ${{ env.NAMESPACE }} --dry-run=client -o yaml | kubectl apply -f -
       - name: Install k8s manifests - namespace ${{ env.NAMESPACE }}
-        if: false
+        if: ${{ env.useAzureCliForK8s }}
         uses: azure/cli@v2
         with:
           azcliversion: latest
@@ -610,6 +629,7 @@ jobs:
             # wait for the service to be ready
             kubectl wait --for=condition=available --timeout=600s deployment.apps/pygoat-app -n ${{ env.NAMESPACE }}
       - name: Install k8s manifests - namespace ${{ env.NAMESPACE }}
+        continue-on-error: ${{ env.continue-on-error }}
         run: |-
           kubectl version --client
           # apply the manifests
@@ -619,7 +639,7 @@ jobs:
           # wait for the service to be ready
           kubectl wait --for=condition=available --timeout=600s deployment.apps/pygoat-app -n ${{ env.NAMESPACE }}
       - name: Adjust DNS for environment
-        if: false
+        if: ${{ env.adjustDNS }}
         uses: azure/cli@v2
         with:
           azcliversion: latest
@@ -640,3 +660,12 @@ jobs:
               -z ${{ env.zoneName }} \
               -n ${{ env.dnsRecordSetName }} \
               -a $externalIp
+      - name: Get Resources - namespace ${{ env.NAMESPACE }}
+        continue-on-error: ${{ env.continue-on-error }}
+        run: |-
+          kubectl version --client
+          kubectl get pods -n ${{ env.NAMESPACE }}
+          kubectl get services -n ${{ env.NAMESPACE }}
+          # get external IP from the service
+          externalIp=$(kubectl get service ${{ env.Pygoat_Service }} -n ${{ env.NAMESPACE }} -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
+          echo "External IP: $externalIp"
