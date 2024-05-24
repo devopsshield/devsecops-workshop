@@ -1,14 +1,16 @@
-# 1 - Introduction to GitHub Actions
-In this lab you will update and run your first workflow.
+# 1 - Introduction to Defect Dojo
+In this lab you will learn about Defect Dojo.
+For the purposes of this lab, we will assume we are **Student003** of **Workshop 001**.
 > Duration: 5-10 minutes
 
 References:
 - [Events that trigger workflows](https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows)
 - [Adding an action to your workflow](https://docs.github.com/en/actions/learn-github-actions/finding-and-customizing-actions#adding-an-action-to-your-workflow)
 
-## 1.1 Update the workflow to trigger when a change is made to the labs folder on main branch
+## 1.1 Log in
 
-1. Open the workflow file [github-actions-demo.yml](/.github/workflows/github-actions-demo.yml)
+1. You should have received en email with access to a OneDrive folder for your workshop. Open that folder:
+![image](https://github.com/devopsshield/oss-pygoat-devsecops/assets/112144174/1c3ae5a9-ce28-4bad-aadc-3333e427a1ed)
 2. Edit the file and copy the following YAML content after line 4:
 ```YAML
   push:
