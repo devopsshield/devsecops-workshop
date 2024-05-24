@@ -26,8 +26,12 @@ Azure Container Registry Password: TUf******************************************
 ```
 4. Now navigate to your [Defect Dojo Instance](https://defectdojo-002.cad4devops.com:8443/) and log in:
 ![image](https://github.com/devopsshield/oss-pygoat-devsecops/assets/112144174/fcc342ee-e1d1-4a4a-8d92-145d36ffe111)
-6. Commit the changes into the `main` branch
-7. Go to `Actions` and see the details of your running workflow
+6. Navigate to your product and make note of your **product id**
+![image](https://github.com/devopsshield/oss-pygoat-devsecops/assets/112144174/efab9afd-ac31-4994-ae4b-e0bf32a55122)
+![image](https://github.com/devopsshield/oss-pygoat-devsecops/assets/112144174/3d2afeec-650b-45fc-8b23-348cb2080bd7)
+8. In our case, our product id is **12**
+![image](https://github.com/devopsshield/oss-pygoat-devsecops/assets/112144174/d39e1a91-169e-451d-bad3-56e2069ccbd9)
+
 
 ## 1.2 Add steps to your workflow
 
