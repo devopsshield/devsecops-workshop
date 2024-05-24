@@ -9,4 +9,4 @@ app.log
 bin
 pygoatvenv/
 /.vs
-/infra/onboarding/wrkshp-001-student-*
+wrkshp-001-student-*

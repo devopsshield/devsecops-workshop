@@ -4,8 +4,8 @@
 param (
     [int]    $NumberOfStudents = 5,
     [string] $keyVaultName = "kv-w001-rbf6xriugto5s",
-    [string] $subscription = "Microsoft Azure Sponsorship", 
-    [string] $location = "canadacentral", 
+    [string] $subscription = "Microsoft Azure Sponsorship",
+    [string] $location = "canadacentral",
     [int]    $jsonDepth = 100,
     [string] $WorkshopNumber = "001"
 )
@@ -14,8 +14,8 @@ function New-StudentResource {
     param (
         [string] $StudentNumber = "001",  
         [string] $keyVaultName = "kv-w001-rbf6xriugto5s",
-        [string] $subscription = "Microsoft Azure Sponsorship", 
-        [string] $location = "canadacentral", 
+        [string] $subscription = "Microsoft Azure Sponsorship",
+        [string] $location = "canadacentral",
         [int]    $jsonDepth = 100,
         [string] $WorkshopNumber = "001"
     )
@@ -75,8 +75,24 @@ function New-StudentResource {
         --parameters sshRSAPublicKey="$publicKey" `
         --parameters containerRegistryBaseName=$containerRegistryBaseName
 
+    # create a string array
+    $strArray = @()
+    $strArray += "Workshop Number: $WorkshopNumber"
+    $strArray += "Student Number: $StudentNumber"
+    $strArray += "Defect Dojo Url: https://defectdojo-002.cad4devops.com:8443/"
+    $strArray += "Defect Dojo User Name: Student$StudentNumber"
+    $strArray += "Defect Dojo Password: P@ssw0rd!1"
+    $strArray += "Defect Dojo Product Name: GitHub-OSS-pygoat-devsecops-workshop-$WorkshopNumber-product-$StudentNumber"
+
+
+
     # Get the credentials for the AKS cluster
-    $kubeConfigFileName = "wrkshp-$WorkshopNumber-student-$StudentNumber-config-$clusterName"
+    # create subfolder for kubeconfig files if it does not exist
+    $kubeConfigFolder = "workshop$WorkshopNumber/student$StudentNumber"
+    if (-not (Test-Path $kubeConfigFolder)) {
+        New-Item -ItemType Directory -Path $kubeConfigFolder
+    }
+    $kubeConfigFileName = Join-Path $kubeConfigFolder "wrkshp-$WorkshopNumber-student-$StudentNumber-config-$clusterName"
     Write-Host "Getting credentials for AKS cluster $clusterName"
     az aks get-credentials --resource-group $resourceGroupName --name $clusterName --file $kubeConfigFileName --overwrite-existing
 
@@ -134,11 +150,20 @@ function New-StudentResource {
     Write-Host "Adding ACR password to key vault"
     $acrPasswordSecretName = "wrkshp-$WorkshopNumber-student-$StudentNumber-acr-password-$acrName"
     az keyvault secret set --vault-name $keyVaultName --name $acrPasswordSecretName --value $acrPassword
+
+    $strArray += "Azure Container Registry Name: $acrName"
+    $strArray += "Azure Container Registry Password: $acrPassword"
+
+    # write the string array to a file
+    Write-Host "Writing string array to file"
+    $strArrayFileName = "wrkshp-$WorkshopNumber-student-$StudentNumber-info.txt"
+    $strArrayFilePath = Join-Path $kubeConfigFolder $strArrayFileName
+    $strArray | Out-File $strArrayFilePath
 }
 
 for ($i = 1; $i -le $NumberOfStudents; $i++) {
     $studentNumberPadded = $i.ToString("000")
-    Write-Host "Creating student $studentNumberPadded"
+    Write-Host "Creating resources for student $studentNumberPadded"
     New-StudentResource -StudentNumber $studentNumberPadded `
         -keyVaultName $keyVaultName `
         -subscription $subscription `
