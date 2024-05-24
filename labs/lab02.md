@@ -1,5 +1,5 @@
-# 2 - Workflow Syntax
-In this lab you will update the workflow syntax.
+# 2 - Explore Your Kubernetes Cluster
+In this lab you will explore your kubernetes cluster using kubectl.
 > Duration: 5-10 minutes
 
 References:
@@ -9,47 +9,16 @@ References:
 
 ## 2.1 Add new jobs with dependencies
 
-1. Open the workflow file [job-dependencies.yml](/.github/workflows/job-dependencies.yml)
-2. Edit the file and copy the following YAML content at the end of the file:
-```YAML
-  build:
-    runs-on: windows-latest
-    steps:
-      - run: echo "This job will be run in parallel with the initial job."
-  test:
-    runs-on: ubuntu-latest
-    needs: build
-    steps:
-      - run: echo "This job will be run after the build job."
-  ring01:
-    runs-on: ubuntu-latest
-    needs: test
-    steps:
-      - run: echo "This job will be run after the test job."
-  ring02:
-    runs-on: macos-latest
-    needs: test
-    steps:
-      - run: echo "This job will be run after the test job."
-  ring03:
-    runs-on: ubuntu-latest
-    needs: test
-    steps:
-      - run: echo "This job will be run after the test job."
-  ring04:
-    runs-on: ubuntu-latest
-    needs: [ring01,ring02,ring03]
-    steps:
-      - run: echo "This job will be run after the ring01,ring02,ring03 jobs."
-  prod:
-    runs-on: ubuntu-latest
-    needs: [ring04]
-    steps:
-      - run: echo "This job will be run after the ring04 job."
+1. Download the kubeconfig file from OneDrive
+![image](https://github.com/devopsshield/oss-pygoat-devsecops/assets/112144174/72354cb0-461e-4077-a951-a2e207782148)
+3. Explore the contents of this YAML file:
+![image](https://github.com/devopsshield/oss-pygoat-devsecops/assets/112144174/fa49b1c5-60b8-4e4a-ac75-6f4f8374d07b)
+3. Use kubectl to verify access to the kubernetes cluster
 ```
-3. Commit the changes into the `main` branch
-4. Go to `Actions` and manually trigger the workflow by clicking on `Run Workflow` button
-5. See the details of your running workflow
+
+```
+5. Go to `Actions` and manually trigger the workflow by clicking on `Run Workflow` button
+6. See the details of your running workflow
 
 ## 2.2 Create a matrix build
 
