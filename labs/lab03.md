@@ -7,7 +7,7 @@ References:
 - [Encrypted secrets](https://docs.github.com/en/actions/security-guides/encrypted-secrets)
 - [Accessing your secrets](https://docs.github.com/en/actions/security-guides/encrypted-secrets#accessing-your-secrets)
 
-## 3.1 Create new encrypted secrets
+## 3.1 Create new environments, variables, and secrets
 
 1. Follow the guide to create a new environment called `UAT`, add a reviewer and an environment variable.
     - [Creating an environment](https://docs.github.com/en/actions/deployment/targeting-different-environments/using-environments-for-deployment#creating-an-environment)
