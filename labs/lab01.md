@@ -24,7 +24,8 @@ Defect Dojo Product Name: GitHub-OSS-pygoat-devsecops-workshop-001-product-003
 Azure Container Registry Name: crs003r46vs7qui3ejw
 Azure Container Registry Password: TUf************************************************
 ```
-5. Change a file inside the folder [labs](/labs)
+4. Now navigate to your [Defect Dojo Instance](https://defectdojo-002.cad4devops.com:8443/) and log in:
+![image](https://github.com/devopsshield/oss-pygoat-devsecops/assets/112144174/fcc342ee-e1d1-4a4a-8d92-145d36ffe111)
 6. Commit the changes into the `main` branch
 7. Go to `Actions` and see the details of your running workflow
 
