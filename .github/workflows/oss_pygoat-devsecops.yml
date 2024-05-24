@@ -33,7 +33,7 @@ jobs:
     name: Build and Push App
     runs-on: ubuntu-latest
     env:
-      image: ${{ vars.DOCKER_USERNAME}}.azurecr.io/devsecops-pygoat
+      image: ${{ vars.DOCKER_USERNAME }}.azurecr.io/devsecops-pygoat
     environment:
       name: dev
     steps:
@@ -48,12 +48,12 @@ jobs:
         run: pip install -r requirements.txt
       - name: Check some variables
         run: |-
-          echo "DOCKER_REGISTRY: ${{ vars.DOCKER_USERNAME}}.azurecr.io, DOCKER_USERNAME: ${{ vars.DOCKER_USERNAME}}"
-          echo "DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD}}"
+          echo "DOCKER_REGISTRY: ${{ vars.DOCKER_USERNAME }}.azurecr.io, DOCKER_USERNAME: ${{ vars.DOCKER_USERNAME }}"
+          echo "DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}"
       - name: Docker Login
         uses: docker/login-action@v3.0.0
         with:
-          registry: "${{ vars.DOCKER_REGISTRY }}"
+          registry: "${{ vars.DOCKER_USERNAME }}.azurecr.io"
           username: "${{ vars.DOCKER_USERNAME }}"
           password: "${{ secrets.DOCKER_PASSWORD }}"
       - name: Build and Push Docker image
@@ -154,7 +154,7 @@ jobs:
       - build-build_and_push_app
     runs-on: ubuntu-latest
     env:
-      image: ${{ vars.DOCKER_USERNAME}}.azurecr.io/devsecops-pygoat
+      image: ${{ vars.DOCKER_USERNAME }}.azurecr.io/devsecops-pygoat
     environment:
       name: dev
     steps:
@@ -179,7 +179,7 @@ jobs:
       - name: Docker Login
         uses: docker/login-action@v3.0.0
         with:
-          registry: "${{ vars.DOCKER_REGISTRY }}"
+          registry: "${{ vars.DOCKER_USERNAME }}.azurecr.io"
           username: "${{ vars.DOCKER_USERNAME }}"
           password: "${{ secrets.DOCKER_PASSWORD }}"
       - name: Image Scanning
@@ -373,7 +373,7 @@ jobs:
       DnsResourceGroup: rg-dns-prod
       zoneName: cad4devops.com
       dnsRecordSetName: gh-pygoat-test
-      image: ${{ vars.DOCKER_USERNAME}}.azurecr.io/devsecops-pygoat
+      image: ${{ vars.DOCKER_USERNAME }}.azurecr.io/devsecops-pygoat
     environment:
       name: OSS_pygoat-test
     steps:
@@ -537,7 +537,7 @@ jobs:
       DnsResourceGroup: rg-dns-prod
       zoneName: cad4devops.com
       dnsRecordSetName: gh-pygoat
-      image: ${{ vars.DOCKER_USERNAME}}.azurecr.io/devsecops-pygoat
+      image: ${{ vars.DOCKER_USERNAME }}.azurecr.io/devsecops-pygoat
     steps:
       - name: checkout
         uses: actions/checkout@v4.1.0
