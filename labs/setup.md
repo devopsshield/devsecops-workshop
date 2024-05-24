@@ -21,8 +21,8 @@ References:
 ```markdown
 ### Hands-on Labs & Activities:
 - [x] Hands-on Labs Setup
-- [ ] Module 1: Introduction to GitHub Actions
-- [ ] Module 2: Syntax
+- [ ] Module 1: Introduction to Defect Dojo
+- [ ] Module 2: Explore Your Kubernetes Cluster
 - [ ] Module 3: Environments and Secrets
 - [ ] Module 4: Workflow Templates
 - [ ] Module 5: Custom actions
