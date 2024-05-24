@@ -11,18 +11,22 @@ References:
 
 1. You should have received en email with access to a OneDrive folder for your workshop. Open that folder:
 ![image](https://github.com/devopsshield/oss-pygoat-devsecops/assets/112144174/1c3ae5a9-ce28-4bad-aadc-3333e427a1ed)
-2. Edit the file and copy the following YAML content after line 4:
-```YAML
-  push:
-    branches:
-      - main
-    paths:
-      - 'labs/**'
+2. Open the subfolder corresponding to your student number. In our case, it's 003:
+![image](https://github.com/devopsshield/oss-pygoat-devsecops/assets/112144174/60b97325-c429-4c8c-8c4a-e75063e752ac)
+3. Observe the contents of the student info text file. We have:
 ```
-3. Commit the workflow changes into the `main` branch
-4. Change a file inside the folder [labs](/labs)
-5. Commit the changes into the `main` branch
-6. Go to `Actions` and see the details of your running workflow
+Workshop Number: 001
+Student Number: 003
+Defect Dojo Url: https://defectdojo-002.cad4devops.com:8443/
+Defect Dojo User Name: Student003
+Defect Dojo Password: P@ssw0rd!1
+Defect Dojo Product Name: GitHub-OSS-pygoat-devsecops-workshop-001-product-003
+Azure Container Registry Name: crs003r46vs7qui3ejw
+Azure Container Registry Password: TUf************************************************
+```
+5. Change a file inside the folder [labs](/labs)
+6. Commit the changes into the `main` branch
+7. Go to `Actions` and see the details of your running workflow
 
 ## 1.2 Add steps to your workflow
 
