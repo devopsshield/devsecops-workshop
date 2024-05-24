@@ -325,7 +325,7 @@ jobs:
         if: env.listArtifacts == 'true'
         run: |-
           ls -l ${{ github.workspace }}
-          ls -l ${{ github.workspace }}/image-scan-report
+          #ls -l ${{ github.workspace }}/image-scan-report
           ls -l ${{ github.workspace }}/dependency-check-reports
           ls -l ${{ github.workspace }}/bandit-sast-report
           ls -l ${{ github.workspace }}/devops-shield-reports-linux
