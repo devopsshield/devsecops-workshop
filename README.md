@@ -8,9 +8,7 @@ Initially presented at [DevOps Days Montreal 2024](https://devopsdays.org/events
 ### Hands-on Labs Setup
 - [ ] [Lab Setup](/labs/setup.md)
 
-### Module 1: Introduction to GitHub Actions
-- Example: [github-actions-demo.yml](/.github/workflows/github-actions-demo.yml)
-- Example: [greet-everyone.yml](/.github/workflows/greet-everyone.yml)
+### Module 1: Introduction to Defect Dojo
 - [ ] _Hands-on Lab:_ :point_right: [Activity 1](/labs/lab01.md)
 
 ### Module 2: Syntax
