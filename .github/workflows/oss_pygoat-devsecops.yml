@@ -425,7 +425,7 @@ jobs:
                     } | ConvertTo-Json)).token
 
               if ($DEFECTDOJO_TOKEN_COMMON) {
-                Write-Host "DEFECTDOJO_TOKEN: $DEFECTDOJO_TOKEN_COMMON"
+                #Write-Host "DEFECTDOJO_TOKEN: $DEFECTDOJO_TOKEN_COMMON"
                 Write-Host "DEFECTDOJO_TOKEN is set"
                 #echo "DEFECTDOJO_TOKEN=$DEFECTDOJO_TOKEN_COMMON" >> $GITHUB_ENV
                 echo "DEFECTDOJO_TOKEN=$DEFECTDOJO_TOKEN_COMMON" | Out-File -FilePath $Env:GITHUB_ENV -Encoding utf8 -Append
@@ -466,9 +466,45 @@ jobs:
         if: env.useCommonDefectDojoProduct == 'true'
         shell: pwsh
         run: |-
-          echo $env:DEFECTDOJO_TOKEN
+          #echo $env:DEFECTDOJO_TOKEN
           echo $env:DEFECTDOJO_PRODUCTID
+      - name: Create DefectDojo Engagement with Common Product
+        if: env.useCommonDefectDojoProduct == 'true'
+        run: |-
+          TODAY=`date +%Y-%m-%d`
+          ENDDAY=$(date -d "+${{ env.DEFECTDOJO_ENGAGEMENT_PERIOD }} days" +%Y-%m-%d)
+          ENGAGEMENTID=`curl --fail --location --request POST "${{ env.DEFECTDOJO_URL }}/engagements/" \
+            --header "Authorization: Token ${{ env.DEFECTDOJO_TOKEN }}" \
+            --header 'Content-Type: application/json' \
+              --data-raw "{
+                \"tags\": [\"GITHUB\"],
+                \"name\": \"pygoat-${{ github.run_id }}\",
+                \"description\": \"${{ github.event.head_commit.message }}\",
+                \"version\": \"${{ github.ref }}\",
+                \"first_contacted\": \"${TODAY}\",
+                \"target_start\": \"${TODAY}\",
+                \"target_end\": \"${ENDDAY}\",
+                \"reason\": \"${{ env.DEFECTDOJO_ENGAGEMENT_REASON }}\",
+                \"tracker\": \"${{ github.server_url }}/${{ github.repository }}/\",
+                \"threat_model\": \"${{ env.DEFECTDOJO_ENGAGEMENT_THREAT_MODEL }}\",
+                \"api_test\": \"${{ env.DEFECTDOJO_ENGAGEMENT_API_TEST }}\",
+                \"pen_test\": \"${{ env.DEFECTDOJO_ENGAGEMENT_PEN_TEST }}\",
+                \"check_list\": \"${{ env.DEFECTDOJO_ENGAGEMENT_CHECK_LIST }}\",
+                \"status\": \"${{ env.DEFECTDOJO_ENGAGEMENT_STATUS }}\",
+                \"engagement_type\": \"CI/CD\",
+                \"build_id\": \"${{ github.run_id }}\",
+                \"commit_hash\": \"${{ github.sha }}\",
+                \"branch_tag\": \"${{ github.ref }}\",
+                \"deduplication_on_engagement\": \"${{ env.DEFECTDOJO_ENGAGEMENT_DEDUPLICATION_ON_ENGAGEMENT }}\",
+                \"product\": \"${{ env.DEFECTDOJO_PRODUCTID }}\",
+                \"source_code_management_uri\": \"${{ github.server_url }}/${{ github.repository }}\",
+                \"build_server\": ${{ env.DEFECTDOJO_ENGAGEMENT_BUILD_SERVER }},
+                \"source_code_management_server\": ${{ env.DEFECTDOJO_ENGAGEMENT_SOURCE_CODE_MANAGEMENT_SERVER }},
+                \"orchestration_engine\": ${{ env.DEFECTDOJO_ENGAGEMENT_ORCHESTRATION_ENGINE }}
+            }" | jq -r '.id'` &&
+            echo ${ENGAGEMENTID} > ENGAGEMENTID.env
       - name: Create DefectDojo Engagement
+        if: env.useCommonDefectDojoProduct == 'false'
         run: |-
           TODAY=`date +%Y-%m-%d`
           ENDDAY=$(date -d "+${{ env.DEFECTDOJO_ENGAGEMENT_PERIOD }} days" +%Y-%m-%d)
