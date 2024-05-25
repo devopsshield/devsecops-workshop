@@ -11,13 +11,22 @@ permissions:
 
 env:
   #DEFECTDOJO_PRODUCTID: 4
+  # basic settings
+  useCommonDefectDojoProduct: true # for DEMO purposes
   pushDockerImage: false # for DEMO purposes
   continue-on-error: true # for DEMO purposes
+  # # advanced settings
+  # useCommonDefectDojoProduct: false # advanced setting
+  # pushDockerImage: true # advanced setting
+  # continue-on-error: false # advanced setting
   useAzureCliForK8s: false
   doImageScanWithDockerHubScout: false
   adjustDNS: false
   listArtifacts: true
   DEFECTDOJO_URL: https://defectdojo-002.cad4devops.com:8443/api/v2
+  DEFECTDOJO_COMMONUSER: Student000
+  DEFECTDOJO_COMMONPRODUCTNAME: GitHub-OSS-pygoat-devsecops-workshop-001-product-000
+  DEFECTDOJO_TOKEN: ${{ secrets.DEFECTDOJO_TOKEN }}
   appUrl: http://gh-pygoat-test.cad4devops.com
   containerName: owaspzapproxy
   doActiveScan: false
@@ -43,6 +52,53 @@ jobs:
     environment:
       name: dev
     steps:
+      - name: Fixes docker image name if not being pushed to Azure Container Registry
+        run: |-
+          echo "image=devsecops-pygoat" >> $GITHUB_ENV
+        if: vars.DOCKER_USERNAME == ''
+      - name: test action get auth token
+        if: env.useCommonDefectDojoProduct == 'true'
+        run: |-
+          echo "testing action"
+          # get token from common user
+          DEFECTDOJO_TOKEN_COMMON=`curl --fail --location --request POST "${{ env.DEFECTDOJO_URL }}/api-token-auth/" \
+            --header 'Content-Type: application/json' \
+            --data-raw "{
+              \"username\": \"${{ env.DEFECTDOJO_COMMONUSER }}\",
+              \"password\": \"${{ secrets.DEFECTDOJO_COMMONPASSWORD }}\"
+            }" | jq -r '.token'`
+          if [ -z "${DEFECTDOJO_TOKEN_COMMON}" ]; then
+            echo "Error: Failed to get token from common user ${{ env.DEFECTDOJO_COMMONUSER }}. Please check the credentials."
+            exit 1
+          else
+            #echo "DEFECTDOJO_TOKEN: $DEFECTDOJO_TOKEN_COMMON"
+            echo "DEFECTDOJO_TOKEN is set"
+            echo "DEFECTDOJO_TOKEN=$DEFECTDOJO_TOKEN_COMMON" >> $GITHUB_ENV
+            exit 0
+          fi
+      - name: test action get product id
+        if: env.useCommonDefectDojoProduct == 'true'
+        run: |-
+          echo "testing action"
+          # now get the product id
+          DEFECTDOJO_PRODUCTID_COMMON=`curl --fail --location --request GET "${{ env.DEFECTDOJO_URL }}/products/?name=${{ env.DEFECTDOJO_COMMONPRODUCTNAME }}" \
+            --header "Authorization: Token ${{ env.DEFECTDOJO_TOKEN }}" | jq -r '.results[0].id'`
+          if [ -z "${DEFECTDOJO_PRODUCTID_COMMON}" ]; then
+            echo "Error: Failed to get product id for ${{ env.DEFECTDOJO_COMMONPRODUCTNAME }}. Please check the product name."
+            exit 1
+          else
+            echo "DEFECTDOJO_PRODUCTID: $DEFECTDOJO_PRODUCTID_COMMON"
+            echo "DEFECTDOJO_PRODUCTID is set"
+            echo "DEFECTDOJO_PRODUCTID=$DEFECTDOJO_PRODUCTID_COMMON" >> $GITHUB_ENV
+            exit 0
+          fi
+      - name: test env settings
+        if: env.useCommonDefectDojoProduct == 'true'
+        run: |-
+          #echo $DEFECTDOJO_TOKEN
+          #echo ${{ env.DEFECTDOJO_TOKEN }}
+          echo $DEFECTDOJO_PRODUCTID
+          echo ${{ env.DEFECTDOJO_PRODUCTID }}
       - name: checkout
         uses: actions/checkout@v4.1.0
       - name: Setup Python
@@ -87,6 +143,11 @@ jobs:
           echo "Current Repo: ${{ github.repository }}"
           echo "Current Org: ${{ github.repository_owner }}"
           echo "GitHub Token: ${{ secrets.TOKEN_FOR_DOS }}"
+          # throw error if token is not set
+          if [ -z "${{ secrets.TOKEN_FOR_DOS }}" ]; then
+            echo "Error: TOKEN_FOR_DOS is not set. Please set the secret in the dev environment."
+            exit 1
+          fi
           # check os linux or windows
           echo "Linux OS"
           docker run --name devopsshield \
@@ -186,6 +247,7 @@ jobs:
           name: dependency-check-reports
           path: "${{ github.workspace }}/dependency-check-reports"
       - name: Docker Login
+        if: env.doImageScanWithDockerHubScout == 'true'
         uses: docker/login-action@v3.0.0
         with:
           registry: "${{ vars.DOCKER_USERNAME }}.azurecr.io"
@@ -264,6 +326,8 @@ jobs:
       name: dev
     env:
       DEFECTDOJO_PRODUCTID: ${{ vars.DEFECTDOJO_PRODUCTID }}
+      DEFECTDOJO_TOKEN: ${{ secrets.DEFECTDOJO_TOKEN }}
+      DEFECTDOJO_COMMONPASSWORD: ${{ secrets.DEFECTDOJO_COMMONPASSWORD }}
       DEFECTDOJO_ENGAGEMENT_REASON: "CI/CD Pipeline Scan"
       DEFECTDOJO_ANCHORE_DISABLE: "false"
       DEFECTDOJO_ENGAGEMENT_API_TEST: "true"
@@ -291,7 +355,161 @@ jobs:
         uses: actions/download-artifact@v4.1.0
         with:
           path: "${{ github.workspace }}"
+      - name: check if secrets are set
+        if: false
+        run: |-
+          echo "DEFECTDOJO_URL: ${{ env.DEFECTDOJO_URL }}"
+          echo "DEFECTDOJO_PRODUCTID: ${{ vars.DEFECTDOJO_PRODUCTID }}"
+          echo "DEFECTDOJO_TOKEN: ${{ secrets.DEFECTDOJO_TOKEN }}"
+          echo "DEFECTDOJO_COMMONUSER: ${{ env.DEFECTDOJO_COMMONUSER }}"
+          echo "DEFECTDOJO_COMMONPASSWORD: ${{ secrets.DEFECTDOJO_COMMONPASSWORD }}"
+          # throw error if token is not set and common password is not set
+          if [ -z "${{ secrets.DEFEECTDOJO_TOKEN }}" ]; then
+            echo "Warning: DEFEECTDOJO_TOKEN is not set. Please set the secret in the dev environment."
+            echo "Checking for DEFECTDOJO_COMMONPASSWORD"
+            if [ -z "${{ secrets.DEFEECTDOJO_COMMONPASSWORD }}" ]; then
+              echo "Error: DEFECTDOJO_TOKEN is not set. Please set the secret in the dev environment."
+              echo "Error: DEFECTDOJO_COMMONPASSWORD is not set. Please set the secret in the dev environment."
+              echo "You need to set either DEFECTDOJO_TOKEN or DEFECTDOJO_COMMONPASSWORD to run the pipeline."
+              exit 1
+            else
+              echo "DEFECTDOJO_COMMONPASSWORD is set"
+              echo "Trying to get token from common user ${{ env.DEFECTDOJO_COMMONUSER }}..."
+              # get token from common user
+              DEFECTDOJO_TOKEN=`curl --fail --location --request POST "${{ env.DEFECTDOJO_URL }}/api-token-auth/" \
+                --header 'Content-Type: application/json' \
+                --data-raw "{
+                  \"username\": \"${{ env.DEFECTDOJO_COMMONUSER }}\",
+                  \"password\": \"${{ secrets.DEFECTDOJO_COMMONPASSWORD }}\"
+                }" | jq -r '.token'`
+              if [ -z "${DEFECTDOJO_TOKEN}" ]; then
+                echo "Error: Failed to get token from common user ${{ env.DEFECTDOJO_COMMONUSER }}. Please check the credentials."
+                exit 1
+              else
+                echo "DEFECTDOJO_TOKEN: $DEFECTDOJO_TOKEN"
+                echo "DEFECTDOJO_TOKEN is set"
+                exit 0
+              fi
+              exit 0
+            fi
+          else
+            echo "DEFECTDOJO_TOKEN is set"
+            exit 0
+          fi
+      - name: check if secrets are set
+        if: env.useCommonDefectDojoProduct == 'true'
+        shell: pwsh
+        run: |-
+          echo "DEFECTDOJO_URL: $env:DEFECTDOJO_URL"
+          echo "DEFECTDOJO_PRODUCTID: $env:DEFECTDOJO_PRODUCTID"
+          echo "DEFECTDOJO_TOKEN: $env:DEFECTDOJO_TOKEN"
+          echo "DEFECTDOJO_COMMONUSER: $env:DEFECTDOJO_COMMONUSER"
+          echo "DEFECTDOJO_COMMONPASSWORD: $env:DEFECTDOJO_COMMONPASSWORD"
+          # throw error if token is not set and common password is not set  
+          $defectDojoTokenIsSet = $null -ne $env:DEFECTDOJO_TOKEN -and $env:DEFECTDOJO_TOKEN -ne ""
+          Write-Host "DefectDojo Token is set: $defectDojoTokenIsSet"
+          $defectDojoCommonPasswordIsSet = $null -ne $env:DEFECTDOJO_COMMONPASSWORD -and $env:DEFECTDOJO_COMMONPASSWORD -ne ""
+          Write-Host "DefectDojo Common Password is set: $defectDojoCommonPasswordIsSet"
+
+          if ($defectDojoTokenIsSet) {
+            Write-Host "DEFECTDOJO_TOKEN is set"
+            exit 0
+          }
+          else {
+            Write-Host "Warning: DEFEECTDOJO_TOKEN is not set. Please set the secret in the dev environment."
+            Write-Host "checking for DEFECTDOJO_COMMONPASSWORD"
+            if ($defectDojoCommonPasswordIsSet) {
+              Write-Host "DEFECTDOJO_COMMONPASSWORD is set"
+              Write-Host "Trying to get token from common user ${{ env.DEFECTDOJO_COMMONUSER }}..."
+              # get token from common user
+              $DEFECTDOJO_TOKEN_COMMON = (Invoke-RestMethod -Method Post -Uri "${env:DEFECTDOJO_URL}/api-token-auth/" `
+                    -ContentType 'application/json' `
+                    -Body (@{
+                        "username" = "$env:DEFECTDOJO_COMMONUSER";
+                        "password" = "$env:DEFECTDOJO_COMMONPASSWORD"
+                    } | ConvertTo-Json)).token
+
+              if ($DEFECTDOJO_TOKEN_COMMON) {
+                #Write-Host "DEFECTDOJO_TOKEN: $DEFECTDOJO_TOKEN_COMMON"
+                Write-Host "DEFECTDOJO_TOKEN is set"
+                #echo "DEFECTDOJO_TOKEN=$DEFECTDOJO_TOKEN_COMMON" >> $GITHUB_ENV
+                echo "DEFECTDOJO_TOKEN=$DEFECTDOJO_TOKEN_COMMON" | Out-File -FilePath $Env:GITHUB_ENV -Encoding utf8 -Append
+
+                # now to fetch the product id
+                # Get the product id
+                $DEFECTDOJO_PRODUCTID_COMMON = Invoke-RestMethod -Method Get -Uri "${env:DEFECTDOJO_URL}/products/?name=${env:DEFECTDOJO_COMMONPRODUCTNAME}" `
+                    -Headers @{ "Authorization" = "Token $DEFECTDOJO_TOKEN_COMMON" }
+
+                Write-Host "DEFECTDOJO_PRODUCTID_COMMON: $DEFECTDOJO_PRODUCTID_COMMON"
+
+                if ($DEFECTDOJO_PRODUCTID_COMMON) {
+                    $DEFECTDOJO_PRODUCTID_COMMON_ID = $DEFECTDOJO_PRODUCTID_COMMON.results[0].id
+                    Write-Host "DEFECTDOJO_PRODUCTID: $DEFECTDOJO_PRODUCTID_COMMON_ID"
+                    Write-Host "DEFECTDOJO_PRODUCTID is set"
+                    #echo "DEFECTDOJO_PRODUCTID=$DEFECTDOJO_PRODUCTID_COMMON_ID" >> $GITHUB_ENV
+                    echo "DEFECTDOJO_PRODUCTID=$DEFECTDOJO_PRODUCTID_COMMON_ID" | Out-File -FilePath $Env:GITHUB_ENV -Encoding utf8 -Append
+                    exit 0
+                }
+                else {
+                    Write-Host "Error: Failed to get product id for $DEFECTDOJO_COMMONPRODUCTNAME. Please check the product name."
+                    exit 1
+                }
+              }
+              else {
+                Write-Host "Error: Failed to get token from common user ${env:DEFECTDOJO_COMMONUSER}. Please check the credentials."
+                exit 1
+              }
+            }
+            else {
+              Write-Host "Error: DEFECTDOJO_TOKEN is not set. Please set the secret in the dev environment."
+              Write-Host "Error: DEFECTDOJO_COMMONPASSWORD is not set. Please set the secret in the dev environment."
+              Write-Host "You need to set either DEFECTDOJO_TOKEN or DEFECTDOJO_COMMONPASSWORD to run the pipeline."
+              exit 1
+            }
+          }
+      - name: test env settings
+        if: env.useCommonDefectDojoProduct == 'true'
+        shell: pwsh
+        run: |-
+          #echo $env:DEFECTDOJO_TOKEN
+          echo $env:DEFECTDOJO_PRODUCTID
+      - name: Create DefectDojo Engagement with Common Product
+        if: env.useCommonDefectDojoProduct == 'true'
+        run: |-
+          TODAY=`date +%Y-%m-%d`
+          ENDDAY=$(date -d "+${{ env.DEFECTDOJO_ENGAGEMENT_PERIOD }} days" +%Y-%m-%d)
+          ENGAGEMENTID=`curl --fail --location --request POST "${{ env.DEFECTDOJO_URL }}/engagements/" \
+            --header "Authorization: Token ${{ env.DEFECTDOJO_TOKEN }}" \
+            --header 'Content-Type: application/json' \
+              --data-raw "{
+                \"tags\": [\"GITHUB\"],
+                \"name\": \"pygoat-${{ github.run_id }}\",
+                \"description\": \"${{ github.event.head_commit.message }}\",
+                \"version\": \"${{ github.ref }}\",
+                \"first_contacted\": \"${TODAY}\",
+                \"target_start\": \"${TODAY}\",
+                \"target_end\": \"${ENDDAY}\",
+                \"reason\": \"${{ env.DEFECTDOJO_ENGAGEMENT_REASON }}\",
+                \"tracker\": \"${{ github.server_url }}/${{ github.repository }}/\",
+                \"threat_model\": \"${{ env.DEFECTDOJO_ENGAGEMENT_THREAT_MODEL }}\",
+                \"api_test\": \"${{ env.DEFECTDOJO_ENGAGEMENT_API_TEST }}\",
+                \"pen_test\": \"${{ env.DEFECTDOJO_ENGAGEMENT_PEN_TEST }}\",
+                \"check_list\": \"${{ env.DEFECTDOJO_ENGAGEMENT_CHECK_LIST }}\",
+                \"status\": \"${{ env.DEFECTDOJO_ENGAGEMENT_STATUS }}\",
+                \"engagement_type\": \"CI/CD\",
+                \"build_id\": \"${{ github.run_id }}\",
+                \"commit_hash\": \"${{ github.sha }}\",
+                \"branch_tag\": \"${{ github.ref }}\",
+                \"deduplication_on_engagement\": \"${{ env.DEFECTDOJO_ENGAGEMENT_DEDUPLICATION_ON_ENGAGEMENT }}\",
+                \"product\": \"${{ env.DEFECTDOJO_PRODUCTID }}\",
+                \"source_code_management_uri\": \"${{ github.server_url }}/${{ github.repository }}\",
+                \"build_server\": ${{ env.DEFECTDOJO_ENGAGEMENT_BUILD_SERVER }},
+                \"source_code_management_server\": ${{ env.DEFECTDOJO_ENGAGEMENT_SOURCE_CODE_MANAGEMENT_SERVER }},
+                \"orchestration_engine\": ${{ env.DEFECTDOJO_ENGAGEMENT_ORCHESTRATION_ENGINE }}
+            }" | jq -r '.id'` &&
+            echo ${ENGAGEMENTID} > ENGAGEMENTID.env
       - name: Create DefectDojo Engagement
+        if: env.useCommonDefectDojoProduct == 'false'
         run: |-
           TODAY=`date +%Y-%m-%d`
           ENDDAY=$(date -d "+${{ env.DEFECTDOJO_ENGAGEMENT_PERIOD }} days" +%Y-%m-%d)
@@ -333,7 +551,45 @@ jobs:
           ls -l ${{ github.workspace }}/dependency-check-reports
           ls -l ${{ github.workspace }}/bandit-sast-report
           ls -l ${{ github.workspace }}/devops-shield-reports-linux
+      - name: Upload Reports To DefectDojo with Common Product
+        if: env.useCommonDefectDojoProduct == 'true'
+        run: |-
+          TODAY=`date +%Y-%m-%d`
+          ENGAGEMENTID=`cat ENGAGEMENTID.env`
+          echo "TODAY: $TODAY"
+          echo "ENGAGEMENTID: $ENGAGEMENTID"
+          array=('type=("SARIF" "pip-audit Scan" "SARIF" "Bandit Scan")' 'file=("devops-shield-reports-linux/DevOpsShield-SecurityScanner-Report-Fixed.sarif" "dependency-check-reports/dependency-check-report-pip-audit.json" "image-scan-report/image-scan-report.json" "bandit-sast-report/sast-report.json")')
+          for elt in "${array[@]}";do eval $elt;done
+          for scan in 0 1 2 3; do \
+            echo ""
+            echo "======================= Scan No $scan ======================="
+            echo "Uploading ${type[$scan]} report"
+            echo "Uploading ${file[$scan]}"
+            #echo "Contents are:"
+            #cat ${{ github.workspace }}/${file[$scan]}
+            # check if the file exists
+            if [ -f ${{ github.workspace }}/${file[$scan]} ]; then
+              echo "File exists"
+            else
+              echo "File does not exist"
+              continue
+            fi
+            curl --fail --location --request POST "${{ env.DEFECTDOJO_URL }}/import-scan/" \
+              --header "Authorization: Token ${{ env.DEFECTDOJO_TOKEN }}" \
+              --form "scan_date=${TODAY}" \
+              --form "minimum_severity=${{ env.DEFECTDOJO_SCAN_MINIMUM_SEVERITY }}" \
+              --form "active=${{ env.DEFECTDOJO_SCAN_ACTIVE }}" \
+              --form "verified=${{ env.DEFECTDOJO_SCAN_VERIFIED }}" \
+              --form "scan_type=${type[$scan]}" \
+              --form "engagement=${ENGAGEMENTID}" \
+              --form "file=@${{ github.workspace }}/${file[$scan]}" \
+              --form "close_old_findings=${{ env.DEFECTDOJO_SCAN_CLOSE_OLD_FINDINGS }}" \
+              --form "push_to_jira=${{ env.DEFECTDOJO_SCAN_PUSH_TO_JIRA }}" \
+              --form "test_type=${{ env.DEFECTDOJO_SCAN_TEST_TYPE }}" \
+              --form "environment=${{ env.DEFECTDOJO_SCAN_ENVIRONMENT }}"
+          done
       - name: Upload Reports To DefectDojo
+        if: env.useCommonDefectDojoProduct == 'false'
         run: |-
           TODAY=`date +%Y-%m-%d`
           ENGAGEMENTID=`cat ENGAGEMENTID.env`
@@ -428,12 +684,12 @@ jobs:
             # create namespace if it does not exist
             kubectl create namespace ${{ env.NAMESPACE }} --dry-run=client -o yaml | kubectl apply -f -
       - uses: tale/kubectl-action@v1
-        continue-on-error: ${{ env.continue-on-error }}
+        continue-on-error: true
         with:
           base64-kube-config: ${{ secrets.KUBE_CONFIG }}
           kubectl-version: v1.28.9
       - name: Create k8s namespace ${{ env.NAMESPACE }}
-        continue-on-error: ${{ env.continue-on-error }}
+        continue-on-error: true
         run: |-
           kubectl version --client
           kubectl get nodes
@@ -459,7 +715,7 @@ jobs:
             # wait for the service to be ready
             kubectl wait --for=condition=available --timeout=600s deployment.apps/pygoat-app -n ${{ env.NAMESPACE }}
       - name: Install k8s manifests - namespace ${{ env.NAMESPACE }}
-        continue-on-error: ${{ env.continue-on-error }}
+        continue-on-error: true
         run: |-
           kubectl version --client
           # apply the manifests
@@ -491,7 +747,7 @@ jobs:
               -n ${{ env.dnsRecordSetName }} \
               -a $externalIp
       - name: Get Resources - namespace ${{ env.NAMESPACE }}
-        continue-on-error: ${{ env.continue-on-error }}
+        continue-on-error: true
         run: |-
           kubectl version --client
           kubectl get pods -n ${{ env.NAMESPACE }}
@@ -602,12 +858,12 @@ jobs:
             # create namespace if it does not exist
             kubectl create namespace ${{ env.NAMESPACE }} --dry-run=client -o yaml | kubectl apply -f -
       - uses: tale/kubectl-action@v1
-        continue-on-error: ${{ env.continue-on-error }}
+        continue-on-error: true
         with:
           base64-kube-config: ${{ secrets.KUBE_CONFIG }}
           kubectl-version: v1.28.9
       - name: Create k8s namespace ${{ env.NAMESPACE }}
-        continue-on-error: ${{ env.continue-on-error }}
+        continue-on-error: true
         run: |-
           kubectl version --client
           kubectl get nodes
@@ -633,7 +889,7 @@ jobs:
             # wait for the service to be ready
             kubectl wait --for=condition=available --timeout=600s deployment.apps/pygoat-app -n ${{ env.NAMESPACE }}
       - name: Install k8s manifests - namespace ${{ env.NAMESPACE }}
-        continue-on-error: ${{ env.continue-on-error }}
+        continue-on-error: true
         run: |-
           kubectl version --client
           # apply the manifests
@@ -665,7 +921,7 @@ jobs:
               -n ${{ env.dnsRecordSetName }} \
               -a $externalIp
       - name: Get Resources - namespace ${{ env.NAMESPACE }}
-        continue-on-error: ${{ env.continue-on-error }}
+        continue-on-error: true
         run: |-
           kubectl version --client
           kubectl get pods -n ${{ env.NAMESPACE }}
