@@ -400,9 +400,9 @@ jobs:
           echo "DEFECTDOJO_COMMONUSER: ${{ env.DEFECTDOJO_COMMONUSER }}"
           echo "DEFECTDOJO_COMMONPASSWORD: ${{ env.DEFECTDOJO_COMMONPASSWORD }}"
           # throw error if token is not set and common password is not set  
-          $defectDojoTokenIsSet = $null -ne ${{ env.DEFECTDOJO_TOKEN }} -and ${{ env.DEFECTDOJO_TOKEN }} -ne ""
+          $defectDojoTokenIsSet = $null -ne $DEFECTDOJO_TOKEN -and $DEFECTDOJO_TOKEN -ne ""
           Write-Host "DefectDojo Token is set: $defectDojoTokenIsSet"
-          $defectDojoCommonPasswordIsSet = $null -ne ${{ env.DEFECTDOJO_COMMONPASSWORD }} -and ${{ env.DEFECTDOJO_COMMONPASSWORD }} -ne ""
+          $defectDojoCommonPasswordIsSet = $null -ne $DEFECTDOJO_COMMONPASSWORD -and $DEFECTDOJO_COMMONPASSWORD -ne ""
           Write-Host "DefectDojo Common Password is set: $defectDojoCommonPasswordIsSet"
 
           if ($defectDojoTokenIsSet) {
