@@ -427,7 +427,8 @@ jobs:
               if ($DEFECTDOJO_TOKEN_COMMON) {
                 Write-Host "DEFECTDOJO_TOKEN: $DEFECTDOJO_TOKEN_COMMON"
                 Write-Host "DEFECTDOJO_TOKEN is set"
-                echo "DEFECTDOJO_TOKEN=$DEFECTDOJO_TOKEN_COMMON" >> $GITHUB_ENV
+                #echo "DEFECTDOJO_TOKEN=$DEFECTDOJO_TOKEN_COMMON" >> $GITHUB_ENV
+                echo "DEFECTDOJO_TOKEN=$DEFECTDOJO_TOKEN_COMMON" | Out-File -FilePath $Env:GITHUB_ENV -Encoding utf8 -Append
 
                 # now to fetch the product id
                 # Get the product id
@@ -440,7 +441,8 @@ jobs:
                     $DEFECTDOJO_PRODUCTID_COMMON_ID = $DEFECTDOJO_PRODUCTID_COMMON.results[0].id
                     Write-Host "DEFECTDOJO_PRODUCTID: $DEFECTDOJO_PRODUCTID_COMMON_ID"
                     Write-Host "DEFECTDOJO_PRODUCTID is set"
-                    echo "DEFECTDOJO_PRODUCTID=$DEFECTDOJO_PRODUCTID_COMMON_ID" >> $GITHUB_ENV
+                    #echo "DEFECTDOJO_PRODUCTID=$DEFECTDOJO_PRODUCTID_COMMON_ID" >> $GITHUB_ENV
+                    echo "DEFECTDOJO_PRODUCTID=$DEFECTDOJO_PRODUCTID_COMMON_ID" | Out-File -FilePath $Env:GITHUB_ENV -Encoding utf8 -Append
                     exit 0
                 }
                 else {
