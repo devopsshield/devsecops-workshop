@@ -74,7 +74,8 @@ jobs:
             else
               echo "DEFECTDOJO_PRODUCTID: $DEFECTDOJO_PRODUCTID"
               echo "DEFECTDOJO_PRODUCTID is set"
-              echo "DEFECTDOJO_PRODUCTID: $DEFECTDOJO_PRODUCTID" >> $GITHUB_ENV
+              echo "DEFECTDOJO_PRODUCTID=$DEFECTDOJO_PRODUCTID" >> $GITHUB_ENV
+              echo "DEFECTDOJO Product ID: ${{ env.DEFECTDOJO_PRODUCTID }}"
               exit 0
             fi
             exit 0
