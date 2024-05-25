@@ -16,7 +16,8 @@ param (
     [string] $defectDojoProductId,
     [string] $defectDojoToken,
     [string] $githubReadOnlyPersonalAccessTokenClassic,
-    [string] $kubeConfigFileName
+    [string] $kubeConfigFileName,
+    [string] $kubeConfigBase64
 )
 function New-Environment {
     param (
@@ -52,11 +53,31 @@ gh secret set TOKEN_FOR_DOS --body "$githubReadOnlyPersonalAccessTokenClassic" -
 # repository variable for simplicity
 gh variable set DOCKER_USERNAME --body "$dockerName" --repo "https://github.com/$ghOwner/$ghRepo"
 
-# get kubeconfig contents
-$kubeContent = Get-Content $kubeConfigFileName -Raw
+# check if kubeconfig file was provided and exists
+if ($kubeConfigBase64) {
+    Write-Host "Kubeconfig base64 provided"
+    $kubeConfigBase64Secret = $kubeConfigBase64
+}
+elseif ($kubeConfigFileName) {
+    Write-Host "Kubeconfig file provided: $kubeConfigFileName"
+    # check if kubeconfig file exists
+    if (-not (Test-Path $kubeConfigFileName)) {
+        Write-Host "Kubeconfig file does not exist: $kubeConfigFileName"        
+    }
+    else {
+        Write-Host "Kubeconfig file exists: $kubeConfigFileName"
+        # get kubeconfig contents
+        $kubeContent = Get-Content $kubeConfigFileName -Raw
 
-# convert kubeconfig to base64
-$kubeConfigBase64 = [Convert]::ToBase64String([System.Text.Encoding]::UTF8.GetBytes($kubeContent))
- 
-gh secret set KUBE_CONFIG --body "$kubeConfigBase64" --repo "https://github.com/$ghOwner/$ghRepo" --env "OSS_pygoat-test"
-gh secret set KUBE_CONFIG --body "$kubeConfigBase64" --repo "https://github.com/$ghOwner/$ghRepo" --env "OSS_pygoat-prod"
+        # convert kubeconfig to base64
+        Write-Host "Converting kubeconfig to base64"
+        $kubeConfigBase64Secret = [Convert]::ToBase64String([System.Text.Encoding]::UTF8.GetBytes($kubeContent))
+    }
+}
+if (-not $kubeConfigBase64Secret) {
+    Write-Host "Kubeconfig not provided or invalid"    
+}
+else {
+    gh secret set KUBE_CONFIG --body "$kubeConfigBase64Secret" --repo "https://github.com/$ghOwner/$ghRepo" --env "OSS_pygoat-test"
+    gh secret set KUBE_CONFIG --body "$kubeConfigBase64Secret" --repo "https://github.com/$ghOwner/$ghRepo" --env "OSS_pygoat-prod"
+}
