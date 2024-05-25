@@ -326,8 +326,10 @@ function New-StudentResource {
     $kubeConfigFileNameSecretName = "wrkshp-$WorkshopNumber-student-$StudentNumber-config-$clusterName"
     az keyvault secret set --vault-name $keyVaultName --name $kubeConfigFileNameSecretName --file $kubeConfigFileName --encoding ascii
 
+    # get the kubeconfig file content
+    $kubeContent = Get-Content $kubeConfigFileName -Raw
     # get base64 encoded kubeconfig file
-    $kubeConfigBase64 = [Convert]::ToBase64String([System.Text.Encoding]::UTF8.GetBytes((Get-Content $kubeConfigFileName)))
+    $kubeConfigBase64 = [Convert]::ToBase64String([System.Text.Encoding]::UTF8.GetBytes($kubeContent))
 
     $mergedKubeConfigFiles = $true
     if ($mergedKubeConfigFiles) {
