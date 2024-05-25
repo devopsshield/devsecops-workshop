@@ -392,6 +392,7 @@ jobs:
             exit 0
           fi
       - name: check if secrets are set
+        if: env.useCommonDefectDojoProduct == 'true'
         shell: pwsh
         run: |-
           echo "DEFECTDOJO_URL: $env:DEFECTDOJO_URL"
@@ -427,6 +428,23 @@ jobs:
                 Write-Host "DEFECTDOJO_TOKEN: $DEFECTDOJO_TOKEN_COMMON"
                 Write-Host "DEFECTDOJO_TOKEN is set"
                 echo "DEFECTDOJO_TOKEN=$DEFECTDOJO_TOKEN_COMMON" >> $GITHUB_ENV
+
+                # now to fetch the product id
+                # Get the product id
+                $DEFECTDOJO_PRODUCTID_COMMON = Invoke-RestMethod -Method Get -Uri "$env:DEFECTDOJO_URL/products/?name=$env:DEFECTDOJO_COMMONPRODUCTNAME" `
+                    -Headers @{ "Authorization" = "Token $DEFECTDOJO_TOKEN_COMMON" } | Select-Object -ExpandProperty results[0].id
+
+                if ($DEFECTDOJO_PRODUCTID_COMMON) {
+                    Write-Host "DEFECTDOJO_PRODUCTID: $DEFECTDOJO_PRODUCTID_COMMON"
+                    Write-Host "DEFECTDOJO_PRODUCTID is set"
+                    echo "DEFECTDOJO_PRODUCTID=$DEFECTDOJO_PRODUCTID_COMMON" >> $GITHUB_ENV
+                    exit 0
+                }
+                else {
+                    Write-Host "Error: Failed to get product id for ${env:DEFECTDOJO_COMMONPRODUCTNAME}. Please check the product name."
+                    exit 1
+                }
+
                 exit 0
               }
               else {
