@@ -308,19 +308,22 @@ jobs:
           echo "DEFECTDOJO_PRODUCTID: ${{ vars.DEFECTDOJO_PRODUCTID }}"
           echo "DEFECTDOJO_TOKEN: ${{ secrets.DEFECTDOJO_TOKEN }}"
           echo "DEFECTDOJO_COMMONUSER: ${{ env.DEFECTDOJO_COMMONUSER }}"
-          echo "DEFECTDOJO_COMMONPASSWORD: ${{ secrets.DEFECTDOJO_COMMONPASSWORD }}"          
-          if [ -z "${{ secrets.DEFECTDOJO_TOKEN }}" ]
+          echo "DEFECTDOJO_COMMONPASSWORD: ${{ secrets.DEFECTDOJO_COMMONPASSWORD }}"  
+          # throw error if token is not set and common password is not set
+          if [ -z "${{ secrets.DEFECTDOJO_TOKEN }}" and -z "${{ secrets.DEFECTDOJO_COMMONPASSWORD }}"]
           then
             echo "Error: DEFECTDOJO_TOKEN is not set. Please set the secret in the dev environment."
-            echo "Alternatively, you can use the common ${{ env.DEFECTDOJO_COMMONUSER }} user."
-          elif [ -z "${{ secrets.DEFECTDOJO_COMMONPASSWORD }}" ]
-          then
             echo "Error: DEFECTDOJO_COMMONPASSWORD is not set. Please set the secret in the dev environment."
+            echo "Alternatively, you can use the common ${{ env.DEFECTDOJO_COMMONUSER }} user."
+            exit 1
+          elif [ "${{ secrets.DEFECTDOJO_TOKEN }}" ]
+          then
+            echo  "DEFECTDOJO_TOKEN is set"
+            exit 0
           else
             echo "DEFECTDOJO_COMMONPASSWORD is set"
             exit 0
           fi
-          exit 1
       - name: Create DefectDojo Engagement
         run: |-
           TODAY=`date +%Y-%m-%d`
