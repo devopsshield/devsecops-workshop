@@ -53,21 +53,22 @@ jobs:
         run: |-
           echo "testing action"
           # get token from common user
-          DEFECTDOJO_TOKEN=`curl --fail --location --request POST "${{ env.DEFECTDOJO_URL }}/api-token-auth/" \
+          DEFECTDOJO_TOKEN_COMMON=`curl --fail --location --request POST "${{ env.DEFECTDOJO_URL }}/api-token-auth/" \
             --header 'Content-Type: application/json' \
             --data-raw "{
               \"username\": \"${{ env.DEFECTDOJO_COMMONUSER }}\",
               \"password\": \"${{ secrets.DEFECTDOJO_COMMONPASSWORD }}\"
             }" | jq -r '.token'`
-          if [ -z "${DEFECTDOJO_TOKEN}" ]; then
+          if [ -z "${DEFECTDOJO_TOKEN_COMMON}" ]; then
             echo "Error: Failed to get token from common user ${{ env.DEFECTDOJO_COMMONUSER }}. Please check the credentials."
             exit 1
           else
-            echo "DEFECTDOJO_TOKEN: $DEFECTDOJO_TOKEN"
+            echo "DEFECTDOJO_TOKEN: $DEFECTDOJO_TOKEN_COMMON"
             echo "DEFECTDOJO_TOKEN is set"
+            echo "DEFECTDOJO_TOKEN=$DEFECTDOJO_TOKEN_COMMON" >> $GITHUB_ENV
             # now get the product id
             DEFECTDOJO_PRODUCTID_COMMON=`curl --fail --location --request GET "${{ env.DEFECTDOJO_URL }}/products/?name=${{ env.DEFECTDOJO_COMMONPRODUCTNAME }}" \
-              --header "Authorization: Token ${{ secrets.DEFECTDOJO_TOKEN }}" | jq -r '.results[0].id'`
+              --header "Authorization: Token ${{ env.DEFECTDOJO_TOKEN }}" | jq -r '.results[0].id'`
             if [ -z "${DEFECTDOJO_PRODUCTID_COMMON}" ]; then
               echo "Error: Failed to get product id for ${{ env.DEFECTDOJO_COMMONPRODUCTNAME }}. Please check the product name."
               exit 1
@@ -82,6 +83,8 @@ jobs:
           fi
       - name: test env settings
         run: |-
+          echo $DEFECTDOJO_TOKEN
+          echo ${{ env.DEFECTDOJO_TOKEN }}
           echo $DEFECTDOJO_PRODUCTID
           echo ${{ env.DEFECTDOJO_PRODUCTID }}
       - name: checkout
