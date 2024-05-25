@@ -321,6 +321,21 @@ jobs:
             else
               echo "DEFECTDOJO_COMMONPASSWORD is set"
               echo "Trying to get token from common user ${{ env.DEFECTDOJO_COMMONUSER }}..."
+              # get token from common user
+              DEFECTDOJO_TOKEN=`curl --fail --location --request POST "${{ env.DEFECTDOJO_URL }}/api-token-auth/" \
+                --header 'Content-Type: application/json' \
+                --data-raw "{
+                  \"username\": \"${{ env.DEFECTDOJO_COMMONUSER }}\",
+                  \"password\": \"${{ secrets.DEFECTDOJO_COMMONPASSWORD }}\"
+                }" | jq -r '.token'`
+              if [ -z "${DEFECTDOJO_TOKEN}" ]; then
+                echo "Error: Failed to get token from common user ${{ env.DEFECTDOJO_COMMONUSER }}. Please check the credentials."
+                exit 1
+              else
+                echo "DEFECTDOJO_TOKEN: $DEFECTDOJO_TOKEN"
+                echo "DEFECTDOJO_TOKEN is set"
+                exit 0
+              fi
               exit 0
             fi
           else
