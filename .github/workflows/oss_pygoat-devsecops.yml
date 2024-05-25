@@ -70,7 +70,7 @@ jobs:
           fi
       - name: test action get product id
         run: |-
-          echo "testing action"          
+          echo "testing action"
           # now get the product id
           DEFECTDOJO_PRODUCTID_COMMON=`curl --fail --location --request GET "${{ env.DEFECTDOJO_URL }}/products/?name=${{ env.DEFECTDOJO_COMMONPRODUCTNAME }}" \
             --header "Authorization: Token ${{ env.DEFECTDOJO_TOKEN }}" | jq -r '.results[0].id'`
