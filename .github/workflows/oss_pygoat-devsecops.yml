@@ -310,18 +310,21 @@ jobs:
           echo "DEFECTDOJO_COMMONUSER: ${{ env.DEFECTDOJO_COMMONUSER }}"
           echo "DEFECTDOJO_COMMONPASSWORD: ${{ secrets.DEFECTDOJO_COMMONPASSWORD }}"  
           # throw error if token is not set and common password is not set
-          if [ "${{ secrets.DEFECTDOJO_TOKEN }}" = '' and "${{ secrets.DEFECTDOJO_COMMONPASSWORD }}" = '']
-          then
-            echo "Error: DEFECTDOJO_TOKEN is not set. Please set the secret in the dev environment."
-            echo "Error: DEFECTDOJO_COMMONPASSWORD is not set. Please set the secret in the dev environment."
-            echo "Alternatively, you can use the common ${{ env.DEFECTDOJO_COMMONUSER }} user."
-            exit 1
-          elif [ "${{ secrets.DEFECTDOJO_TOKEN }}" ]
-          then
-            echo  "DEFECTDOJO_TOKEN is set"
-            exit 0
+          if [ -z "${{ secrets.DEFECTDOJO_TOKEN }}" ] then
+            echo "Warning: DEFEECTDOJO_TOKEN is not set. Please set the secret in the dev environment."
+            echo "checking for DEFECTDOJO_COMMONPASSWORD"
+            if [ -z "${{ secrets.DEFECTDOJO_COMMONPASSWORD }}" ] then
+              echo "Error: DEFECTDOJO_TOKEN is not set. Please set the secret in the dev environment."
+              echo "Error: DEFECTDOJO_COMMONPASSWORD is not set. Please set the secret in the dev environment."
+              echo "You need to set either DEFECTDOJO_TOKEN or DEFECTDOJO_COMMONPASSWORD to run the pipeline."
+              exit 1
+            else
+              echo "DEFECTDOJO_COMMONPASSWORD is set"
+              echo "Trying to get token from common user ${{ env.DEFECTDOJO_COMMONUSER }}..."
+              exit 0
+            fi
           else
-            echo "DEFECTDOJO_COMMONPASSWORD is set"
+            echo "DEFECTDOJO_TOKEN is set"
             exit 0
           fi
       - name: Create DefectDojo Engagement
