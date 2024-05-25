@@ -66,20 +66,24 @@ jobs:
             echo "DEFECTDOJO_TOKEN: $DEFECTDOJO_TOKEN"
             echo "DEFECTDOJO_TOKEN is set"
             # now get the product id
-            DEFECTDOJO_PRODUCTID=`curl --fail --location --request GET "${{ env.DEFECTDOJO_URL }}/products/?name=${{ env.DEFECTDOJO_COMMONPRODUCTNAME }}" \
+            DEFECTDOJO_PRODUCTID_COMMON=`curl --fail --location --request GET "${{ env.DEFECTDOJO_URL }}/products/?name=${{ env.DEFECTDOJO_COMMONPRODUCTNAME }}" \
               --header "Authorization: Token ${{ secrets.DEFECTDOJO_TOKEN }}" | jq -r '.results[0].id'`
-            if [ -z "${DEFECTDOJO_PRODUCTID}" ]; then
+            if [ -z "${DEFECTDOJO_PRODUCTID_COMMON}" ]; then
               echo "Error: Failed to get product id for ${{ env.DEFECTDOJO_COMMONPRODUCTNAME }}. Please check the product name."
               exit 1
             else
-              echo "DEFECTDOJO_PRODUCTID: $DEFECTDOJO_PRODUCTID"
+              echo "DEFECTDOJO_PRODUCTID: $DEFECTDOJO_PRODUCTID_COMMON"
               echo "DEFECTDOJO_PRODUCTID is set"
-              echo "DEFECTDOJO_PRODUCTID=$DEFECTDOJO_PRODUCTID" >> $GITHUB_ENV
+              echo "DEFECTDOJO_PRODUCTID=$DEFECTDOJO_PRODUCTID_COMMON" >> $GITHUB_ENV
               echo "DEFECTDOJO Product ID: ${{ env.DEFECTDOJO_PRODUCTID }}"
               exit 0
             fi
             exit 0
           fi
+      - name: test env settings
+        run: |-
+          echo $DEFECTDOJO_PRODUCTID
+          echo ${{ env.DEFECTDOJO_PRODUCTID }}
       - name: checkout
         uses: actions/checkout@v4.1.0
       - name: Setup Python
