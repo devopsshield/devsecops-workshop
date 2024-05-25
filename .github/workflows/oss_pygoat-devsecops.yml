@@ -308,16 +308,14 @@ jobs:
           echo "DEFECTDOJO_PRODUCTID: ${{ vars.DEFECTDOJO_PRODUCTID }}"
           echo "DEFECTDOJO_TOKEN: ${{ secrets.DEFECTDOJO_TOKEN }}"
           echo "DEFECTDOJO_COMMONUSER: ${{ env.DEFECTDOJO_COMMONUSER }}"
-          echo "DEFECTDOJO_COMMONPASSWORD: ${{ secrets.DEFECTDOJO_COMMONPASSWORD }}"
-          # check if the token is set
-          if [ -z "${{ secrets.DEFECTDOJO_TOKEN }}" ]; then
+          echo "DEFECTDOJO_COMMONPASSWORD: ${{ secrets.DEFECTDOJO_COMMONPASSWORD }}"          
+          if [ -z "${{ secrets.DEFECTDOJO_TOKEN }}" ]
+          then
             echo "Error: DEFECTDOJO_TOKEN is not set. Please set the secret in the dev environment."
-            echo "Alternatively, you can use the common ${{ env.DEFECTDOJO_COMMONUSER }} user."           
-          fi
-          # checking if common password is set
-          if [ -z "${{ secrets.DEFECTDOJO_COMMONPASSWORD }}" ]; then
-            echo "Error: DEFECTDOJO_COMMONPASSWORD is not set. Please set the secret in the dev environment."            
-          fi
+            echo "Alternatively, you can use the common ${{ env.DEFECTDOJO_COMMONUSER }} user."
+          elif [ -z "${{ secrets.DEFECTDOJO_COMMONPASSWORD }}" ]
+          then
+            echo "Error: DEFECTDOJO_COMMONPASSWORD is not set. Please set the secret in the dev environment."
           else
             echo "DEFECTDOJO_COMMONPASSWORD is set"
             exit 0
