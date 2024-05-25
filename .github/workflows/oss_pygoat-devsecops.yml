@@ -18,6 +18,7 @@ env:
   adjustDNS: false
   listArtifacts: true
   DEFECTDOJO_URL: https://defectdojo-002.cad4devops.com:8443/api/v2
+  DEFECTDOJO_COMMONUSER: Student000
   appUrl: http://gh-pygoat-test.cad4devops.com
   containerName: owaspzapproxy
   doActiveScan: false
@@ -306,12 +307,22 @@ jobs:
           echo "DEFECTDOJO_URL: ${{ env.DEFECTDOJO_URL }}"
           echo "DEFECTDOJO_PRODUCTID: ${{ vars.DEFECTDOJO_PRODUCTID }}"
           echo "DEFECTDOJO_TOKEN: ${{ secrets.DEFECTDOJO_TOKEN }}"
+          echo "DEFECTDOJO_COMMONUSER: ${{ env.DEFECTDOJO_COMMONUSER }}"
+          echo "DEFECTDOJO_COMMONPASSWORD: ${{ secrets.DEFECTDOJO_COMMONPASSWORD }}"
           # check if the token is set
           if [ -z "${{ secrets.DEFECTDOJO_TOKEN }}" ]; then
             echo "Error: DEFECTDOJO_TOKEN is not set. Please set the secret in the dev environment."
-            echo "Alternatively, you can use the common Student000 user."
-            exit 1
+            echo "Alternatively, you can use the common ${{ env.DEFECTDOJO_COMMONUSER }} user."           
           fi
+          # checking if common password is set
+          if [ -z "${{ secrets.DEFECTDOJO_COMMONPASSWORD }}" ]; then
+            echo "Error: DEFECTDOJO_COMMONPASSWORD is not set. Please set the secret in the dev environment."            
+          fi
+          else
+            echo "DEFECTDOJO_COMMONPASSWORD is set"
+            exit 0
+          fi
+          exit 1
       - name: Create DefectDojo Engagement
         run: |-
           TODAY=`date +%Y-%m-%d`
