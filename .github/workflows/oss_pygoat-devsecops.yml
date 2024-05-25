@@ -431,7 +431,7 @@ jobs:
 
                 # now to fetch the product id
                 # Get the product id
-                $DEFECTDOJO_PRODUCTID_COMMON = Invoke-RestMethod -Method Get -Uri "$DEFECTDOJO_URL/products/?name=$env:DEFECTDOJO_COMMONPRODUCTNAME" `
+                $DEFECTDOJO_PRODUCTID_COMMON = Invoke-RestMethod -Method Get -Uri "${env:DEFECTDOJO_URL}/products/?name=${env:DEFECTDOJO_COMMONPRODUCTNAME}" `
                     -Headers @{ "Authorization" = "Token $DEFECTDOJO_TOKEN_COMMON" }
 
                 Write-Host "DEFECTDOJO_PRODUCTID_COMMON: $DEFECTDOJO_PRODUCTID_COMMON"
