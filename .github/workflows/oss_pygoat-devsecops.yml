@@ -67,9 +67,9 @@ jobs:
             echo "DEFECTDOJO_TOKEN is set"
             # now get the product id
             DEFECTDOJO_PRODUCTID=`curl --fail --location --request GET "${{ env.DEFECTDOJO_URL }}/products/?name=${{ env.DEFECTDOJO_COMMONPRODUCTNAME }}" \
-              --header "Authorization: Token $DEFEECTDOJO_TOKEN" | jq -r '.results[0].id'`
+              --header "Authorization: Token ${{ secrets.DEFECTDOJO_TOKEN }}" | jq -r '.results[0].id'`
             if [ -z "${DEFECTDOJO_PRODUCTID}" ]; then
-              echo "Error: Failed to get product id for pygoat. Please check the product name."
+              echo "Error: Failed to get product id for ${{ env.DEFECTDOJO_COMMONPRODUCTNAME }}. Please check the product name."
               exit 1
             else
               echo "DEFECTDOJO_PRODUCTID: $DEFECTDOJO_PRODUCTID"
