@@ -43,6 +43,10 @@ jobs:
     environment:
       name: dev
     steps:
+      - name: Fixes docker image if not being pushed to Azure
+        run: |
+          echo "image=devsecops-pygoat" >> $GITHUB_ENV
+        if: startsWith(env.image, '.azurecr.io')
       - name: checkout
         uses: actions/checkout@v4.1.0
       - name: Setup Python
