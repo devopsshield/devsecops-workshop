@@ -49,7 +49,7 @@ jobs:
         run: |-
           echo "image=devsecops-pygoat" >> $GITHUB_ENV
         if: vars.DOCKER_USERNAME == ''
-      - name: test action
+      - name: test action get auth token
         run: |-
           echo "testing action"
           # get token from common user
@@ -66,19 +66,21 @@ jobs:
             echo "DEFECTDOJO_TOKEN: $DEFECTDOJO_TOKEN_COMMON"
             echo "DEFECTDOJO_TOKEN is set"
             echo "DEFECTDOJO_TOKEN=$DEFECTDOJO_TOKEN_COMMON" >> $GITHUB_ENV
-            # now get the product id
-            DEFECTDOJO_PRODUCTID_COMMON=`curl --fail --location --request GET "${{ env.DEFECTDOJO_URL }}/products/?name=${{ env.DEFECTDOJO_COMMONPRODUCTNAME }}" \
-              --header "Authorization: Token ${{ env.DEFECTDOJO_TOKEN }}" | jq -r '.results[0].id'`
-            if [ -z "${DEFECTDOJO_PRODUCTID_COMMON}" ]; then
-              echo "Error: Failed to get product id for ${{ env.DEFECTDOJO_COMMONPRODUCTNAME }}. Please check the product name."
-              exit 1
-            else
-              echo "DEFECTDOJO_PRODUCTID: $DEFECTDOJO_PRODUCTID_COMMON"
-              echo "DEFECTDOJO_PRODUCTID is set"
-              echo "DEFECTDOJO_PRODUCTID=$DEFECTDOJO_PRODUCTID_COMMON" >> $GITHUB_ENV
-              echo "DEFECTDOJO Product ID: ${{ env.DEFECTDOJO_PRODUCTID }}"
-              exit 0
-            fi
+            exit 0
+          fi
+      - name: test action get product id
+        run: |-
+          echo "testing action"          
+          # now get the product id
+          DEFECTDOJO_PRODUCTID_COMMON=`curl --fail --location --request GET "${{ env.DEFECTDOJO_URL }}/products/?name=${{ env.DEFECTDOJO_COMMONPRODUCTNAME }}" \
+            --header "Authorization: Token ${{ env.DEFECTDOJO_TOKEN }}" | jq -r '.results[0].id'`
+          if [ -z "${DEFECTDOJO_PRODUCTID_COMMON}" ]; then
+            echo "Error: Failed to get product id for ${{ env.DEFECTDOJO_COMMONPRODUCTNAME }}. Please check the product name."
+            exit 1
+          else
+            echo "DEFECTDOJO_PRODUCTID: $DEFECTDOJO_PRODUCTID_COMMON"
+            echo "DEFECTDOJO_PRODUCTID is set"
+            echo "DEFECTDOJO_PRODUCTID=$DEFECTDOJO_PRODUCTID_COMMON" >> $GITHUB_ENV
             exit 0
           fi
       - name: test env settings
