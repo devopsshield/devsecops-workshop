@@ -546,7 +546,45 @@ jobs:
           ls -l ${{ github.workspace }}/dependency-check-reports
           ls -l ${{ github.workspace }}/bandit-sast-report
           ls -l ${{ github.workspace }}/devops-shield-reports-linux
+      - name: Upload Reports To DefectDojo with Common Product
+        if: env.useCommonDefectDojoProduct == 'true'
+        run: |-
+          TODAY=`date +%Y-%m-%d`
+          ENGAGEMENTID=`cat ENGAGEMENTID.env`
+          echo "TODAY: $TODAY"
+          echo "ENGAGEMENTID: $ENGAGEMENTID"
+          array=('type=("SARIF" "pip-audit Scan" "SARIF" "Bandit Scan")' 'file=("devops-shield-reports-linux/DevOpsShield-SecurityScanner-Report-Fixed.sarif" "dependency-check-reports/dependency-check-report-pip-audit.json" "image-scan-report/image-scan-report.json" "bandit-sast-report/sast-report.json")')
+          for elt in "${array[@]}";do eval $elt;done
+          for scan in 0 1 2 3; do \
+            echo ""
+            echo "======================= Scan No $scan ======================="
+            echo "Uploading ${type[$scan]} report"
+            echo "Uploading ${file[$scan]}"
+            #echo "Contents are:"
+            #cat ${{ github.workspace }}/${file[$scan]}
+            # check if the file exists
+            if [ -f ${{ github.workspace }}/${file[$scan]} ]; then
+              echo "File exists"
+            else
+              echo "File does not exist"
+              continue
+            fi
+            curl --fail --location --request POST "${{ env.DEFECTDOJO_URL }}/import-scan/" \
+              --header "Authorization: Token ${{ env.DEFECTDOJO_TOKEN }}" \
+              --form "scan_date=${TODAY}" \
+              --form "minimum_severity=${{ env.DEFECTDOJO_SCAN_MINIMUM_SEVERITY }}" \
+              --form "active=${{ env.DEFECTDOJO_SCAN_ACTIVE }}" \
+              --form "verified=${{ env.DEFECTDOJO_SCAN_VERIFIED }}" \
+              --form "scan_type=${type[$scan]}" \
+              --form "engagement=${ENGAGEMENTID}" \
+              --form "file=@${{ github.workspace }}/${file[$scan]}" \
+              --form "close_old_findings=${{ env.DEFECTDOJO_SCAN_CLOSE_OLD_FINDINGS }}" \
+              --form "push_to_jira=${{ env.DEFECTDOJO_SCAN_PUSH_TO_JIRA }}" \
+              --form "test_type=${{ env.DEFECTDOJO_SCAN_TEST_TYPE }}" \
+              --form "environment=${{ env.DEFECTDOJO_SCAN_ENVIRONMENT }}"
+          done
       - name: Upload Reports To DefectDojo
+        if: env.useCommonDefectDojoProduct == 'false'
         run: |-
           TODAY=`date +%Y-%m-%d`
           ENGAGEMENTID=`cat ENGAGEMENTID.env`
