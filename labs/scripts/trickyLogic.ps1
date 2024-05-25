@@ -11,7 +11,7 @@ if ($defectDojoTokenIsSet) {
     Write-Host "DEFECTDOJO_TOKEN is set"
     exit 0
 }
-else {    
+else {
     Write-Host "Warning: DEFEECTDOJO_TOKEN is not set. Please set the secret in the dev environment."
     Write-Host "checking for DEFECTDOJO_COMMONPASSWORD"
     if ($defectDojoCommonPasswordIsSet) {

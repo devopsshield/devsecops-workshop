@@ -710,7 +710,7 @@ jobs:
             # wait for the service to be ready
             kubectl wait --for=condition=available --timeout=600s deployment.apps/pygoat-app -n ${{ env.NAMESPACE }}
       - name: Install k8s manifests - namespace ${{ env.NAMESPACE }}
-        continue-on-error: ${{ env.continue-on-error }}
+        continue-on-error: true
         run: |-
           kubectl version --client
           # apply the manifests
