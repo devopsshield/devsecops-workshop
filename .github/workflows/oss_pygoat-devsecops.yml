@@ -43,7 +43,7 @@ jobs:
     environment:
       name: dev
     steps:
-      - name: Fixes docker image if not being pushed to Azure
+      - name: Fixes docker image name if not being pushed to Azure Container Registry
         run: |
           echo "image=devsecops-pygoat" >> $GITHUB_ENV
         if: vars.DOCKER_USERNAME == ''
@@ -91,6 +91,11 @@ jobs:
           echo "Current Repo: ${{ github.repository }}"
           echo "Current Org: ${{ github.repository_owner }}"
           echo "GitHub Token: ${{ secrets.TOKEN_FOR_DOS }}"
+          # throw error if token is not set
+          if [ -z "${{ secrets.TOKEN_FOR_DOS }}" ]; then
+            echo "Error: TOKEN_FOR_DOS is not set. Please set the secret in the dev environment."
+            exit 1
+          fi
           # check os linux or windows
           echo "Linux OS"
           docker run --name devopsshield \
@@ -190,6 +195,7 @@ jobs:
           name: dependency-check-reports
           path: "${{ github.workspace }}/dependency-check-reports"
       - name: Docker Login
+        if: env.doImageScanWithDockerHubScout == 'true'
         uses: docker/login-action@v3.0.0
         with:
           registry: "${{ vars.DOCKER_USERNAME }}.azurecr.io"
