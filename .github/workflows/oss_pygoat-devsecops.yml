@@ -321,6 +321,8 @@ jobs:
       name: dev
     env:
       DEFECTDOJO_PRODUCTID: ${{ vars.DEFECTDOJO_PRODUCTID }}
+      DEFECTDOJO_TOKEN: ${{ secrets.DEFECTDOJO_TOKEN }}
+      DEFECTDOJO_COMMONPASSWORD: ${{ secrets.DEFECTDOJO_COMMONPASSWORD }}
       DEFECTDOJO_ENGAGEMENT_REASON: "CI/CD Pipeline Scan"
       DEFECTDOJO_ANCHORE_DISABLE: "false"
       DEFECTDOJO_ENGAGEMENT_API_TEST: "true"
@@ -393,21 +395,21 @@ jobs:
         shell: pwsh
         run: |-
           echo "DEFECTDOJO_URL: ${{ env.DEFECTDOJO_URL }}"
-          echo "DEFECTDOJO_PRODUCTID: ${{ vars.DEFECTDOJO_PRODUCTID }}"
-          echo "DEFECTDOJO_TOKEN: ${{ secrets.DEFECTDOJO_TOKEN }}"
+          echo "DEFECTDOJO_PRODUCTID: ${{ env.DEFECTDOJO_PRODUCTID }}"
+          echo "DEFECTDOJO_TOKEN: ${{ env.DEFECTDOJO_TOKEN }}"
           echo "DEFECTDOJO_COMMONUSER: ${{ env.DEFECTDOJO_COMMONUSER }}"
-          echo "DEFECTDOJO_COMMONPASSWORD: ${{ secrets.DEFECTDOJO_COMMONPASSWORD }}"
+          echo "DEFECTDOJO_COMMONPASSWORD: ${{ env.DEFECTDOJO_COMMONPASSWORD }}"
           # throw error if token is not set and common password is not set  
-          $defectDojoTokenIsSet = $null -ne ${{ secrets.DEFECTDOJO_TOKEN }} -and ${{ secrets.DEFECTDOJO_TOKEN }} -ne ""
+          $defectDojoTokenIsSet = $null -ne ${{ env.DEFECTDOJO_TOKEN }} -and ${{ env.DEFECTDOJO_TOKEN }} -ne ""
           Write-Host "DefectDojo Token is set: $defectDojoTokenIsSet"
-          $defectDojoCommonPasswordIsSet = $null -ne ${{ secrets.DEFECTDOJO_COMMONPASSWORD }} -and ${{ secrets.DEFECTDOJO_COMMONPASSWORD }} -ne ""
+          $defectDojoCommonPasswordIsSet = $null -ne ${{ env.DEFECTDOJO_COMMONPASSWORD }} -and ${{ env.DEFECTDOJO_COMMONPASSWORD }} -ne ""
           Write-Host "DefectDojo Common Password is set: $defectDojoCommonPasswordIsSet"
 
           if ($defectDojoTokenIsSet) {
             Write-Host "DEFECTDOJO_TOKEN is set"
             exit 0
           }
-          else {    
+          else {
             Write-Host "Warning: DEFEECTDOJO_TOKEN is not set. Please set the secret in the dev environment."
             Write-Host "checking for DEFECTDOJO_COMMONPASSWORD"
             if ($defectDojoCommonPasswordIsSet) {
