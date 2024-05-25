@@ -1,8 +1,11 @@
 #$DEFEECTDOJO_TOKEN = "token"
-#$DEFEECTDOJO_COMMONPASSWORD = "password"
+$DEFECTDOJO_COMMONPASSWORD = "P@ssw0rd!1"
+$DEFECTDOJO_COMMONUSER = "Student000"
+$DEFECTDOJO_URL = "https://defectdojo-002.cad4devops.com:8443/api/v2"
+$DEFECTDOJO_COMMONPRODUCTNAME = "GitHub-OSS-pygoat-devsecops-workshop-001-product-000"
 
 $defectDojoTokenIsSet = $null -ne $DEFEECTDOJO_TOKEN -and $DEFEECTDOJO_TOKEN -ne ""
-$defectDojoCommonPasswordIsSet = $null -ne $DEFEECTDOJO_COMMONPASSWORD -and $DEFEECTDOJO_COMMONPASSWORD -ne ""
+$defectDojoCommonPasswordIsSet = $null -ne $DEFECTDOJO_COMMONPASSWORD -and $DEFECTDOJO_COMMONPASSWORD -ne ""
 
 if ($defectDojoTokenIsSet) {
     Write-Host "DEFECTDOJO_TOKEN is set"
@@ -15,31 +18,35 @@ else {
         Write-Host "DEFECTDOJO_COMMONPASSWORD is set"
         Write-Host "Trying to get token from common user Student000..."
         # get token from common user
-        $DEFECTDOJO_TOKEN_COMMON = (Invoke-RestMethod -Method Post -Uri "${env:DEFECTDOJO_URL}/api-token-auth/" `
+        $DEFECTDOJO_TOKEN_COMMON = (Invoke-RestMethod -Method Post -Uri "$DEFECTDOJO_URL/api-token-auth/" `
                 -ContentType 'application/json' `
                 -Body (@{
-                    "username" = "$env:DEFECTDOJO_COMMONUSER";
-                    "password" = "$env:DEFECTDOJO_COMMONPASSWORD"
+                    "username" = "$DEFECTDOJO_COMMONUSER";
+                    "password" = "$DEFECTDOJO_COMMONPASSWORD"
                 } | ConvertTo-Json)).token
 
-        if ($env:DEFECTDOJO_TOKEN_COMMON) {
-            # Write-Host "DEFECTDOJO_TOKEN: $env:DEFECTDOJO_TOKEN_COMMON"
+        if ($DEFECTDOJO_TOKEN_COMMON) {
+            Write-Host "DEFECTDOJO_TOKEN: $DEFECTDOJO_TOKEN_COMMON"
             Write-Host "DEFECTDOJO_TOKEN is set"
             #Add-Content -Path $env:GITHUB_ENV -Value "DEFECTDOJO_TOKEN=$env:DEFECTDOJO_TOKEN_COMMON"
 
             # now to fetch the product id
             # Get the product id
-            $DEFECTDOJO_PRODUCTID_COMMON = Invoke-RestMethod -Method Get -Uri "${env:DEFECTDOJO_URL}/products/?name=${env:DEFECTDOJO_COMMONPRODUCTNAME}" `
-                -Headers @{ "Authorization" = "Token ${env:DEFECTDOJO_TOKEN}" } | Select-Object -ExpandProperty results[0].id
+            $DEFECTDOJO_PRODUCTID_COMMON = Invoke-RestMethod -Method Get -Uri "$DEFECTDOJO_URL/products/?name=$DEFECTDOJO_COMMONPRODUCTNAME" `
+                -Headers @{ "Authorization" = "Token ${env:DEFECTDOJO_TOKEN}" }
 
-            if (-not [string]::IsNullOrWhiteSpace($DEFECTDOJO_PRODUCTID_COMMON)) {
-                Write-Host "DEFECTDOJO_PRODUCTID: $DEFECTDOJO_PRODUCTID_COMMON"
+            Write-Host "DEFECTDOJO_PRODUCTID_COMMON: $DEFECTDOJO_PRODUCTID_COMMON"
+
+            if ($DEFECTDOJO_PRODUCTID_COMMON) {
+                $DEFECTDOJO_PRODUCTID_COMMON_ID = $DEFECTDOJO_PRODUCTID_COMMON.results[0].id
+                #Write-Host "DEFECTDOJO_PRODUCTID_COMMON_ID: $DEFECTDOJO_PRODUCTID_COMMON_ID"
+                Write-Host "DEFECTDOJO_PRODUCTID: $DEFECTDOJO_PRODUCTID_COMMON_ID"
                 Write-Host "DEFECTDOJO_PRODUCTID is set"
-                Add-Content -Path $env:GITHUB_ENV -Value "DEFECTDOJO_PRODUCTID=$DEFECTDOJO_PRODUCTID_COMMON"
+                #Add-Content -Path $env:GITHUB_ENV -Value "DEFECTDOJO_PRODUCTID=$DEFECTDOJO_PRODUCTID_COMMON"
                 exit 0
             }
             else {
-                Write-Host "Error: Failed to get product id for ${env:DEFECTDOJO_COMMONPRODUCTNAME}. Please check the product name."
+                Write-Host "Error: Failed to get product id for $DEFECTDOJO_COMMONPRODUCTNAME. Please check the product name."
                 exit 1
             }
 
