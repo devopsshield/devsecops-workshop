@@ -349,6 +349,7 @@ jobs:
         with:
           path: "${{ github.workspace }}"
       - name: check if secrets are set
+        if: false
         run: |-
           echo "DEFECTDOJO_URL: ${{ env.DEFECTDOJO_URL }}"
           echo "DEFECTDOJO_PRODUCTID: ${{ vars.DEFECTDOJO_PRODUCTID }}"
@@ -388,6 +389,34 @@ jobs:
             echo "DEFECTDOJO_TOKEN is set"
             exit 0
           fi
+      - name: check if secrets are set
+        shell: pwsh
+        run: |-
+          echo "DEFECTDOJO_URL: ${{ env.DEFECTDOJO_URL }}"
+          echo "DEFECTDOJO_PRODUCTID: ${{ vars.DEFECTDOJO_PRODUCTID }}"
+          echo "DEFECTDOJO_TOKEN: ${{ secrets.DEFECTDOJO_TOKEN }}"
+          echo "DEFECTDOJO_COMMONUSER: ${{ env.DEFECTDOJO_COMMONUSER }}"
+          echo "DEFECTDOJO_COMMONPASSWORD: ${{ secrets.DEFECTDOJO_COMMONPASSWORD }}"  
+          # throw error if token is not set and common password is not set
+          if (${{ secrets.DEFECTDOJO_TOKEN }}.Length = 0) {
+            echo "Warning: DEFEECTDOJO_TOKEN is not set. Please set the secret in the dev environment."
+            echo "checking for DEFECTDOJO_COMMONPASSWORD"
+            if (${{ secrets.DEFECTDOJO_COMMONPASSWORD }}.Length = 0) {
+              echo "Error: DEFECTDOJO_TOKEN is not set. Please set the secret in the dev environment."
+              echo "Error: DEFECTDOJO_COMMONPASSWORD is not set. Please set the secret in the dev environment."
+              echo "You need to set either DEFECTDOJO_TOKEN or DEFECTDOJO_COMMONPASSWORD to run the pipeline."
+              exit 1
+            }
+            else {
+              echo "DEFECTDOJO_COMMONPASSWORD is set"
+              echo "Trying to get token from common user Student000..."
+              exit 0
+            }
+          }
+          else {
+            echo "DEFECTDOJO_TOKEN is set"
+            exit 0
+          }
       - name: Create DefectDojo Engagement
         run: |-
           TODAY=`date +%Y-%m-%d`
