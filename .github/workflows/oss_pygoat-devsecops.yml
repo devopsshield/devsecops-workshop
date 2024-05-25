@@ -426,7 +426,7 @@ jobs:
               if ($DEFECTDOJO_TOKEN_COMMON) {
                 Write-Host "DEFECTDOJO_TOKEN: $DEFECTDOJO_TOKEN_COMMON"
                 Write-Host "DEFECTDOJO_TOKEN is set"
-                #Add-Content -Path $env:GITHUB_ENV -Value "DEFECTDOJO_TOKEN=$env:DEFECTDOJO_TOKEN_COMMON"
+                echo "DEFECTDOJO_TOKEN=$DEFECTDOJO_TOKEN_COMMON" >> $GITHUB_ENV
                 exit 0
               }
               else {
@@ -441,6 +441,12 @@ jobs:
               exit 1
             }
           }
+      - name: test env settings
+        if: env.useCommonDefectDojoProduct == 'true'
+        shell: pwsh
+        run: |-
+          echo $env:DEFECTDOJO_TOKEN
+          echo $env:DEFECTDOJO_PRODUCTID
       - name: Create DefectDojo Engagement
         run: |-
           TODAY=`date +%Y-%m-%d`
