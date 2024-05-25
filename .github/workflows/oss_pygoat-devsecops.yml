@@ -310,7 +310,7 @@ jobs:
           echo "DEFECTDOJO_COMMONUSER: ${{ env.DEFECTDOJO_COMMONUSER }}"
           echo "DEFECTDOJO_COMMONPASSWORD: ${{ secrets.DEFECTDOJO_COMMONPASSWORD }}"  
           # throw error if token is not set and common password is not set
-          if [ -z "${{ secrets.DEFECTDOJO_TOKEN }}" and -z "${{ secrets.DEFECTDOJO_COMMONPASSWORD }}"]
+          if [ "${{ secrets.DEFECTDOJO_TOKEN }}" = '' and "${{ secrets.DEFECTDOJO_COMMONPASSWORD }}" = '']
           then
             echo "Error: DEFECTDOJO_TOKEN is not set. Please set the secret in the dev environment."
             echo "Error: DEFECTDOJO_COMMONPASSWORD is not set. Please set the secret in the dev environment."
