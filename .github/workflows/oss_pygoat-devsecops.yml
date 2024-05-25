@@ -11,9 +11,14 @@ permissions:
 
 env:
   #DEFECTDOJO_PRODUCTID: 4
+  # basic settings
   useCommonDefectDojoProduct: true # for DEMO purposes
   pushDockerImage: false # for DEMO purposes
   continue-on-error: true # for DEMO purposes
+  # # advanced settings
+  # useCommonDefectDojoProduct: false # advanced setting
+  # pushDockerImage: true # advanced setting
+  # continue-on-error: false # advanced setting
   useAzureCliForK8s: false
   doImageScanWithDockerHubScout: false
   adjustDNS: false
@@ -679,12 +684,12 @@ jobs:
             # create namespace if it does not exist
             kubectl create namespace ${{ env.NAMESPACE }} --dry-run=client -o yaml | kubectl apply -f -
       - uses: tale/kubectl-action@v1
-        continue-on-error: ${{ env.continue-on-error }}
+        continue-on-error: true
         with:
           base64-kube-config: ${{ secrets.KUBE_CONFIG }}
           kubectl-version: v1.28.9
       - name: Create k8s namespace ${{ env.NAMESPACE }}
-        continue-on-error: ${{ env.continue-on-error }}
+        continue-on-error: true
         run: |-
           kubectl version --client
           kubectl get nodes
@@ -742,7 +747,7 @@ jobs:
               -n ${{ env.dnsRecordSetName }} \
               -a $externalIp
       - name: Get Resources - namespace ${{ env.NAMESPACE }}
-        continue-on-error: ${{ env.continue-on-error }}
+        continue-on-error: true
         run: |-
           kubectl version --client
           kubectl get pods -n ${{ env.NAMESPACE }}
