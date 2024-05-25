@@ -11,6 +11,7 @@ permissions:
 
 env:
   #DEFECTDOJO_PRODUCTID: 4
+  useCommonDefectDojoProduct: true # for DEMO purposes
   pushDockerImage: false # for DEMO purposes
   continue-on-error: true # for DEMO purposes
   useAzureCliForK8s: false
@@ -20,6 +21,7 @@ env:
   DEFECTDOJO_URL: https://defectdojo-002.cad4devops.com:8443/api/v2
   DEFECTDOJO_COMMONUSER: Student000
   DEFECTDOJO_COMMONPRODUCTNAME: GitHub-OSS-pygoat-devsecops-workshop-001-product-000
+  DEFECTDOJO_TOKEN: ${{ secrets.DEFECTDOJO_TOKEN }}
   appUrl: http://gh-pygoat-test.cad4devops.com
   containerName: owaspzapproxy
   doActiveScan: false
@@ -50,6 +52,7 @@ jobs:
           echo "image=devsecops-pygoat" >> $GITHUB_ENV
         if: vars.DOCKER_USERNAME == ''
       - name: test action get auth token
+        if: env.useCommonDefectDojoProduct == 'true'
         run: |-
           echo "testing action"
           # get token from common user
@@ -63,12 +66,13 @@ jobs:
             echo "Error: Failed to get token from common user ${{ env.DEFECTDOJO_COMMONUSER }}. Please check the credentials."
             exit 1
           else
-            echo "DEFECTDOJO_TOKEN: $DEFECTDOJO_TOKEN_COMMON"
+            #echo "DEFECTDOJO_TOKEN: $DEFECTDOJO_TOKEN_COMMON"
             echo "DEFECTDOJO_TOKEN is set"
             echo "DEFECTDOJO_TOKEN=$DEFECTDOJO_TOKEN_COMMON" >> $GITHUB_ENV
             exit 0
           fi
       - name: test action get product id
+        if: env.useCommonDefectDojoProduct == 'true'
         run: |-
           echo "testing action"
           # now get the product id
@@ -84,9 +88,10 @@ jobs:
             exit 0
           fi
       - name: test env settings
+        if: env.useCommonDefectDojoProduct == 'true'
         run: |-
-          echo $DEFECTDOJO_TOKEN
-          echo ${{ env.DEFECTDOJO_TOKEN }}
+          #echo $DEFECTDOJO_TOKEN
+          #echo ${{ env.DEFECTDOJO_TOKEN }}
           echo $DEFECTDOJO_PRODUCTID
           echo ${{ env.DEFECTDOJO_PRODUCTID }}
       - name: checkout
