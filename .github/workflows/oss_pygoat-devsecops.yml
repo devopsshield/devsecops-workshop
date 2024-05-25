@@ -46,7 +46,7 @@ jobs:
       - name: Fixes docker image if not being pushed to Azure
         run: |
           echo "image=devsecops-pygoat" >> $GITHUB_ENV
-        if: startsWith(env.image, '.azurecr.io')
+        if: vars.DOCKER_USERNAME == ''
       - name: checkout
         uses: actions/checkout@v4.1.0
       - name: Setup Python
