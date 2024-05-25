@@ -45,9 +45,27 @@ jobs:
       name: dev
     steps:
       - name: Fixes docker image name if not being pushed to Azure Container Registry
-        run: |
+        run: |-
           echo "image=devsecops-pygoat" >> $GITHUB_ENV
         if: vars.DOCKER_USERNAME == ''
+      - name: test action
+        run: |-
+          echo "testing action"
+          # get token from common user
+          DEFECTDOJO_TOKEN=`curl --fail --location --request POST "${{ env.DEFECTDOJO_URL }}/api-token-auth/" \
+            --header 'Content-Type: application/json' \
+            --data-raw "{
+              \"username\": \"${{ env.DEFECTDOJO_COMMONUSER }}\",
+              \"password\": \"${{ secrets.DEFECTDOJO_COMMONPASSWORD }}\"
+            }" | jq -r '.token'`
+          if [ -z "${DEFECTDOJO_TOKEN}" ]; then
+            echo "Error: Failed to get token from common user ${{ env.DEFECTDOJO_COMMONUSER }}. Please check the credentials."
+            exit 1
+          else
+            echo "DEFECTDOJO_TOKEN: $DEFECTDOJO_TOKEN"
+            echo "DEFECTDOJO_TOKEN is set"
+            exit 0
+          fi
       - name: checkout
         uses: actions/checkout@v4.1.0
       - name: Setup Python
