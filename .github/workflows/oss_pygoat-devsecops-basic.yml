@@ -61,7 +61,7 @@ jobs:
         run: |-
           echo "testing action"
           # get token from common user 
-          echo "DEFECTDOJO_COMMONUSER: ${{ env.DEFECTDOJO_COMMONUSER }}"         
+          echo "DEFECTDOJO_COMMONUSER: ${{ env.DEFECTDOJO_COMMONUSER }}"
           echo "DEFECTDOJO_COMMONPASSWORD: ${{ secrets.DEFECTDOJO_COMMONPASSWORD }}"
           # throw error if token is not set
           if [ -z "${{ secrets.DEFECTDOJO_COMMONPASSWORD }}" ]; then
@@ -378,7 +378,6 @@ jobs:
       - name: checkout
         uses: actions/checkout@v4.1.0
       - name: Download Reports From Pipeline Artifacts
-        if: false
         uses: actions/download-artifact@v4.1.0
         with:
           path: "${{ github.workspace }}"
@@ -672,6 +671,7 @@ jobs:
       - name: checkout
         uses: actions/checkout@v4.1.0
       - name: download artifact
+        if: false
         uses: actions/download-artifact@v4.1.0
       - uses: actions/checkout@v4.1.0
       - uses: cschleiden/replace-tokens@v1
@@ -846,6 +846,7 @@ jobs:
       - name: checkout
         uses: actions/checkout@v4.1.0
       - name: download artifact
+        if: false
         uses: actions/download-artifact@v4.1.0
       - uses: actions/checkout@v4.1.0
       - uses: cschleiden/replace-tokens@v1
