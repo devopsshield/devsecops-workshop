@@ -84,7 +84,7 @@ jobs:
             $throwError = $true
           }
           if (-not $env:DOCKER_USERNAME) {
-            Write-Host "Error: DOCKER_USERNAME is not set. Please set the variable in the dev environment."
+            Write-Host "Error: DOCKER_USERNAME is not set. Please set the variable AS A REPOSITORY VARIABLE."
             $numberOfErrors++
             $throwError = $true
           }
