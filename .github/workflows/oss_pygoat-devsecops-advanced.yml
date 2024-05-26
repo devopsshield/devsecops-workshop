@@ -52,6 +52,48 @@ jobs:
     environment:
       name: dev
     steps:
+      - name: check all secrets and variables are provided for dev environment
+        if: env.useCommonDefectDojoProduct == 'false'
+        run: |-
+          echo "advanced settings"
+          echo "DEFECTDOJO_PRODUCTID: ${{ env.DEFECTDOJO_PRODUCTID }}"         
+          echo "DEFECTDOJO_TOKEN: ${{ secrets.DEFECTDOJO_TOKEN }}"
+          echo "DOCKER_USERNAME: ${{ env.DOCKER_USERNAME }}"
+          echo "DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}"          
+          echo "TOKEN_FOR_DOS: ${{ secrets.TOKEN_FOR_DOS }}"
+          echo "KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}"
+          # throw error if any of these are not set
+          $throwError = $false
+          if [ -z "${{ env.DEFECTDOJO_PRODUCTID }}" ]; then
+            echo "Error: DEFECTDOJO_PRODUCTID is not set. Please set the variable in the dev environment."
+            $throwError = $true
+          fi
+          if [ -z "${{ secrets.DEFECTDOJO_TOKEN }}" ]; then
+            echo "Error: DEFECTDOJO_TOKEN is not set. Please set the secret in the dev environment."
+            $throwError = $true
+          fi
+          if [ -z "${{ env.DOCKER_USERNAME }}" ]; then
+            echo "Error: DOCKER_USERNAME is not set. Please set the variable in the dev environment."
+            $throwError = $true
+          fi
+          if [ -z "${{ secrets.DOCKER_PASSWORD }}" ]; then
+            echo "Error: DOCKER_PASSWORD is not set. Please set the secret in the dev environment."
+            $throwError = $true
+          fi
+          if [ -z "${{ secrets.TOKEN_FOR_DOS }}" ]; then
+            echo "Error: TOKEN_FOR_DOS is not set. Please set the secret in the dev environment."
+            $throwError = $true
+          fi
+          if [ -z "${{ secrets.KUBE_CONFIG }}" ]; then
+            echo "Error: KUBE_CONFIG is not set. Please set the secret in the dev environment."
+            $throwError = $true
+          fi
+          if ($throwError) {
+            exit 1
+          } else {
+            echo "All secrets and variables are set. Continuing..."
+            exit 0
+          }
       - name: Fixes docker image name if not being pushed to Azure Container Registry
         run: |-
           echo "image=devsecops-pygoat" >> $GITHUB_ENV
