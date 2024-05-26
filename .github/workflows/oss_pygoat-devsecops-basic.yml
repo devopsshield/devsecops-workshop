@@ -60,7 +60,13 @@ jobs:
         if: env.useCommonDefectDojoProduct == 'true'
         run: |-
           echo "testing action"
-          # get token from common user
+          # get token from common user          
+          echo "DEFECTDOJO_COMMONPASSWORD: ${{ secrets.DEFECTDOJO_COMMONPASSWORD }}"
+          # throw error if token is not set
+          if [ -z "${{ secrets.DEFECTDOJO_COMMONPASSWORD }}" ]; then
+            echo "Error: DEFECTDOJO_COMMONPASSWORD is not set. Please set the secret in the dev environment."
+            exit 1
+          fi
           DEFECTDOJO_TOKEN_COMMON=`curl --fail --location --request POST "${{ env.DEFECTDOJO_URL }}/api-token-auth/" \
             --header 'Content-Type: application/json' \
             --data-raw "{
