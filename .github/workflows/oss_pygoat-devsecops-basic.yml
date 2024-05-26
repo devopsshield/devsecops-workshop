@@ -1,4 +1,4 @@
-name: OneDOS/OSS_pygoat-devsecops
+name: OSS_pygoat-devsecops-basic
 on:
   # push:
   #   branches:

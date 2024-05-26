@@ -9,7 +9,8 @@
 
 param (
     [int]    $NumberOfStudents = 3,
-    [string] $Password = "P@ssw0rd!1",
+    [int]    $StudentStartNumber = 1,
+    [string] $Password, # = "P@ssw0rd!1",
     [string] $DojoUrl = "https://defectdojo-002.cad4devops.com:8443/",
     [string] $ApiKey,
     [string] $groupId = 1, # workshop group
@@ -20,6 +21,46 @@ param (
     [string] $WorkshopNumber = "001",
     [string] $OutputFolder
 )
+
+function New-ComplexPassword {
+    param (
+        [int]$length = 12
+    )
+
+    $upperCase = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
+    $upperCaseArray = $upperCase.ToCharArray()
+    $lowerCase = 'abcdefghijklmnopqrstuvwxyz'
+    $lowerCaseArray = $lowerCase.ToCharArray()
+    $numbers = '0123456789'
+    $numbersArray = $numbers.ToCharArray()
+    $specialChars = '!@#$%^&*()_-+=<>?'
+    $specialCharsArray = $specialChars.ToCharArray()
+
+    $randomUpperCase = $upperCaseArray | Get-Random -Count 1
+    $randomLowerCase = $lowerCaseArray | Get-Random -Count 1
+    $randomNumber = $numbersArray | Get-Random -Count 1
+    $randomSpecialChar = $specialCharsArray | Get-Random -Count 1
+
+    # Ensure the password includes at least one character from each set
+    $initialPassword = $randomUpperCase + 
+    $randomLowerCase + 
+    $randomNumber + 
+    $randomSpecialChar
+
+    $allChars = $upperCase + $lowerCase + $numbers + $specialChars
+    $allCharsArray = $allChars.ToCharArray()
+
+    # Fill the rest of the password up to the desired length
+    for ($i = $initialPassword.Length; $i -lt $length; $i++) {
+        $initialPassword += $allCharsArray | Get-Random -Count 1
+    }
+
+    # Shuffle the password to prevent predictable patterns
+    $shuffledPasswordChars = $initialPassword.ToCharArray() | Get-Random -Count $length
+    $shuffledPassword = -join $shuffledPasswordChars
+
+    return $shuffledPassword
+}
 
 function New-Student {
     param (
@@ -59,31 +100,46 @@ function New-Student {
         $fetchedUserId = $fetchedUser.results[0].id
         Write-Host "Fetched user $Username with id $fetchedUserId"
         $userId = $fetchedUserId
-    }
-    else {
-        Write-Host "User $Username does not exist"
-        Write-Host "Creating user $Username with email $Email"
 
-        $user = @{
-            first_name = $FirstName
-            last_name  = $LastName
-            email      = $Email
-            username   = $Username
-            password   = $Password
-            is_active  = $true
-        }
+        # # update user password - can't update password using PATCH through the API
+        # $user = @{
+        #     password = $Password
+        # }
 
         $headers = New-Object "System.Collections.Generic.Dictionary[[String],[String]]"
         $headers.Add("Authorization", "Token $ApiKey")
         $headers.Add("Content-Type", "application/json")
 
-        $userJson = $user | ConvertTo-Json -Depth $jsonDepth
-
-        $createdUser = Invoke-RestMethod "$DojoUrl/api/v2/users/" -Method 'POST' -Headers $headers -Body $userJson
-        $userId = $createdUser.id
-        Write-Host "Created user $($createdUser.username) with id $userId"
-        $createdUser | ConvertTo-Json -Depth $jsonDepth
+        $deletedUser = Invoke-RestMethod "$DojoUrl/api/v2/users/$userId/" -Method 'DELETE' -Headers $headers
+        $userId = $deletedUser.id
+        Write-Host "Deleted user $Username with id $userId"
+        $deletedUser | ConvertTo-Json -Depth $jsonDepth     
     }
+    
+    
+    Write-Host "User $Username does not exist"
+    Write-Host "Creating user $Username with email $Email and password $Password"    
+
+    $user = @{
+        first_name = $FirstName
+        last_name  = $LastName
+        email      = $Email
+        username   = $Username
+        password   = $Password
+        is_active  = $true
+    }
+
+    $headers = New-Object "System.Collections.Generic.Dictionary[[String],[String]]"
+    $headers.Add("Authorization", "Token $ApiKey")
+    $headers.Add("Content-Type", "application/json")
+
+    $userJson = $user | ConvertTo-Json -Depth $jsonDepth
+
+    $createdUser = Invoke-RestMethod "$DojoUrl/api/v2/users/" -Method 'POST' -Headers $headers -Body $userJson
+    $userId = $createdUser.id
+    Write-Host "Created user $($createdUser.username) with id $userId"
+    $createdUser | ConvertTo-Json -Depth $jsonDepth
+    
 
     # check if product exists
     $headers = New-Object "System.Collections.Generic.Dictionary[[String],[String]]"
@@ -211,6 +267,7 @@ function New-Student {
         WorkshopNumber        = $WorkshopNumber
         StudentNumber         = $StudentNumber
         DefectDojoUrl         = "$DojoUrl/"
+        DefectDojoUserId      = $userId
         DefectDojoUserName    = $Username
         DefectDojoPassword    = $Password
         DefectDojoProductName = $productName
@@ -395,7 +452,30 @@ function New-StudentResource {
     }
 }
 
-for ($i = 1; $i -le $NumberOfStudents; $i++) {
+# check if password is set
+if (-not $Password) {
+    Write-Host "Password is not set through parameter, generating password for each student"
+    # generate a random password        
+    $generateRandomPassword = $true
+}
+else {
+    Write-Host "Password is set through parameter"
+    $generateRandomPassword = $false
+}
+
+for ($i = $StudentStartNumber; $i -le $StudentStarNumber + $NumberOfStudents; $i++) {
+
+    # check if password is set
+    if ($generateRandomPassword) {
+        Write-Host "Password is not set through parameter, generating password"
+        # generate a random password        
+        $Password = New-ComplexPassword -length 12
+    }
+    else {
+        Write-Host "Password is set through parameter"
+        Write-Host "Password: $Password"
+    }
+
     $studentNumberPadded = $i.ToString("000")
     $StudentNumber = $studentNumberPadded
     Write-Host "Creating student $StudentNumber"
@@ -422,6 +502,7 @@ for ($i = 1; $i -le $NumberOfStudents; $i++) {
     $strArray += "Workshop Number: $($retValueStudent.WorkshopNumber)"
     $strArray += "Student Number: $($retValueStudent.StudentNumber)"
     $strArray += "Defect Dojo Url: $($retValueStudent.DefectDojoUrl)"
+    $strArray += "Defect Dojo User Id: $($retValueStudent.DefectDojoUserId)"
     $strArray += "Defect Dojo User Name: $($retValueStudent.DefectDojoUserName)"
     $strArray += "Defect Dojo Password: $($retValueStudent.DefectDojoPassword)"
     $strArray += "Defect Dojo Product Name: $($retValueStudent.DefectDojoProductName)"
@@ -444,5 +525,12 @@ for ($i = 1; $i -le $NumberOfStudents; $i++) {
     $strArrayFileName = "wrkshp-$WorkshopNumber-student-$StudentNumber-info.txt"
     $kubeConfigFolder = $retValueStudentResource.KubernetesConfigFolder
     $strArrayFilePath = Join-Path $kubeConfigFolder $strArrayFileName
+    # backup the file if it already exists
+    if (Test-Path $strArrayFilePath) {
+        Write-Host "Backing up file $strArrayFilePath"
+        $strArrayFilePathBackup = $strArrayFilePath + ".bak"
+        Move-Item $strArrayFilePath $strArrayFilePathBackup
+    }
+    Write-Host "Writing string array to file $strArrayFilePath"
     $strArray | Out-File $strArrayFilePath
 }
