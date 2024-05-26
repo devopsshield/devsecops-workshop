@@ -51,8 +51,8 @@ jobs:
       image: ${{ vars.DOCKER_USERNAME }}.azurecr.io/devsecops-pygoat
       DEFECTDOJO_PRODUCTID: ${{ vars.DEFECTDOJO_PRODUCTID }}
       DEFECTDOJO_TOKEN: ${{ secrets.DEFECTDOJO_TOKEN }}
-      DEFECTDOJO_USERNAME: ${{ vars.DEFECTDOJO_USERNAME }}
-      DEFECTDOJO_PASSWORD: ${{ secrets.DEFECTDOJO_PASSWORD }}
+      DOCKER_USERNAME: ${{ vars.DOCKER_USERNAME }}
+      DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
       TOKEN_FOR_DOS: ${{ secrets.TOKEN_FOR_DOS }}
       KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
     environment:
