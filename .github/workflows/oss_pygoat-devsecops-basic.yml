@@ -60,7 +60,8 @@ jobs:
         if: env.useCommonDefectDojoProduct == 'true'
         run: |-
           echo "testing action"
-          # get token from common user          
+          # get token from common user 
+          echo "DEFECTDOJO_COMMONUSER: ${{ env.DEFECTDOJO_COMMONUSER }}"         
           echo "DEFECTDOJO_COMMONPASSWORD: ${{ secrets.DEFECTDOJO_COMMONPASSWORD }}"
           # throw error if token is not set
           if [ -z "${{ secrets.DEFECTDOJO_COMMONPASSWORD }}" ]; then
@@ -87,6 +88,7 @@ jobs:
         run: |-
           echo "testing action"
           # now get the product id
+          echo "DEFECTDOJO_COMMONPRODUCTNAME: ${{ env.DEFECTDOJO_COMMONPRODUCTNAME }}"
           DEFECTDOJO_PRODUCTID_COMMON=`curl --fail --location --request GET "${{ env.DEFECTDOJO_URL }}/products/?name=${{ env.DEFECTDOJO_COMMONPRODUCTNAME }}" \
             --header "Authorization: Token ${{ env.DEFECTDOJO_TOKEN }}" | jq -r '.results[0].id'`
           if [ -z "${DEFECTDOJO_PRODUCTID_COMMON}" ]; then
@@ -151,7 +153,7 @@ jobs:
           echo "GitHub Token: ${{ secrets.TOKEN_FOR_DOS }}"
           # throw error if token is not set
           if [ -z "${{ secrets.TOKEN_FOR_DOS }}" ]; then
-            echo "Error: TOKEN_FOR_DOS is not set. Please set the secret in the dev environment."
+            echo "Error: TOKEN_FOR_DOS is not set. Please set the secret in the dev environment. You need to create a personal access token (classic). In general, you only need read permissions."
             exit 1
           fi
           # check os linux or windows
