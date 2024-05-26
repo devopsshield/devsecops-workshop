@@ -2,7 +2,7 @@ function New-ComplexPassword {
     param (
         [int]$length = 12
     )
-    
+
     $upperCase = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
     $upperCaseArray = $upperCase.ToCharArray()
     $lowerCase = 'abcdefghijklmnopqrstuvwxyz'
@@ -16,16 +16,16 @@ function New-ComplexPassword {
     $randomLowerCase = $lowerCaseArray | Get-Random -Count 1
     $randomNumber = $numbersArray | Get-Random -Count 1
     $randomSpecialChar = $specialCharsArray | Get-Random -Count 1
-    
+
     # Ensure the password includes at least one character from each set
     $initialPassword = $randomUpperCase + 
     $randomLowerCase + 
     $randomNumber + 
     $randomSpecialChar
-    
+
     $allChars = $upperCase + $lowerCase + $numbers + $specialChars
     $allCharsArray = $allChars.ToCharArray()
-    
+
     # Fill the rest of the password up to the desired length
     for ($i = $initialPassword.Length; $i -lt $length; $i++) {
         $initialPassword += $allCharsArray | Get-Random -Count 1

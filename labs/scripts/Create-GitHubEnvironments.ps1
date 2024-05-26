@@ -9,13 +9,22 @@
 #     -kubeConfigFileName "E:\src\GitHub\devopsshield\oss-pygoat-devsecops\infra\onboarding\wrkshp-001-student-001-config-aks-wrkshp-001-s-001"
 
 param (
-    [string] $ghOwner = "devopsabcs-engineering",
-    [string] $ghRepo = "oss-pygoat-devsecops",
-    [string] $dockerName = "crs001fwmpo7kn3hnty",
+    # make mandatory parameters
+    [Parameter(Mandatory = $true)]
+    [string] $ghOwner, # = "devopsabcs-engineering",
+    [Parameter(Mandatory = $true)]
+    [string] $ghRepo, # = "oss-pygoat-devsecops",
+    [Parameter(Mandatory = $true)]
+    [string] $dockerName, # = "crs001fwmpo7kn3hnty",
+    [Parameter(Mandatory = $true)]
     [string] $dockerPassword,
+    [Parameter(Mandatory = $true)]
     [string] $defectDojoProductId,
+    [Parameter(Mandatory = $true)]
     [string] $defectDojoToken,
+    [Parameter(Mandatory = $true)]
     [string] $githubReadOnlyPersonalAccessTokenClassic,
+    # optional parameters - kubeconfig file or base64
     [string] $kubeConfigFileName,
     [string] $kubeConfigBase64
 )
@@ -28,6 +37,18 @@ function New-Environment {
 
     # create GitHub environment
     gh api --method PUT -H "Accept: application/vnd.github+json" repos/$ghOwner/$ghRepo/environments/$EnvironmentName
+}
+
+# ensure GitHub CLI is installed
+if (-not (Get-Command gh -ErrorAction SilentlyContinue)) {
+    Write-Host "GitHub CLI is not installed. Please install it from https://cli.github.com/"
+    exit
+}
+
+# ensure one of kubeconfig file or base64 is provided
+if (-not $kubeConfigFileName -and -not $kubeConfigBase64) {
+    Write-Host "Kubeconfig file or base64 must be provided"
+    exit
 }
 
 # create all environments
