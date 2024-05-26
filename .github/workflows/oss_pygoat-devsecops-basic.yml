@@ -135,10 +135,20 @@ jobs:
       - name: Push Docker image ${{ env.image }}:latest
         if: env.pushDockerImage == 'true'
         run: docker push ${{ env.image }}:latest
+  devsecops-tasks:
+    name: Do DevSecOps Tasks
+    needs:
+      - build-build_and_push_app
+    runs-on: ubuntu-latest
+    environment:
+      name: dev
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4.1.0
   test-run_devopsshield_scan_linux:
     name: Run DevOps Shield Scan Linux
     needs:
-      - build-build_and_push_app
+      - devsecops-tasks
     runs-on: ubuntu-latest
     environment:
       name: dev
@@ -229,7 +239,7 @@ jobs:
   test-run_sca_analysis:
     name: Run SCA Analysis
     needs:
-      - build-build_and_push_app
+      - devsecops-tasks
     runs-on: ubuntu-latest
     env:
       image: ${{ vars.DOCKER_USERNAME }}.azurecr.io/devsecops-pygoat
@@ -279,7 +289,7 @@ jobs:
   test-run_unit_tests:
     name: Run Unit Tests
     needs:
-      - build-build_and_push_app
+      - devsecops-tasks
     runs-on: ubuntu-latest
     steps:
       - name: checkout
@@ -304,7 +314,7 @@ jobs:
   test-run_sast_analysis:
     name: Run SAST Analysis
     needs:
-      - build-build_and_push_app
+      - devsecops-tasks
     runs-on: ubuntu-latest
     steps:
       - name: checkout
