@@ -99,7 +99,7 @@ jobs:
             $throwError = $true
           }
           if (-not $env:KUBE_CONFIG) {
-            Write-Host "Error: KUBE_CONFIG is not set. Please set the secret in the dev environment."
+            Write-Host "Error: KUBE_CONFIG is not set. Please set the secret AS A REPOSITORY SECRET."
             $numberOfErrors++
             $throwError = $true
           }
