@@ -49,49 +49,66 @@ jobs:
     runs-on: ubuntu-latest
     env:
       image: ${{ vars.DOCKER_USERNAME }}.azurecr.io/devsecops-pygoat
+      DEFECTDOJO_PRODUCTID: ${{ vars.DEFECTDOJO_PRODUCTID }}
+      DEFECTDOJO_TOKEN: ${{ secrets.DEFECTDOJO_TOKEN }}
+      DEFECTDOJO_USERNAME: ${{ vars.DEFECTDOJO_USERNAME }}
+      DEFECTDOJO_PASSWORD: ${{ secrets.DEFECTDOJO_PASSWORD }}
+      TOKEN_FOR_DOS: ${{ secrets.TOKEN_FOR_DOS }}
+      KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
     environment:
       name: dev
     steps:
       - name: check all secrets and variables are provided for dev environment
         if: env.useCommonDefectDojoProduct == 'false'
+        shell: pwsh
         run: |-
           echo "advanced settings"
-          echo "DEFECTDOJO_PRODUCTID: ${{ env.DEFECTDOJO_PRODUCTID }}"         
-          echo "DEFECTDOJO_TOKEN: ${{ secrets.DEFECTDOJO_TOKEN }}"
-          echo "DOCKER_USERNAME: ${{ env.DOCKER_USERNAME }}"
-          echo "DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}"          
-          echo "TOKEN_FOR_DOS: ${{ secrets.TOKEN_FOR_DOS }}"
-          echo "KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}"
-          # throw error if any of these are not set
+          echo "DEFECTDOJO_PRODUCTID: $env:DEFECTDOJO_PRODUCTID"         
+          echo "DEFECTDOJO_TOKEN: $env:DEFECTDOJO_TOKEN"
+          echo "DOCKER_USERNAME: $env:DOCKER_USERNAME"
+          echo "DOCKER_PASSWORD: $env:DOCKER_PASSWORD"          
+          echo "TOKEN_FOR_DOS: $env:TOKEN_FOR_DOS"
+          echo "KUBE_CONFIG: $env:KUBE_CONFIG"
+          # throw error if any of these are not set                    
           $throwError = $false
-          if [ -z "${{ env.DEFECTDOJO_PRODUCTID }}" ]; then
-            echo "Error: DEFECTDOJO_PRODUCTID is not set. Please set the variable in the dev environment."
+          $numberOfErrors = 0
+
+          if (-not $env:DEFECTDOJO_PRODUCTID) {
+            Write-Host "Error: DEFECTDOJO_PRODUCTID is not set. Please set the variable in the dev environment."
+            $numberOfErrors++
             $throwError = $true
-          fi
-          if [ -z "${{ secrets.DEFECTDOJO_TOKEN }}" ]; then
-            echo "Error: DEFECTDOJO_TOKEN is not set. Please set the secret in the dev environment."
+          }
+          if (-not $env:DEFECTDOJO_TOKEN) {
+            Write-Host "Error: DEFECTDOJO_TOKEN is not set. Please set the secret in the dev environment."
+            $numberOfErrors++
             $throwError = $true
-          fi
-          if [ -z "${{ env.DOCKER_USERNAME }}" ]; then
-            echo "Error: DOCKER_USERNAME is not set. Please set the variable in the dev environment."
+          }
+          if (-not $env:DOCKER_USERNAME) {
+            Write-Host "Error: DOCKER_USERNAME is not set. Please set the variable in the dev environment."
+            $numberOfErrors++
             $throwError = $true
-          fi
-          if [ -z "${{ secrets.DOCKER_PASSWORD }}" ]; then
-            echo "Error: DOCKER_PASSWORD is not set. Please set the secret in the dev environment."
+          }
+          if (-not $env:DOCKER_PASSWORD) {
+            Write-Host "Error: DOCKER_PASSWORD is not set. Please set the secret in the dev environment."
+            $numberOfErrors++
             $throwError = $true
-          fi
-          if [ -z "${{ secrets.TOKEN_FOR_DOS }}" ]; then
-            echo "Error: TOKEN_FOR_DOS is not set. Please set the secret in the dev environment."
+          }
+          if (-not $env:TOKEN_FOR_DOS) {
+            Write-Host "Error: TOKEN_FOR_DOS is not set. Please set the secret in the dev environment."
+            $numberOfErrors++
             $throwError = $true
-          fi
-          if [ -z "${{ secrets.KUBE_CONFIG }}" ]; then
-            echo "Error: KUBE_CONFIG is not set. Please set the secret in the dev environment."
+          }
+          if (-not $env:KUBE_CONFIG) {
+            Write-Host "Error: KUBE_CONFIG is not set. Please set the secret in the dev environment."
+            $numberOfErrors++
             $throwError = $true
-          fi
+          }
           if ($throwError) {
+            Write-Host "You need to set the above variables to run the pipeline. You have $numberOfErrors errors."
             exit 1
-          } else {
-            echo "All secrets and variables are set. Continuing..."
+          }
+          else {
+            Write-Host "All secrets and variables are set. Continuing..."
             exit 0
           }
       - name: Fixes docker image name if not being pushed to Azure Container Registry
