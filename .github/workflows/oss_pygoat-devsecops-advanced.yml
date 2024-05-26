@@ -1,4 +1,4 @@
-name: OSS_pygoat-devsecops-basic
+name: OSS_pygoat-devsecops-advanced
 on:
   # push:
   #   branches:
