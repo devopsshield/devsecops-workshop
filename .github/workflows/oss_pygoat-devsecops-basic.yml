@@ -145,6 +145,10 @@ jobs:
     steps:
       - name: checkout
         uses: actions/checkout@v4.1.0
+      - name: Gitleaks
+        # You may pin to the exact commit or the version.
+        # uses: gitleaks/gitleaks-action@e6dab246340401bf53eec993b8f05aebe80ac636
+        uses: gitleaks/gitleaks-action@v2.3.4          
   test-run_devopsshield_scan_linux:
     name: Run DevOps Shield Scan Linux
     needs:
