@@ -38,7 +38,8 @@ References:
 ## 3.2 Create new environments, variables, and secrets - advanced pipeline
 
 1. Try running the advanced pipeline and you will quickly see it fail
-2. You can immediately remedy this by running
+![image](https://github.com/devopsshield/devsecops-workshop/assets/112144174/f415605a-e5b8-44bd-800b-abca9a0eb68a)
+3. You can immediately remedy this by running
 ```POWERSHELL
 .\Create-GitHubEnvironments.ps1 -ghOwner emmanuel-knafo `
     -ghRepo devsecops-workshop `
@@ -49,12 +50,7 @@ References:
     -githubReadOnlyPersonalAccessTokenClassic "ghp_pPK*********************************" `
     -kubeConfigFileName "C:\Users\emmanuel.DEVOPSABCS\Downloads\wrkshp-001-student-001-config-aks-wrkshp-001-s-001"
 ```
-7. Inside the `use-environment-prod` job, replace `needs: use-environment-test` with:
-```YAML
-    needs: use-environment-uat
-```
-8. Commit the changes into the `main` branch
-9. Go to `Actions` and see the details of your running workflow
-10. Review your deployment and approve the pending UAT job
-    - [Reviewing deployments](https://docs.github.com/en/actions/managing-workflow-runs/reviewing-deployments)
-11. Go to `Settings` > `Environments` and update the `PROD` environment created to protect it with approvals (same as UAT)
+7. You can grab all the parameter values from the OneDrive file you received:
+![image](https://github.com/devopsshield/devsecops-workshop/assets/112144174/e8e19ef5-f2c0-475c-8980-c80c56bbf176)
+8. Or you can enter each environment secret and variable manually till you get something like:
+
