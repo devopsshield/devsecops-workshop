@@ -37,26 +37,17 @@ References:
 
 ## 3.2 Create new environments, variables, and secrets - advanced pipeline
 
-1. Open the workflow file [environments-secrets.yml](/.github/workflows/environments-secrets.yml)
-2. Edit the file and copy the following YAML content between the test and prod jobs (before the `use-environment-prod:` line):
-```YAML
-
-  use-environment-uat:
-    name: Use UAT environment
-    runs-on: ubuntu-latest
-    if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
-    needs: use-environment-test
-
-    environment:
-      name: UAT
-      url: 'https://uat.github.com'
-    
-    steps:
-      - name: Step that uses the UAT environment
-        run: echo "Deployment to UAT..."
-        env: 
-          env_secret: ${{ secrets.MY_ENV_SECRET }}
-
+1. Try running the advanced pipeline and you will quickly see it fail
+2. You can immediately remedy this by running
+```POWERSHELL
+.\Create-GitHubEnvironments.ps1 -ghOwner emmanuel-knafo `
+    -ghRepo devsecops-workshop `
+    -dockerName crs001fwmpo7kn3hnty `
+    -dockerPassword "Dgv*************************************************" `
+    -defectDojoProductId 6 `
+    -defectDojoToken "607*************************************" `
+    -githubReadOnlyPersonalAccessTokenClassic "ghp_pPK*********************************" `
+    -kubeConfigFileName "C:\Users\emmanuel.DEVOPSABCS\Downloads\wrkshp-001-student-001-config-aks-wrkshp-001-s-001"
 ```
 7. Inside the `use-environment-prod` job, replace `needs: use-environment-test` with:
 ```YAML
