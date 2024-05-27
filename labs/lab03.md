@@ -62,5 +62,5 @@ References:
 ![image](https://github.com/devopsshield/devsecops-workshop/assets/112144174/50900633-57f7-43c5-ae5c-7b20fa5a4ae0)
 9. You can view the deployed app here: http://gh-pygoat.cad4devops.com or find the ip in the deployment such as http://20.175.206.146 :
 ![image](https://github.com/devopsshield/devsecops-workshop/assets/112144174/ba4b6912-f616-4da9-b2ff-2eb1ab118afa)
-10. The [Live Demo of the Pygoat app](http://gh-pygoat.cad4devops.com) is a great way to learn more about DevSecOps
+10. The [Live Demo of the Pygoat app](http://gh-pygoat.cad4devops.com) is a great way to learn more about DevSecOps. Please bear in mind that this app is **intentionally insecure**!
 ![image](https://github.com/devopsshield/devsecops-workshop/assets/112144174/aea2bf6e-538e-465e-821b-6518b047ce92)
