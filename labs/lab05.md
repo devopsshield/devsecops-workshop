@@ -4,6 +4,7 @@ In this lab you will run the DevOps Shield Web App locally from a docker contain
 
 References:
 - [DevOps Shield on DockerHub](https://hub.docker.com/r/devopsshield/devopsshield)
+- [DevOps Shield Live Demo Website](https://demo.devopsshield.com)
 
 ## 5.1 Run the Docker Container of DevOps Shield
 
