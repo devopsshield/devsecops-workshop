@@ -53,4 +53,10 @@ References:
 3. You can grab all the parameter values from the OneDrive file you received:
 ![image](https://github.com/devopsshield/devsecops-workshop/assets/112144174/e8e19ef5-f2c0-475c-8980-c80c56bbf176)
 4. Or you can enter each environment secret and variable manually till you get something like:
+![image](https://github.com/devopsshield/devsecops-workshop/assets/112144174/064215a3-a8d8-4650-950e-d2c1cd93032e)
+![image](https://github.com/devopsshield/devsecops-workshop/assets/112144174/b8a1ecdc-f215-4d12-bc25-500113c05f87)
+![image](https://github.com/devopsshield/devsecops-workshop/assets/112144174/e866fe16-7770-4f57-9942-c500121ceb10)
+6. Then run the advanced pipeline again
+
+
 
