@@ -8,7 +8,7 @@ References:
 
 ## Fork the current repository and enable GitHub Actions
 
-1. Fork the current repository [oss-pygoat-devsecops](https://github.com/devopsshield/oss-pygoat-devsecops)
+1. Fork the current repository [devsecops-workshop](https://github.com/devopsshield/devsecops-workshop)
 2. Optional, copy or clone the repository by importing the repository into your account.
 3. Go to `Actions` and see the warning message
     > Workflows aren’t being run on this forked repository
