@@ -16,7 +16,10 @@ References:
 4. Then add 2 environment secrets called `TOKEN_FOR_DOS` and `DEFECTDOJO_COMMON_PASSWORD`
 ![image](https://github.com/devopsshield/oss-pygoat-devsecops/assets/112144174/7d126c06-17eb-42f8-9d53-25827900c81e)
 6. TOKEN_FOR_DOS should be a GitHub Personal Access Token (classic) with Read Only permissions:
-
+![image](https://github.com/devopsshield/oss-pygoat-devsecops/assets/112144174/a20204fb-1792-4871-8f91-8ba950e71fc4)
+![image](https://github.com/devopsshield/oss-pygoat-devsecops/assets/112144174/afcc91f3-b139-49aa-9afe-7e30b5b65385)
+![image](https://github.com/devopsshield/oss-pygoat-devsecops/assets/112144174/aa20d773-7dc8-4382-82bc-39f7994f0a72)
+![image](https://github.com/devopsshield/oss-pygoat-devsecops/assets/112144174/55c6cf39-2880-42bf-9a15-1cc85b9a6be0)
 6. Update the workflow to also run on push and pull_request events
 ```YAML
 on:
