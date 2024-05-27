@@ -1,13 +1,9 @@
 # 5 - Holistic Compliance View with DevOps Shield UI
-In this lab you will create and use custom actions.
+In this lab you will run the DevOps Shield Web App locally from a docker container on your laptop.
 > Duration: 15-20 minutes
 
 References:
-- [Creating actions](https://docs.github.com/en/actions/creating-actions)
-- [Creating a composite action](https://docs.github.com/en/actions/creating-actions/creating-a-composite-action)
-- [Creating a JavaScript action](https://docs.github.com/en/actions/creating-actions/creating-a-javascript-action)
-- [GitHub Actions Toolkit](https://github.com/actions/toolkit)
-- [actions/github-script](https://github.com/actions/github-script)
+- [DevOps Shield on DockerHub](https://hub.docker.com/r/devopsshield/devopsshield)
 
 ## 5.1 Run the Docker Container of DevOps Shield
 
@@ -30,6 +26,7 @@ docker run -d -p 8080:8080 devopsshield/devopsshield
 7. Explore the results once the scan is done
 ![image](https://github.com/devopsshield/devsecops-workshop/assets/112144174/37005629-4287-4e9f-bf45-e891905b5f9f)
 ![image](https://github.com/devopsshield/devsecops-workshop/assets/112144174/8c6a22ab-a0e9-4030-8091-1fe23678becc)
+![image](https://github.com/devopsshield/devsecops-workshop/assets/112144174/bb2f72d3-bf3e-4be8-9fa9-5bd196e4f346)
 8. Look at also the DevSecOps Controls
 ![image](https://github.com/devopsshield/devsecops-workshop/assets/112144174/187f70ef-8c5d-47dc-9bfa-89d4d816fd15)
 9. Explore the various Policies and Libraries
