@@ -14,7 +14,7 @@ Initially presented at [DevOps Days Montreal 2024](https://devopsdays.org/events
 ### Module 2: Explore Your Kubernetes Cluster
 - [ ] _Hands-on Lab:_ :point_right: [Activity 2](/labs/lab02.md)
 
-### Module 3: Environments and Secrets
+### Module 3: Running the Basic and Advanced DevSecOps Pipelines
 - Example: [environments-secrets.yml](/.github/workflows/environments-secrets.yml)
 - [ ] _Hands-on Lab:_ :point_right: [Activity 3](/labs/lab03.md)
 
