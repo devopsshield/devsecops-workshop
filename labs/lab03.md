@@ -6,6 +6,7 @@ References:
 - [Using environments for deployment](https://docs.github.com/en/actions/deployment/targeting-different-environments/using-environments-for-deployment)
 - [Encrypted secrets](https://docs.github.com/en/actions/security-guides/encrypted-secrets)
 - [Accessing your secrets](https://docs.github.com/en/actions/security-guides/encrypted-secrets#accessing-your-secrets)
+- [Live Demo of the Pygoat app](http://gh-pygoat.cad4devops.com)
 
 ## 3.1 Create new environments, variables, and secrets - basic pipeline
 
