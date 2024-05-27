@@ -24,5 +24,7 @@ References:
 
 ## 4.3 Static Application Security Test with CodeQL
 
-1. Enable CodeQL in GitHub settings
+1. Enable CodeQL in GitHub security settings
+![image](https://github.com/devopsshield/devsecops-workshop/assets/112144174/49a1f30a-7485-4454-bf38-385d19660d32)
+3. Be sure to configure the tool
 
