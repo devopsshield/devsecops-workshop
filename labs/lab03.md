@@ -19,7 +19,7 @@ References:
 ![image](https://github.com/devopsshield/oss-pygoat-devsecops/assets/112144174/a20204fb-1792-4871-8f91-8ba950e71fc4)
 ![image](https://github.com/devopsshield/oss-pygoat-devsecops/assets/112144174/afcc91f3-b139-49aa-9afe-7e30b5b65385)
 ![image](https://github.com/devopsshield/oss-pygoat-devsecops/assets/112144174/aa20d773-7dc8-4382-82bc-39f7994f0a72)
-6. If needed, you can always edit personal access tokens permissions
+6. If needed, you can always edit personal access token permissions
 ![image](https://github.com/devopsshield/oss-pygoat-devsecops/assets/112144174/f782d2c8-e1ff-4ca3-a933-f0174073615e)
 ![image](https://github.com/devopsshield/oss-pygoat-devsecops/assets/112144174/55c6cf39-2880-42bf-9a15-1cc85b9a6be0)
 6. The other secret DEFECTDOJO_COMMONPASSWORD can be found here:
