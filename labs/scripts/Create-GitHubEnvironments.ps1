@@ -1,19 +1,19 @@
 # # Example:
 # .\Create-GitHubEnvironments.ps1 -ghOwner emmanuel-knafo `
-#     -ghRepo oss-pygoat-devsecops `
+#     -ghRepo devsecops-workshop `
 #     -dockerName crs001fwmpo7kn3hnty `
 #     -dockerPassword "Dgv*************************************************" `
 #     -defectDojoProductId 6 `
 #     -defectDojoToken "607*************************************" `
 #     -githubReadOnlyPersonalAccessTokenClassic "ghp_pPK*********************************" `
-#     -kubeConfigFileName "E:\src\GitHub\devopsshield\oss-pygoat-devsecops\infra\onboarding\wrkshp-001-student-001-config-aks-wrkshp-001-s-001"
+#     -kubeConfigFileName "C:\Users\emmanuel.DEVOPSABCS\Downloads\wrkshp-001-student-001-config-aks-wrkshp-001-s-001"
 
 param (
     # make mandatory parameters
     [Parameter(Mandatory = $true)]
     [string] $ghOwner, # = "devopsabcs-engineering",
     [Parameter(Mandatory = $true)]
-    [string] $ghRepo, # = "oss-pygoat-devsecops",
+    [string] $ghRepo, # = "devsecops-workshop",
     [Parameter(Mandatory = $true)]
     [string] $dockerName, # = "crs001fwmpo7kn3hnty",
     [Parameter(Mandatory = $true)]
@@ -31,7 +31,7 @@ param (
 function New-Environment {
     param (
         [string] $EnvironmentName = "OSS_pygoat-test",
-        [string] $ghOwner = "devopsabcs-engineering",
+        [string] $ghOwner = "devsecops-workshop",
         [string] $ghRepo = "oss-pygoat-devsecops"
     )
 
