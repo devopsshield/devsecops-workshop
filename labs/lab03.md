@@ -20,17 +20,11 @@ References:
 ![image](https://github.com/devopsshield/oss-pygoat-devsecops/assets/112144174/afcc91f3-b139-49aa-9afe-7e30b5b65385)
 ![image](https://github.com/devopsshield/oss-pygoat-devsecops/assets/112144174/aa20d773-7dc8-4382-82bc-39f7994f0a72)
 ![image](https://github.com/devopsshield/oss-pygoat-devsecops/assets/112144174/55c6cf39-2880-42bf-9a15-1cc85b9a6be0)
-6. Update the workflow to also run on push and pull_request events
-```YAML
-on:
-  push:
-     branches: [main]
-  pull_request:
-     branches: [main]
-  workflow_dispatch:    
-```
-7. Commit the changes into the `main` branch
-8. Go to `Actions` and see the details of your running workflow
+6. The other secret DEFECTDOJO_COMMON_PASSWORD can be found here:
+![image](https://github.com/devopsshield/oss-pygoat-devsecops/assets/112144174/88fe0bce-1933-4021-b15a-09cf3329f3f8)
+7. Once both secrets are entered
+![image](https://github.com/devopsshield/oss-pygoat-devsecops/assets/112144174/efde6e19-42a9-4431-8d83-f069a03bb0df)
+9. Go ahead and run the basic pipeline!
 
 
 ## 3.2 Create new environments, variables, and secrets - advanced pipeline
