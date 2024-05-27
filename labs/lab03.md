@@ -1,4 +1,4 @@
-# 3 - Environments and Secrets
+# 3 - Running the Basic and Advanced DevSecOps Pipelines
 In this lab you will use environments and secrets.
 > Duration: 10-15 minutes
 
