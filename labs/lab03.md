@@ -31,6 +31,9 @@ References:
 10. When all is done:
 ![image](https://github.com/devopsshield/oss-pygoat-devsecops/assets/112144174/efa09478-6536-433b-ab72-2c2ed7293b8d)
 ![image](https://github.com/devopsshield/oss-pygoat-devsecops/assets/112144174/a1c0f519-924c-4362-af13-a81ee3e04b2d)
+11. Modify the GitHub PAT to see the errors detected by DevOps Shield Scanner. Additionally, see the compliance get better as you add more GitHub actions that improve your DevSecOps.
+![image](https://github.com/devopsshield/oss-pygoat-devsecops/assets/112144174/28beb9b0-3b2a-4298-9b70-ee450273e233)
+
 
 ## 3.2 Create new environments, variables, and secrets - advanced pipeline
 
