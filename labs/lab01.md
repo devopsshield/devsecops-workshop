@@ -4,8 +4,7 @@ For the purposes of this lab, we will assume we are **Student003** of **Workshop
 > Duration: 5-10 minutes
 
 References:
-- [Events that trigger workflows](https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows)
-- [Adding an action to your workflow](https://docs.github.com/en/actions/learn-github-actions/finding-and-customizing-actions#adding-an-action-to-your-workflow)
+- [Defect Dojo Website](https://www.defectdojo.org/)
 
 ## 1.1 Log in
 
