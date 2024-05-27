@@ -153,33 +153,8 @@ jobs:
       #   env:
       #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       #     #GITLEAKS_LICENSE: ${{ secrets.GITLEAKS_LICENSE}} # Only required for Organizations, not personal accounts.
-      # - name: Depcheck
-      #   uses: dependency-check/Dependency-Check_Action@main
-      #   id: Depcheck
-      #   with:
-      #     project: 'test'
-      #     path: '.'
-      #     format: 'HTML'
-      #     out: 'reports' # this is the default, no need to specify unless you wish to override it
-      #     args: >
-      #       --failOnCVSS 7
-      #       --enableRetired
-      # - name: Upload Test results
-      #   uses: actions/upload-artifact@master
-      #   with:
-      #      name: Depcheck report
-      #      path: ${{github.workspace}}/reports
       - name: Dependency Review
         uses: actions/dependency-review-action@v4.3.2
-        with:
-          # Token for the repository. Can be passed in using `{{ secrets.GITHUB_TOKEN }}`.
-          repo-token: ${{ github.token }} # optional, default is ${{ github.token }}
-          # A boolean to determine if license checks should be performed
-          license-check: true # optional
-          # A boolean to determine if vulnerability checks should be performed
-          vulnerability-check: true # optional          
-          # Show a summary of the OpenSSF Scorecard scores.
-          show-openssf-scorecard: true # optional          
   test-run_devopsshield_scan_linux:
     name: Run DevOps Shield Scan Linux
     needs:
