@@ -11,8 +11,8 @@ References:
 
 1. In order to run the basic pipeline, you must first enable workflows.
 ![image](https://github.com/devopsshield/oss-pygoat-devsecops/assets/112144174/cd0f7635-4157-447a-bf7a-a6865e7a918e)
-2. Follow the guide to create a new repository secret called `MY_REPO_SECRET`
-    - [Creating encrypted secrets for a repository](https://docs.github.com/en/actions/security-guides/encrypted-secrets#creating-encrypted-secrets-for-a-repository)
+2. Create an environment called `dev`
+![image](https://github.com/devopsshield/oss-pygoat-devsecops/assets/112144174/212b5619-5a9f-4ccd-adcb-23627ff50228)
 4. Open the workflow file [environments-secrets.yml](/.github/workflows/environments-secrets.yml)
 5. Edit the file and copy the following YAML content as a first job (after the `jobs:` line):
 ```YAML
