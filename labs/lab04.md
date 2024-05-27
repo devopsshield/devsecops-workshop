@@ -32,6 +32,4 @@ References:
 ![image](https://github.com/devopsshield/devsecops-workshop/assets/112144174/d21d21dd-a839-4665-8807-9836172fcc1c)
 6. After a scan, you should see some security vulnerabilities
 ![image](https://github.com/devopsshield/devsecops-workshop/assets/112144174/7bf6aeb6-5f64-4498-ab76-a166bb86c551)
-
-
-
+![image](https://github.com/devopsshield/devsecops-workshop/assets/112144174/d74ea483-e82e-4dcc-aae0-6bab275487d7)
