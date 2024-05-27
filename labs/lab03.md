@@ -9,10 +9,8 @@ References:
 
 ## 3.1 Create new environments, variables, and secrets - basic pipeline
 
-1. Follow the guide to create a new environment called `UAT`, add a reviewer and an environment variable.
-    - [Creating an environment](https://docs.github.com/en/actions/deployment/targeting-different-environments/using-environments-for-deployment#creating-an-environment)
-    - [Add required reviewers](https://docs.github.com/en/actions/deployment/targeting-different-environments/using-environments-for-deployment#required-reviewers)
-    - [Create an encrypted secret in the environment](https://docs.github.com/en/actions/security-guides/encrypted-secrets#creating-encrypted-secrets-for-an-environment) called `MY_ENV_SECRET`.
+1. In order to run the basic pipeline, you must first enable workflows.
+![image](https://github.com/devopsshield/oss-pygoat-devsecops/assets/112144174/cd0f7635-4157-447a-bf7a-a6865e7a918e)
 2. Follow the guide to create a new repository secret called `MY_REPO_SECRET`
     - [Creating encrypted secrets for a repository](https://docs.github.com/en/actions/security-guides/encrypted-secrets#creating-encrypted-secrets-for-a-repository)
 4. Open the workflow file [environments-secrets.yml](/.github/workflows/environments-secrets.yml)
