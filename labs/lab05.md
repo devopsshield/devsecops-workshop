@@ -1,4 +1,4 @@
-# 5 - Custom actions
+# 5 - Holistic Compliance View with DevOps Shield UI
 In this lab you will create and use custom actions.
 > Duration: 15-20 minutes
 
@@ -9,9 +9,12 @@ References:
 - [GitHub Actions Toolkit](https://github.com/actions/toolkit)
 - [actions/github-script](https://github.com/actions/github-script)
 
-## 5.1 Use the github-script action to apply a label to an issue
+## 5.1 Run the Docker Container of DevOps Shield
 
-1. Open the workflow file [github-script.yml](/.github/workflows/github-script.yml)
+1. As per [DevOps Shield on DockerHub](https://hub.docker.com/r/devopsshield/devopsshield)
+```
+docker run -d -p 8080:8080 devopsshield/devopsshield
+```
 2. Edit the file and copy the following YAML content at the end of the file:
 ```YAML
   apply-label:

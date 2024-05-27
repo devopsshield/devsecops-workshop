@@ -24,9 +24,7 @@ References:
 - [ ] Module 1: Introduction to Defect Dojo
 - [ ] Module 2: Explore Your Kubernetes Cluster
 - [ ] Module 3: Running the Basic and Advanced DevSecOps Pipelines
-- [ ] Module 4: Workflow Templates
-- [ ] Module 5: Custom actions
-- [ ] Module 6: Self-hosted runners
-- [ ] Module 7: CI/CD
+- [ ] Module 4: Adding Additional DevSecOps Controls
+- [ ] Module 5: Holistic Compliance View with DevOps Shield UI
 ```
 7. Fetch upstream to get the latest changes from the upstream repository
