@@ -7,7 +7,7 @@ References:
 - [Using jobs in a workflow](https://docs.github.com/en/actions/using-jobs/using-jobs-in-a-workflow)
 - [Environment variables](https://docs.github.com/en/actions/learn-github-actions/environment-variables)
 
-## 2.1 Add new jobs with dependencies
+## 2.1 If you intend to run the advanced DevSecOps pipeline...
 
 1. Download the kubeconfig file from OneDrive
 ![image](https://github.com/devopsshield/oss-pygoat-devsecops/assets/112144174/72354cb0-461e-4077-a951-a2e207782148)
