@@ -15,33 +15,14 @@ Initially presented at [DevOps Days Montreal 2024](https://devopsdays.org/events
 - [ ] _Hands-on Lab:_ :point_right: [Activity 2](/labs/lab02.md)
 
 ### Module 3: Running the Basic and Advanced DevSecOps Pipelines
-- Example: [environments-secrets.yml](/.github/workflows/environments-secrets.yml)
 - [ ] _Hands-on Lab:_ :point_right: [Activity 3](/labs/lab03.md)
 
 ### Module 4: Adding Additional DevSecOps Controls
-- Example: [reusable-workflow-template.yml](/.github/workflows/reusable-workflow-template.yml)
-- Example: [super-linter.yml](/.github/workflows/super-linter.yml)
 - [ ] _Hands-on Lab:_ :point_right: [Activity 4](/labs/lab04.md)
 
-### Module 5: Custom actions
-- Example: [github-script.yml](/.github/workflows/github-script.yml)
-- Example: [hello-world-composite.yml](/.github/workflows/hello-world-composite.yml)
-- Example: [use-custom-actions.yml](/.github/workflows/use-custom-actions.yml)
-- Repo: [githubabcs/hello-world-composite-action](https://github.com/githubabcs/hello-world-composite-action)
-- Repo: [write-docker-actions](https://github.com/CalinL/write-docker-actions)
-- Repo: [write-javascript-actions](https://github.com/CalinL/writing-javascript-actions)
+### Module 5: Holistic Compliance View with DevOps Shield UI
 - [ ] _Hands-on Lab:_ :point_right: [Activity 5](/labs/lab05.md)
 
-### Module 6: Self-hosted runners
-- Example: [self-hosted-linux.yml](/.github/workflows/self-hosted-linux.yml)
-- [ ] _Hands-on Lab:_ :point_right: [Activity 6](/labs/lab06.md)
-
-### Module 7: CI/CD
-- Example: [ci-workflow.yml](/.github/workflows/ci-workflow.yml)
-- Example: [cd-workflow.yml](/.github/workflows/cd-workflow.yml)
-- Repo: [github-actions-for-packages](https://github.com/CalinL/github-actions-for-packages)
-- Repo: [github-actions-for-ci](https://github.com/CalinL/github-actions-for-ci)
-- [ ] _Hands-on Lab:_ :point_right: [Activity 7](/labs/lab07.md)
 
 ---
 
