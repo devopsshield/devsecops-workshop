@@ -19,7 +19,8 @@ docker run -d -p 8080:8080 devopsshield/devopsshield
 2. Log into http://localhost:8080 with username **devopsshield** and password **devopsshield**
 ![image](https://github.com/devopsshield/devsecops-workshop/assets/112144174/24c1b52e-4a12-4c9a-89c0-155bc5f00358)
 ![image](https://github.com/devopsshield/devsecops-workshop/assets/112144174/46389907-1f3e-49b8-b6e5-0b81a9886001)
-3. Once logged in, 
+3. Once logged in, click Setup Configuration
+![image](https://github.com/devopsshield/devsecops-workshop/assets/112144174/ec0a50d3-6773-4cd1-ad1f-8b0ef665083b)
 4. Open a new issue or edit an exiting one to trigger the workflow. If the `Issues` tab is not visible, open your repository settings and enable it.
 5. Go to `Actions` and see the details of your running workflow
 6. After the workflow completes, a new label should be applied to your issue
