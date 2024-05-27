@@ -13,21 +13,21 @@ References:
 ![image](https://github.com/devopsshield/oss-pygoat-devsecops/assets/112144174/cd0f7635-4157-447a-bf7a-a6865e7a918e)
 2. Create an environment called `dev`
 ![image](https://github.com/devopsshield/oss-pygoat-devsecops/assets/112144174/212b5619-5a9f-4ccd-adcb-23627ff50228)
-4. Then add 2 environment secrets called `TOKEN_FOR_DOS` and `DEFECTDOJO_COMMON_PASSWORD`
+4. Then add 2 environment secrets called `TOKEN_FOR_DOS` and `DEFECTDOJO_COMMONPASSWORD`
 ![image](https://github.com/devopsshield/oss-pygoat-devsecops/assets/112144174/7d126c06-17eb-42f8-9d53-25827900c81e)
 6. TOKEN_FOR_DOS should be a GitHub Personal Access Token (classic) with Read Only permissions:
 ![image](https://github.com/devopsshield/oss-pygoat-devsecops/assets/112144174/a20204fb-1792-4871-8f91-8ba950e71fc4)
 ![image](https://github.com/devopsshield/oss-pygoat-devsecops/assets/112144174/afcc91f3-b139-49aa-9afe-7e30b5b65385)
 ![image](https://github.com/devopsshield/oss-pygoat-devsecops/assets/112144174/aa20d773-7dc8-4382-82bc-39f7994f0a72)
 ![image](https://github.com/devopsshield/oss-pygoat-devsecops/assets/112144174/55c6cf39-2880-42bf-9a15-1cc85b9a6be0)
-6. The other secret DEFECTDOJO_COMMON_PASSWORD can be found here:
+6. The other secret DEFECTDOJO_COMMONPASSWORD can be found here:
 ![image](https://github.com/devopsshield/oss-pygoat-devsecops/assets/112144174/88fe0bce-1933-4021-b15a-09cf3329f3f8)
 7. Once both secrets are entered
-![image](https://github.com/devopsshield/oss-pygoat-devsecops/assets/112144174/efde6e19-42a9-4431-8d83-f069a03bb0df)
+![image](https://github.com/devopsshield/oss-pygoat-devsecops/assets/112144174/07342ca1-832d-434c-8581-17e52cec7341)
 9. Go ahead and run the basic pipeline!
 ![image](https://github.com/devopsshield/oss-pygoat-devsecops/assets/112144174/df5be1dc-45d5-459d-992e-46ef6d13f05e)
 10. When all is done:
-
+![image](https://github.com/devopsshield/oss-pygoat-devsecops/assets/112144174/efa09478-6536-433b-ab72-2c2ed7293b8d)
 
 ## 3.2 Create new environments, variables, and secrets - advanced pipeline
 
