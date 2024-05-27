@@ -28,3 +28,7 @@ docker run -d -p 8080:8080 devopsshield/devopsshield
 6. Now click on start setup now
 ![image](https://github.com/devopsshield/devsecops-workshop/assets/112144174/3ea36eb2-95ca-4884-8700-723fe1c7f6c4)
 7. Explore the results once the scan is done
+![image](https://github.com/devopsshield/devsecops-workshop/assets/112144174/37005629-4287-4e9f-bf45-e891905b5f9f)
+![image](https://github.com/devopsshield/devsecops-workshop/assets/112144174/8c6a22ab-a0e9-4030-8091-1fe23678becc)
+8. Look at also the DevSecOps Controls
+![image](https://github.com/devopsshield/devsecops-workshop/assets/112144174/187f70ef-8c5d-47dc-9bfa-89d4d816fd15)
