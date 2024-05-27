@@ -27,4 +27,9 @@ References:
 1. Enable CodeQL in GitHub security settings
 ![image](https://github.com/devopsshield/devsecops-workshop/assets/112144174/49a1f30a-7485-4454-bf38-385d19660d32)
 3. Be sure to configure the tool
+![image](https://github.com/devopsshield/devsecops-workshop/assets/112144174/c2f5d15e-35dc-408c-9a34-bee0a70647e7)
+4. Click Enable CodeQL
+![image](https://github.com/devopsshield/devsecops-workshop/assets/112144174/d21d21dd-a839-4665-8807-9836172fcc1c)
+6. After a scan, you should see some security vulnerabilities
+
 
