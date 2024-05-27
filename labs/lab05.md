@@ -15,22 +15,11 @@ References:
 ```
 docker run -d -p 8080:8080 devopsshield/devopsshield
 ```
-2. Edit the file and copy the following YAML content at the end of the file:
-```YAML
-  apply-label:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/github-script@v7
-        with:
-          script: |
-            github.rest.issues.addLabels({
-              issue_number: context.issue.number,
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              labels: ['Training']
-            })
-```
-3. Commit the changes into the `main` branch
+![image](https://github.com/devopsshield/devsecops-workshop/assets/112144174/7ca6e4bf-da09-42b2-b4db-b492cdd01f25)
+2. Log into http://localhost:8080 with username **devopsshield** and password **devopsshield**
+![image](https://github.com/devopsshield/devsecops-workshop/assets/112144174/24c1b52e-4a12-4c9a-89c0-155bc5f00358)
+![image](https://github.com/devopsshield/devsecops-workshop/assets/112144174/46389907-1f3e-49b8-b6e5-0b81a9886001)
+3. Once logged in, 
 4. Open a new issue or edit an exiting one to trigger the workflow. If the `Issues` tab is not visible, open your repository settings and enable it.
 5. Go to `Actions` and see the details of your running workflow
 6. After the workflow completes, a new label should be applied to your issue
