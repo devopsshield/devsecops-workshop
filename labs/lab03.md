@@ -25,6 +25,8 @@ References:
 7. Once both secrets are entered
 ![image](https://github.com/devopsshield/oss-pygoat-devsecops/assets/112144174/efde6e19-42a9-4431-8d83-f069a03bb0df)
 9. Go ahead and run the basic pipeline!
+![image](https://github.com/devopsshield/oss-pygoat-devsecops/assets/112144174/df5be1dc-45d5-459d-992e-46ef6d13f05e)
+10. When all is done:
 
 
 ## 3.2 Create new environments, variables, and secrets - advanced pipeline
