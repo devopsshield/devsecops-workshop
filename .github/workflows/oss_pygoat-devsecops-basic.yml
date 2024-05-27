@@ -155,6 +155,9 @@ jobs:
       #     #GITLEAKS_LICENSE: ${{ secrets.GITLEAKS_LICENSE}} # Only required for Organizations, not personal accounts.
       - name: Dependency Review
         uses: actions/dependency-review-action@v4.3.2
+        with:
+          base-ref: ${{ github.ref }}
+          head-ref: ${{ github.sha }}
   test-run_devopsshield_scan_linux:
     name: Run DevOps Shield Scan Linux
     needs:
