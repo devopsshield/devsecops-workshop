@@ -6,6 +6,8 @@ References:
 - [Using environments for deployment](https://docs.github.com/en/actions/deployment/targeting-different-environments/using-environments-for-deployment)
 - [Encrypted secrets](https://docs.github.com/en/actions/security-guides/encrypted-secrets)
 - [Accessing your secrets](https://docs.github.com/en/actions/security-guides/encrypted-secrets#accessing-your-secrets)
+- [OWASP: Pygoat Project](https://owasp.org/www-project-pygoat/)
+- [Pygoat app on GitHub](https://github.com/adeyosemanputra/pygoat)
 
 ## 3.1 Create new environments, variables, and secrets - basic pipeline
 
