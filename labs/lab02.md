@@ -3,9 +3,7 @@ In this lab you will explore your kubernetes cluster using kubectl.
 > Duration: 5-10 minutes
 
 References:
-- [Workflow syntax for GitHub Actions](https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions)
-- [Using jobs in a workflow](https://docs.github.com/en/actions/using-jobs/using-jobs-in-a-workflow)
-- [Environment variables](https://docs.github.com/en/actions/learn-github-actions/environment-variables)
+- [Learn Kubernetes Basics]https://kubernetes.io/docs/tutorials/kubernetes-basics/)
 
 ## 2.1 If you intend to run the advanced DevSecOps pipeline...
 
