@@ -57,6 +57,13 @@ References:
 ![image](https://github.com/devopsshield/devsecops-workshop/assets/112144174/b8a1ecdc-f215-4d12-bc25-500113c05f87)
 ![image](https://github.com/devopsshield/devsecops-workshop/assets/112144174/e866fe16-7770-4f57-9942-c500121ceb10)
 6. Then run the advanced pipeline again
+![image](https://github.com/devopsshield/devsecops-workshop/assets/112144174/87935f10-003c-4a46-a76c-3973b17e35fa)
+7. It should end like this:
+![image](https://github.com/devopsshield/devsecops-workshop/assets/112144174/50900633-57f7-43c5-ae5c-7b20fa5a4ae0)
+9. You can view the deployed app here: http://gh-pygoat.cad4devops.com or find the ip in the deployment such as http://20.175.206.146 :
+![image](https://github.com/devopsshield/devsecops-workshop/assets/112144174/ba4b6912-f616-4da9-b2ff-2eb1ab118afa)
+
+
 
 
 
