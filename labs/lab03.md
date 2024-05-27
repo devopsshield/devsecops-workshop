@@ -50,7 +50,7 @@ References:
     -githubReadOnlyPersonalAccessTokenClassic "ghp_pPK*********************************" `
     -kubeConfigFileName "C:\Users\emmanuel.DEVOPSABCS\Downloads\wrkshp-001-student-001-config-aks-wrkshp-001-s-001"
 ```
-7. You can grab all the parameter values from the OneDrive file you received:
+3. You can grab all the parameter values from the OneDrive file you received:
 ![image](https://github.com/devopsshield/devsecops-workshop/assets/112144174/e8e19ef5-f2c0-475c-8980-c80c56bbf176)
-8. Or you can enter each environment secret and variable manually till you get something like:
+4. Or you can enter each environment secret and variable manually till you get something like:
 
