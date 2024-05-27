@@ -13,28 +13,10 @@ References:
 ![image](https://github.com/devopsshield/oss-pygoat-devsecops/assets/112144174/cd0f7635-4157-447a-bf7a-a6865e7a918e)
 2. Create an environment called `dev`
 ![image](https://github.com/devopsshield/oss-pygoat-devsecops/assets/112144174/212b5619-5a9f-4ccd-adcb-23627ff50228)
-4. Open the workflow file [environments-secrets.yml](/.github/workflows/environments-secrets.yml)
-5. Edit the file and copy the following YAML content as a first job (after the `jobs:` line):
-```YAML
+4. Then add 2 environment secrets called `TOKEN_FOR_DOS` and `DEFECTDOJO_COMMON_PASSWORD`
+![image](https://github.com/devopsshield/oss-pygoat-devsecops/assets/112144174/7d126c06-17eb-42f8-9d53-25827900c81e)
+6. TOKEN_FOR_DOS should be a GitHub Personal Access Token (classic) with Read Only permissions:
 
-  use-secrets:
-    name: Use secrets
-    runs-on: ubuntu-latest
-    if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
-    steps:
-      - name: Hello world action with secrets
-        uses: actions/hello-world-javascript-action@main
-        with: # Set the secret as an input
-          who-to-greet: ${{ secrets.MY_REPO_SECRET }}
-        env: # Or as an environment variable
-          super_secret: ${{ secrets.MY_REPO_SECRET }}
-      - name: Echo secret is redacted in the logs
-        run: |
-          echo Env secret is ${{ secrets.MY_REPO_SECRET }}
-          echo Warning: GitHub automatically redacts secrets printed to the log, 
-          echo          but you should avoid printing secrets to the log intentionally.
-          echo ${{ secrets.MY_REPO_SECRET }} | sed 's/./& /g'
-```
 6. Update the workflow to also run on push and pull_request events
 ```YAML
 on:
