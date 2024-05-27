@@ -3,7 +3,7 @@ In this lab you will explore your kubernetes cluster using kubectl.
 > Duration: 5-10 minutes
 
 References:
-- [Learn Kubernetes Basics]https://kubernetes.io/docs/tutorials/kubernetes-basics/)
+- [Learn Kubernetes Basics](https://kubernetes.io/docs/tutorials/kubernetes-basics/)
 
 ## 2.1 If you intend to run the advanced DevSecOps pipeline...
 
