@@ -23,7 +23,7 @@ References:
 - [x] Hands-on Labs Setup
 - [ ] Module 1: Introduction to Defect Dojo
 - [ ] Module 2: Explore Your Kubernetes Cluster
-- [ ] Module 3: Environments and Secrets
+- [ ] Module 3: Running the Basic and Advanced DevSecOps Pipelines
 - [ ] Module 4: Workflow Templates
 - [ ] Module 5: Custom actions
 - [ ] Module 6: Self-hosted runners
