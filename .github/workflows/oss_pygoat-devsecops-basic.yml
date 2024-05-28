@@ -6,11 +6,11 @@ on:
   workflow_dispatch:
 
 permissions:
-  id-token: write
+  # The permissions for azure federation
+  #id-token: write
   #contents: read
-  contents: write
-  pull-requests: write
-  repository-projects: write
+  # write to security events
+  security-events: write
 
 env:
   #DEFECTDOJO_PRODUCTID: 4
