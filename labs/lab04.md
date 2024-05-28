@@ -7,6 +7,7 @@ References:
 - [OWASP Dependency-Review GitHub Action](https://github.com/actions/dependency-review-action)
 - [CodeQL](https://codeql.github.com/)
 - [Microsoft Security DevOps (MSDO)](https://github.com/microsoft/security-devops-action)
+- [GitHub Trivy Action](https://github.com/aquasecurity/trivy-action)
 
 ## 4.1 Secret Scanning with Gitleaks
 
