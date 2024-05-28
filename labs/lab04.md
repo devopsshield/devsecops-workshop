@@ -6,6 +6,7 @@ References:
 - [Gitleaks.io](https://gitleaks.io/)
 - [OWASP Dependency-Review GitHub Action](https://github.com/actions/dependency-review-action)
 - [CodeQL](https://codeql.github.com/)
+- [Microsoft Security DevOps (MSDO)](https://github.com/microsoft/security-devops-action)
 
 ## 4.1 Secret Scanning with Gitleaks
 
@@ -34,3 +35,7 @@ References:
 6. After a scan, you should see some security vulnerabilities
 ![image](https://github.com/devopsshield/devsecops-workshop/assets/112144174/7bf6aeb6-5f64-4498-ab76-a166bb86c551)
 ![image](https://github.com/devopsshield/devsecops-workshop/assets/112144174/d74ea483-e82e-4dcc-aae0-6bab275487d7)
+
+## 4.4 Container Scanning with Microsoft Security DevOps (MSDO)
+
+1. uncomment these two actions:
