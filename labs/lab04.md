@@ -38,4 +38,7 @@ References:
 
 ## 4.4 Container Scanning with Microsoft Security DevOps (MSDO)
 
-1. uncomment these two actions:
+1. uncomment this trivy action:
+![image](https://github.com/devopsshield/devsecops-workshop/assets/112144174/0166f0c2-8219-4ad4-822e-ccd6bba6d235)
+1. and these two actions
+![image](https://github.com/devopsshield/devsecops-workshop/assets/112144174/f88b04ad-1408-4b19-8224-a1d5a39c25a4)
