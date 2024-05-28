@@ -18,8 +18,8 @@ References:
 
 1. prerequisite
 ![image](https://github.com/devopsshield/devsecops-workshop/assets/112144174/6a37ed61-fb3e-4a64-adc6-1d9d64e1b51b)
-1. Uncomment the actions ```dependency-check/Dependency-Check_Action@main```
-![image](https://github.com/devopsshield/devsecops-workshop/assets/112144174/69843416-215b-440f-ba3a-b5c83f393ae5)
+1. Uncomment the actions ```actions/dependency-review-action```
+![image](https://github.com/devopsshield/devsecops-workshop/assets/112144174/8b01c834-a9a5-4316-b2f8-0575828b5dc4)
 1. See the pipeline run
 ![image](https://github.com/devopsshield/devsecops-workshop/assets/112144174/5a573256-dd04-4783-b91d-18e3016595da)
 
