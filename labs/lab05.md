@@ -29,6 +29,6 @@ docker run -d -p 8080:8080 devopsshield/devopsshield
 ![image](https://github.com/devopsshield/devsecops-workshop/assets/112144174/8c6a22ab-a0e9-4030-8091-1fe23678becc)
 ![image](https://github.com/devopsshield/devsecops-workshop/assets/112144174/bb2f72d3-bf3e-4be8-9fa9-5bd196e4f346)
 8. Look at also the DevSecOps Controls
-![image](https://github.com/devopsshield/devsecops-workshop/assets/112144174/187f70ef-8c5d-47dc-9bfa-89d4d816fd15)
+![image](https://github.com/devopsshield/devsecops-workshop/assets/112144174/3c6f8dd0-8085-4613-b75b-45da49f7aea0)
 9. Explore the various Policies and Libraries
 ![image](https://github.com/devopsshield/devsecops-workshop/assets/112144174/06ae39ce-0903-428e-850f-0e6f83a08d93)
