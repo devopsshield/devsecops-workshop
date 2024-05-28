@@ -6,8 +6,11 @@ on:
   workflow_dispatch:
 
 permissions:
-  id-token: write
-  contents: read
+  # The permissions for azure federation
+  #id-token: write
+  #contents: read
+  # write to security events
+  security-events: write
 
 env:
   #DEFECTDOJO_PRODUCTID: 4
@@ -194,6 +197,13 @@ jobs:
       - name: Push Docker image ${{ env.image }}:latest
         if: env.pushDockerImage == 'true'
         run: docker push ${{ env.image }}:latest
+      # - name: Aqua Security Trivy
+      #   # You may pin to the exact commit or the version.
+      #   # uses: aquasecurity/trivy-action@fd25fed6972e341ff0007ddb61f77e88103953c2
+      #   uses: aquasecurity/trivy-action@0.21.0
+      #   with:
+      #     # image reference(for backward compatibility)
+      #     image-ref: ${{ env.image }}:latest
   devsecops-tasks:
     name: Do DevSecOps Tasks
     needs:
@@ -225,6 +235,13 @@ jobs:
       #     vulnerability-check: true # optional
       #     # Show a summary of the OpenSSF Scorecard scores.
       #     show-openssf-scorecard: true # optional
+      # - name: Run Microsoft Security DevOps
+      #   uses: microsoft/security-devops-action@v1
+      #   id: msdo
+      # - name: Upload results to Security tab
+      #   uses: github/codeql-action/upload-sarif@v2
+      #   with:
+      #     sarif_file: ${{ steps.msdo.outputs.sarifFile }}
   test-run_devopsshield_scan_linux:
     name: Run DevOps Shield Scan Linux
     needs:

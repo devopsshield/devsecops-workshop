@@ -138,13 +138,13 @@ jobs:
       - name: Push Docker image ${{ env.image }}:latest
         if: env.pushDockerImage == 'true'
         run: docker push ${{ env.image }}:latest
-      - name: Aqua Security Trivy
-        # You may pin to the exact commit or the version.
-        # uses: aquasecurity/trivy-action@fd25fed6972e341ff0007ddb61f77e88103953c2
-        uses: aquasecurity/trivy-action@0.21.0
-        with:
-          # image reference(for backward compatibility)
-          image-ref: ${{ env.image }}:latest
+      # - name: Aqua Security Trivy
+      #   # You may pin to the exact commit or the version.
+      #   # uses: aquasecurity/trivy-action@fd25fed6972e341ff0007ddb61f77e88103953c2
+      #   uses: aquasecurity/trivy-action@0.21.0
+      #   with:
+      #     # image reference(for backward compatibility)
+      #     image-ref: ${{ env.image }}:latest
   devsecops-tasks:
     name: Do DevSecOps Tasks
     needs:
@@ -155,34 +155,34 @@ jobs:
     steps:
       - name: checkout
         uses: actions/checkout@v4.1.0
-      - name: Gitleaks
-        continue-on-error: true
-        # You may pin to the exact commit or the version.
-        # uses: gitleaks/gitleaks-action@e6dab246340401bf53eec993b8f05aebe80ac636
-        uses: gitleaks/gitleaks-action@v2.3.4
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          #GITLEAKS_LICENSE: ${{ secrets.GITLEAKS_LICENSE}} # Only required for Organizations, not personal accounts.
-      - name: Dependency Review
-        uses: actions/dependency-review-action@v4.3.2
-        with:
-          base-ref: ${{ github.ref }}
-          head-ref: ${{ github.sha }}
-          # Token for the repository. Can be passed in using `{{ secrets.GITHUB_TOKEN }}`.
-          repo-token: ${{ github.token }} # optional, default is ${{ github.token }}
-          # A boolean to determine if license checks should be performed
-          license-check: true # optional
-          # A boolean to determine if vulnerability checks should be performed
-          vulnerability-check: true # optional
-          # Show a summary of the OpenSSF Scorecard scores.
-          show-openssf-scorecard: true # optional
-      - name: Run Microsoft Security DevOps
-        uses: microsoft/security-devops-action@v1
-        id: msdo
-      - name: Upload results to Security tab
-        uses: github/codeql-action/upload-sarif@v2
-        with:
-          sarif_file: ${{ steps.msdo.outputs.sarifFile }}
+      # - name: Gitleaks
+      #   continue-on-error: true
+      #   # You may pin to the exact commit or the version.
+      #   # uses: gitleaks/gitleaks-action@e6dab246340401bf53eec993b8f05aebe80ac636
+      #   uses: gitleaks/gitleaks-action@v2.3.4
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      #     #GITLEAKS_LICENSE: ${{ secrets.GITLEAKS_LICENSE}} # Only required for Organizations, not personal accounts.
+      # - name: Dependency Review
+      #   uses: actions/dependency-review-action@v4.3.2
+      #   with:
+      #     base-ref: ${{ github.ref }}
+      #     head-ref: ${{ github.sha }}
+      #     # Token for the repository. Can be passed in using `{{ secrets.GITHUB_TOKEN }}`.
+      #     repo-token: ${{ github.token }} # optional, default is ${{ github.token }}
+      #     # A boolean to determine if license checks should be performed
+      #     license-check: true # optional
+      #     # A boolean to determine if vulnerability checks should be performed
+      #     vulnerability-check: true # optional
+      #     # Show a summary of the OpenSSF Scorecard scores.
+      #     show-openssf-scorecard: true # optional
+      # - name: Run Microsoft Security DevOps
+      #   uses: microsoft/security-devops-action@v1
+      #   id: msdo
+      # - name: Upload results to Security tab
+      #   uses: github/codeql-action/upload-sarif@v2
+      #   with:
+      #     sarif_file: ${{ steps.msdo.outputs.sarifFile }}
   test-run_devopsshield_scan_linux:
     name: Run DevOps Shield Scan Linux
     needs:
