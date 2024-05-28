@@ -14,8 +14,10 @@ References:
 1. Run the pipeline to see
 ![image](https://github.com/devopsshield/devsecops-workshop/assets/112144174/db223fc0-ce46-422a-a564-04aa9573dc4a)
 
-## 4.2 Software Composition Analysis with OWASP Dependency Check
+## 4.2 Software Composition Analysis with OWASP Dependency Review
 
+1. prerequisite
+![image](https://github.com/devopsshield/devsecops-workshop/assets/112144174/6a37ed61-fb3e-4a64-adc6-1d9d64e1b51b)
 1. Uncomment the actions ```dependency-check/Dependency-Check_Action@main```
 ![image](https://github.com/devopsshield/devsecops-workshop/assets/112144174/69843416-215b-440f-ba3a-b5c83f393ae5)
 1. See the pipeline run
