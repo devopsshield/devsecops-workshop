@@ -4,7 +4,7 @@ In this lab you will reuse workflow templates.
 
 References:
 - [Gitleaks.io](https://gitleaks.io/)
-- [OWASP Dependency-Check](https://owasp.org/www-project-dependency-check/)
+- [OWASP Dependency-Review GitHub Action](https://github.com/actions/dependency-review-action)
 - [CodeQL](https://codeql.github.com/)
 
 ## 4.1 Secret Scanning with Gitleaks
