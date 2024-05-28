@@ -4,7 +4,7 @@ In this lab you will reuse workflow templates.
 
 References:
 - [Gitleaks.io](https://gitleaks.io/)
-- [OWASP Dependency-Check](https://owasp.org/www-project-dependency-check/)
+- [OWASP Dependency-Review GitHub Action](https://github.com/actions/dependency-review-action)
 - [CodeQL](https://codeql.github.com/)
 
 ## 4.1 Secret Scanning with Gitleaks
@@ -14,10 +14,12 @@ References:
 1. Run the pipeline to see
 ![image](https://github.com/devopsshield/devsecops-workshop/assets/112144174/db223fc0-ce46-422a-a564-04aa9573dc4a)
 
-## 4.2 Software Composition Analysis with OWASP Dependency Check
+## 4.2 Software Composition Analysis with OWASP Dependency Review
 
-1. Uncomment the actions ```dependency-check/Dependency-Check_Action@main```
-![image](https://github.com/devopsshield/devsecops-workshop/assets/112144174/69843416-215b-440f-ba3a-b5c83f393ae5)
+1. prerequisite
+![image](https://github.com/devopsshield/devsecops-workshop/assets/112144174/6a37ed61-fb3e-4a64-adc6-1d9d64e1b51b)
+1. Uncomment the actions ```actions/dependency-review-action```
+![image](https://github.com/devopsshield/devsecops-workshop/assets/112144174/8b01c834-a9a5-4316-b2f8-0575828b5dc4)
 1. See the pipeline run
 ![image](https://github.com/devopsshield/devsecops-workshop/assets/112144174/5a573256-dd04-4783-b91d-18e3016595da)
 
