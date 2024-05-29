@@ -18,7 +18,11 @@ References:
 
 ## 4.2 Software Composition Analysis with OWASP Dependency Review
 
-1. prerequisite
+1. prerequisite - to avoid error:
+```
+Do DevSecOps Tasks
+Dependency review is not supported on this repository. Please ensure that Dependency graph is enabled along with GitHub Advanced Security on private repositories, see https://github.com/<your-github-repo>/devsecops-workshop/settings/security_analysis
+```
 ![image](https://github.com/devopsshield/devsecops-workshop/assets/112144174/6a37ed61-fb3e-4a64-adc6-1d9d64e1b51b)
 1. Uncomment the actions ```actions/dependency-review-action```
 ![image](https://github.com/devopsshield/devsecops-workshop/assets/112144174/8b01c834-a9a5-4316-b2f8-0575828b5dc4)
