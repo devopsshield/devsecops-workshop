@@ -12,7 +12,13 @@ param (
     [Parameter()]
     [string]$subscriptionId = "IT Test",
     [Parameter()]
-    [string]$sshKeyPath = "$HOME\.ssh\vm-defectdojo-${nameSuffix}-id_rsa"
+    [string]$sshKeyPath = "$HOME\.ssh\vm-defectdojo-${nameSuffix}-id_rsa",
+    [Parameter()]
+    [string] $username = "ddadmin",
+    [Parameter()]
+    [string] $password = "booWgDmaYdgNxO5eNWql",
+    [Parameter()]
+    [string] $adminUsername = "azureuser"
 )
 
 # function to generate random password
@@ -70,9 +76,9 @@ Write-Output "Public key:"
 $sshPublicKey = Get-Content "$sshKeyPath.pub"
 Write-Output $sshPublicKey
 
-# generate random password for postgresql
-$password = New-Password -length 32
-Write-Output "Generated password for PostgreSQL: $password"
+# # generate random password for postgresql
+# $password = New-Password -length 32
+# Write-Output "Generated password for PostgreSQL: $password"
 
 # deploy bicep
 Write-Output "Deploying bicep template $templateFile to resource group $resourceGroupName"
@@ -82,7 +88,9 @@ az deployment group create `
     --template-file main.bicep `
     --parameters sshPublicKey="`"$sshPublicKey`"" `
     --parameters administratorLoginPassword="`"$password`"" `
-    --parameters nameSuffix="`"$nameSuffix`""
+    --parameters nameSuffix="`"$nameSuffix`"" `
+    --parameters adminUsername="`"$adminUsername`"" `
+    --parameters administratorLogin="`"$username`"" `
 
 # output vm public ip address from deployment output
 $fqdn = (az deployment group show `

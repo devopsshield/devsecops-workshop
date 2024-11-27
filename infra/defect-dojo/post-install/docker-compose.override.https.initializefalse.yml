@@ -1,0 +1,20 @@
+---
+version: '3.8'
+services:
+  nginx:
+    environment:
+      USE_TLS: 'true'
+      GENERATE_TLS_CERTIFICATE: 'false' # Set to 'true' to generate a self-signed certificate, 
+      # otherwise false if you have your own certificate e.g. from Let's Encrypt
+    ports:
+      - target: 8443
+        published: ${DD_TLS_PORT:-8443}
+        protocol: tcp
+        mode: host
+  uwsgi:
+    environment:
+      DD_SESSION_COOKIE_SECURE: 'True'
+      DD_CSRF_COOKIE_SECURE: 'True'
+  initializer:
+    environment:
+      DD_INITIALIZE: 'False' # Set to 'True' to initialize the database, otherwise false if you have already initialized the database

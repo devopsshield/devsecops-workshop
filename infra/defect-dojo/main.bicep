@@ -7,12 +7,12 @@ param virtualNetworkName string = 'vnet-vm-defectdojo-${nameSuffix}-${uniqueStri
 param networkSecurityGroupName string = 'nsg-vm-defectdojo-${nameSuffix}-${uniqueString(resourceGroup().id)}'
 
 param location string = resourceGroup().location
-param adminUsername string = 'azureuser'
+param adminUsername string //= 'azureuser'
 
 param sshPublicKey string //= 'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQC4AAZjNhnoNi/tBRwOFPoVg82Ejvt3qLEutQHEUJcBfohXW31R+aeWaGYkz3t4x1nYejoxX2m2Qk8wUsxU0SYhzI9DkOlov39PJ+MoggSGzKnpAUDeJ324kYIlu/2ZkRxkcnnDSe9t32yMWC4KC0tJMNuFzuAObIyi4h5JFJ/f8WqWuWK9uSv1FqnFqvALks8+f1eg5WMw4u4wa5wWBUICGOqVQ4zzQwq+hcAVgCgvi41mJbYn2oVKJyeX2R8mFDjaV+VPRkhgCMphG55ultCkNoH5naLQxLIjSop2ioDxPeYcdqCdO97MSPvkHhwKZgT03R/JJhQJ89Gm8QAdTIGiV5R16vq9EOL83vaVHsJ1jR1zsgDa/EVsQQBmxVNlybs0tgqlgn138Af+1QTNdYQu05fLqd6ara2Wgl61al0HMNjBrLgtJ1To4yxrYJ1iQY9W4I77a4jrq2Sg0ouObgsJu45dwrRpt22Fbh1OWhkfK/XFoEu5O9vr1ghRcZAwxjU= generated-by-azure'
 
 param flexibleServers_psql_name string = 'psql-defectdojo-${nameSuffix}-${uniqueString(resourceGroup().id)}'
-param administratorLogin string = 'ddadmin'
+param administratorLogin string //= 'ddadmin'
 
 param dnsLabelPrefix string = 'app-defectdojo-${nameSuffix}-${uniqueString(resourceGroup().id)}'
 
