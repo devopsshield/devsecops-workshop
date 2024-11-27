@@ -10,3 +10,4 @@ bin
 pygoatvenv/
 /.vs
 wrkshp-001-student-*
+__azurite_db_table__.json

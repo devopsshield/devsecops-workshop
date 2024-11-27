@@ -1,33 +1,49 @@
-param (
+param (    
     [Parameter()]
     [string]
-    $displayName = "GH__devopsabcs_engineering__WRKSHP_FunctionApps", #"<your-service-principal-name>"
+    $githubRepo = "devopsabcs-engineering/devsecops-workshop", #"<your-github-username>/<your-repo-name>"
     [Parameter()]
     [string]
-    $githubRepo = "devopsabcs-engineering/WRKSHP_FunctionApps", #"<your-github-username>/<your-repo-name>"
+    $subscriptionName = "IT Test", #"<your-subscription-id>"
     [Parameter()]
     [string]
-    $subscriptionId = "64c3d212-40ed-4c6d-a825-6adfbdf25dad", #"<your-subscription-id>"
-    [Parameter()]
-    [string]
-    $tenantId = "aa93b9d9-037d-4f08-a26d-783cff0e2369", #"<your-tenant-id>"
-    [Parameter()]
-    [string]
-    $clientId = ""
+    $tenantName = "devopsabcs.com" #"<your-tenant-id>"
 )
 
-# echo parameters
-Write-Output "displayName: $displayName"
-Write-Output "githubRepo: $githubRepo"
-Write-Output "subscriptionId: $subscriptionId"
-Write-Output "tenantId: $tenantId"
-Write-Output "clientId: $clientId"
+# get the display name from the repo name replacing the forward slash with a double underscore
+$displayName = "GH__" + $githubRepo -replace "/", "__"
 
-# create azure credentials for the pipeline in github actions
+Write-Output "Creating federated identity for $displayName in $githubRepo"
+
+$subscriptionsWithTenants = az account list --query "[].{SubscriptionName:name, TenantId:tenantId}" -o json | ConvertFrom-Json
+$subscription = $subscriptionsWithTenants | Where-Object { $_.SubscriptionName -eq $subscriptionName }
+$tenantId = $subscription.TenantId
+
+# get tenant id from tenant name
+Write-Output "Tenant ID: $tenantId"
 
 # Login to Azure
 #az login --service-principal -u "<your-service-principal-id>" -p "<your-service-principal-secret>" --tenant $tenantId
 az login --tenant $tenantId
+
+# set the default subscription
+az account set --subscription $subscriptionName
+
+# get subscription id from subscription name
+$subscriptionId = az account show --query id -o tsv
+Write-Output "Subscription ID: $subscriptionId"
+
+# echo parameters
+Write-Output "displayName: $displayName"
+Write-Output "githubRepo: $githubRepo"
+Write-Output "subscriptionName: $subscriptionName"
+Write-Output "subscriptionId: $subscriptionId"
+Write-Output "tenantName: $tenantName"
+Write-Output "tenantId: $tenantId"
+Write-Output "clientId: $clientId"
+
+
+# create azure credentials for the pipeline in github actions
 
 # Create the federated service principal
 $sp = az ad sp create-for-rbac --name $displayName --role Contributor `
@@ -60,12 +76,20 @@ $credentialRaw =
 # find and replace the placeholders with the actual values
 $credential = $credentialRaw -replace "__CREDENTIAL_NAME__", $displayName -replace "__SUBJECT__", "repo:${githubRepo}:ref:refs/heads/main"
 
+$appRegistrationJson = az ad app list --display-name "$displayName" -o json
+Write-Output "App Registration: $appRegistrationJson"
+$appRegistration = $appRegistrationJson | ConvertFrom-Json
+Write-Output "App Registration: $appRegistration"
+
+
+
 #$appId = "<Your-App-Id>"
 $credential = $credential | ConvertFrom-Json
 Write-Output "Credential: $credential"
-New-AzADAppFederatedCredential -ApplicationObjectId $objectId -Name $credential.name `
-    -Issuer $credential.issuer -Subject $credential.subject `
-    -Audience $credential.audiences
+az ad app show --id $objectId
+$command = "New-AzADAppFederatedCredential -ApplicationObjectId $objectId -Name $($credential.name) -Issuer $($credential.issuer) -Subject $($credential.subject) -Audience $($credential.audiences)"
+
+Write-Output "Command: $command"
 
 gh auth login
 
