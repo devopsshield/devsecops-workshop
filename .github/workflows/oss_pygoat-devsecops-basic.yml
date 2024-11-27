@@ -4,6 +4,19 @@ on:
   #   branches:
   #     - main
   workflow_dispatch:
+    inputs:
+      DEFECTDOJO_URL:
+        description: 'DefectDojo URL'
+        required: true
+        default: 'https://defectdojo.cad4devops.com:8443/api/v2'
+      DEFECTDOJO_COMMONUSER:
+        description: 'DefectDojo Common User'
+        required: true
+        default: 'Student000'
+      DEFECTDOJO_COMMONPRODUCTNAME:
+        description: 'DefectDojo Common Product Name'
+        required: true
+        default: 'GitHub-OSS-pygoat-devsecops-workshop-002-product-000'
 
 permissions:
   # The permissions for azure federation
@@ -26,10 +39,10 @@ env:
   doImageScanWithDockerHubScout: false
   adjustDNS: false
   listArtifacts: true
-  DEFECTDOJO_URL: https://defectdojo-002.cad4devops.com:8443/api/v2
-  DEFECTDOJO_COMMONUSER: Student000
-  DEFECTDOJO_COMMONPRODUCTNAME: GitHub-OSS-pygoat-devsecops-workshop-001-product-000
-  DEFECTDOJO_TOKEN: ${{ secrets.DEFECTDOJO_TOKEN }}
+  DEFECTDOJO_URL: ${{ inputs.DEFECTDOJO_URL }} #https://defectdojo-002.cad4devops.com:8443/api/v2
+  DEFECTDOJO_COMMONUSER: ${{ inputs.DEFECTDOJO_COMMONUSER }} #Student000
+  DEFECTDOJO_COMMONPRODUCTNAME: ${{ inputs.DEFECTDOJO_COMMONPRODUCTNAME }} #GitHub-OSS-pygoat-devsecops-workshop-001-product-000
+  DEFECTDOJO_TOKEN: ${{ secrets.DEFECTDOJO_TOKEN }} # 8116113b49d62b5affe822be7cf260778c5f62b1
   appUrl: http://gh-pygoat-test.cad4devops.com
   containerName: owaspzapproxy
   doActiveScan: false
