@@ -104,6 +104,8 @@ $secrets = @{
 foreach ($secret in $secrets.GetEnumerator()) {
     $value = $secret.Value
     $name = $secret.Key
+    Write-Output "Setting secret $name"
+    Write-Output "gh secret set $name -b $value -R $githubRepo"
     gh secret set $name -b $value -R $githubRepo
 }
 
