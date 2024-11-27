@@ -14,7 +14,7 @@ export NEWHOSTNAME="$instanceName.devopsshield.com"
 export nginx_folder="$HOME/django-DefectDojo/nginx"
 export databaseName="defectdojo"
 export databasePort="5432"
-export doPauses="false" # set to "true" to pause after each step
+export doPauses="true" # set to "true" to pause after each step
 # wait time for the container to be up and migrations to be done
 export waitTime=300
 
@@ -43,14 +43,14 @@ sudo apt-get upgrade -y
 sudo NEEDRESTART_MODE=a apt-get dist-upgrade --yes
 
 # find and replace the variables in the files
-find $HOME/OSS_django-DefectDojo/docker/environments/postgres-redis.env -type f -exec sed -i "s/__DD_DATABASE_USER__/$USERNAME/g" {} \;
-find $HOME/OSS_django-DefectDojo/docker/environments/postgres-redis.env -type f -exec sed -i "s/__DD_DATABASE_PASSWORD__/$PASSWORD/g" {} \;
-find $HOME/OSS_django-DefectDojo/docker/environments/postgres-redis.env -type f -exec sed -i "s/__DD_DATABASE_HOST__/$postgresHostname/g" {} \;
-find $HOME/OSS_django-DefectDojo/docker/environments/postgres-redis.env -type f -exec sed -i "s/__DD_DATABASE_NAME__/$databaseName/g" {} \;
-find $HOME/OSS_django-DefectDojo/docker/environments/postgres-redis.env -type f -exec sed -i "s/__DD_DATABASE_PORT__/$databasePort/g" {} \;
+find $HOME/django-DefectDojo/docker/environments/postgres-redis.env -type f -exec sed -i "s/__DD_DATABASE_USER__/$USERNAME/g" {} \;
+find $HOME/django-DefectDojo/docker/environments/postgres-redis.env -type f -exec sed -i "s/__DD_DATABASE_PASSWORD__/$PASSWORD/g" {} \;
+find $HOME/django-DefectDojo/docker/environments/postgres-redis.env -type f -exec sed -i "s/__DD_DATABASE_HOST__/$postgresHostname/g" {} \;
+find $HOME/django-DefectDojo/docker/environments/postgres-redis.env -type f -exec sed -i "s/__DD_DATABASE_NAME__/$databaseName/g" {} \;
+find $HOME/django-DefectDojo/docker/environments/postgres-redis.env -type f -exec sed -i "s/__DD_DATABASE_PORT__/$databasePort/g" {} \;
 
 # show the files
-cat $HOME/OSS_django-DefectDojo/docker/environments/postgres-redis.env
+cat $HOME/django-DefectDojo/docker/environments/postgres-redis.env
 
 # pause if needed
 if [ "$doPauses" = "true" ]; then
@@ -191,7 +191,7 @@ echo "=========================="
 
 export COMMAND="export DJANGO_SUPERUSER_PASSWORD="$adminPassword"; export DJANGO_SUPERUSER_USERNAME="$adminUser"; export DJANGO_SUPERUSER_EMAIL="$EMAIL"; python manage.py createsuperuser --no-input"
 echo "COMMAND: $COMMAND"
-docker exec oss_django-defectdojo-uwsgi-1 /bin/bash -c "$COMMAND"
+docker exec django-defectdojo-uwsgi-1 /bin/bash -c "$COMMAND"
 
 # test the application
 # open a browser and go to https://$NEWHOSTNAME:8443/dashboard
@@ -214,7 +214,7 @@ echo "current docker-compose.override.yml"
 cat docker-compose.override.yml
 
 # docker-compose service
-sudo cp $HOME/OSS_django-DefectDojo/systemd/defectdojo-composer.service /etc/systemd/system/
+sudo cp $HOME/django-DefectDojo/systemd/defectdojo-composer.service /etc/systemd/system/
 sudo systemctl enable defectdojo-composer
 
 echo ""

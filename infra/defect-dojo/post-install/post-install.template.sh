@@ -191,7 +191,7 @@ echo "=========================="
 
 export COMMAND="export DJANGO_SUPERUSER_PASSWORD="$adminPassword"; export DJANGO_SUPERUSER_USERNAME="$adminUser"; export DJANGO_SUPERUSER_EMAIL="$EMAIL"; python manage.py createsuperuser --no-input"
 echo "COMMAND: $COMMAND"
-docker exec oss_django-defectdojo-uwsgi-1 /bin/bash -c "$COMMAND"
+docker exec django-defectdojo-uwsgi-1 /bin/bash -c "$COMMAND"
 
 # test the application
 # open a browser and go to https://$NEWHOSTNAME:8443/dashboard

@@ -149,17 +149,33 @@ Write-Output "Preparing post-install.sh script"
 Write-Output "Copying post-install.sh script to $fqdnDefectDojo"
 scp -i $sshKeyPath -o StrictHostKeyChecking=no $postInstallScriptPath ${sshUser}@${fqdnDefectDojo}:~/django-DefectDojo/post-install.sh
 
+# copy defectdojo-composer.service to vm
+$defectDojoComposerServicePath = "systemd/defectdojo-composer.service"
+$defectDoJoComposerServiceTemplatePath = "systemd/defectdojo-composer.template.service"
+
+# but first transform the file by replacing __INSTANCE_NAME__ with $instanceName
+(Get-Content $defectDoJoComposerServiceTemplatePath) `
+    -replace "__REPO_NAME__", "django-DefectDojo" `
+    -replace "__HOME_USER__", $sshUser
+| Set-Content $defectDoJoComposerServicePath
+
+# but first ensure the directory exists on the vm
+ssh -i $sshKeyPath -o StrictHostKeyChecking=no ${sshUser}@${fqdnDefectDojo} "mkdir -p ~/django-DefectDojo/systemd"
+
+Write-Output "Copying $defectDojoComposerServicePath to $fqdnDefectDojo"
+scp -i $sshKeyPath -o StrictHostKeyChecking=no $defectDoJoComposerServicePath ${sshUser}@${fqdnDefectDojo}:~/django-DefectDojo/systemd/defectdojo-composer.service
+
 $dockerComposeOverrideInitializeFalsePath = "docker-compose.override.https.initializefalse.yml"
 
 Write-Output "Copying $dockerComposeOverrideInitializeFalsePath to $fqdnDefectDojo"
 scp -i $sshKeyPath -o StrictHostKeyChecking=no $dockerComposeOverrideInitializeFalsePath ${sshUser}@${fqdnDefectDojo}:~/django-DefectDojo/docker-compose.override.https.initializefalse.yml
 
-$dockerEnvironmentsPostgresqlRedisPath = "docker/environments/postgresql-redis.env"
+$dockerEnvironmentsPostgresqlRedisPath = "docker/environments/postgres-redis.env"
 
 Write-Output "Copying $dockerEnvironmentsPostgresqlRedisPath to $fqdnDefectDojo"
 # but first ensure the directory exists on the vm
 ssh -i $sshKeyPath -o StrictHostKeyChecking=no ${sshUser}@${fqdnDefectDojo} "mkdir -p ~/django-DefectDojo/docker/environments"
-scp -i $sshKeyPath -o StrictHostKeyChecking=no $dockerEnvironmentsPostgresqlRedisPath ${sshUser}@${fqdnDefectDojo}:~/django-DefectDojo/docker/environments/postgresql-redis.env
+scp -i $sshKeyPath -o StrictHostKeyChecking=no $dockerEnvironmentsPostgresqlRedisPath ${sshUser}@${fqdnDefectDojo}:~/django-DefectDojo/docker/environments/postgres-redis.env
 
 # # run the post-install.sh script
 # Write-Output "Running post-install.sh script on $fqdnDefectDojo"

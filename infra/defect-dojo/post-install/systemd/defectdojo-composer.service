@@ -1,0 +1,16 @@
+[Unit]
+Description=DefectDojo applicaton with docker compose
+Requires=docker.service
+After=docker.service
+
+[Service]
+Type=oneshot
+RemainAfterExit=true
+WorkingDirectory=/home/azureuser/django-DefectDojo/
+#EnvironmentFile=/home/azureuser/django-DefectDojo/env.defectdojo
+#ExecStart=/home/azureuser/django-DefectDojo/setEnv.defectdojo
+ExecStart=/home/azureuser/django-DefectDojo/dc-up-d.sh
+ExecStop=/home/azureuser/django-DefectDojo/dc-stop.sh
+
+[Install]
+WantedBy=multi-user.target

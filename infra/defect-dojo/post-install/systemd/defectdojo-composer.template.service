@@ -1,0 +1,16 @@
+[Unit]
+Description=DefectDojo applicaton with docker compose
+Requires=docker.service
+After=docker.service
+
+[Service]
+Type=oneshot
+RemainAfterExit=true
+WorkingDirectory=/home/__HOME_USER__/__REPO_NAME__/
+#EnvironmentFile=/home/__HOME_USER__/__REPO_NAME__/env.defectdojo
+#ExecStart=/home/__HOME_USER__/__REPO_NAME__/setEnv.defectdojo
+ExecStart=/home/__HOME_USER__/__REPO_NAME__/dc-up-d.sh
+ExecStop=/home/__HOME_USER__/__REPO_NAME__/dc-stop.sh
+
+[Install]
+WantedBy=multi-user.target
