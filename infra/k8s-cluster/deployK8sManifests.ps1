@@ -58,7 +58,8 @@ foreach ($manifestFile in $manifestFiles) {
     # replace #{host}# with the value of the environment variable HOST
     $manifestFileContent = $manifestFileContent -replace "#\{host\}#", $HOSTURL
     # create a new file with the same name but without the .template extension
-    $newManifestFile = $manifestFile.FullName -replace ".template", ""
+    $newEnvironmentSuffix = $environmentSuffix -replace "-", "."
+    $newManifestFile = $manifestFile.FullName -replace ".template", $newEnvironmentSuffix
     Write-Output "Writing processed manifest file $newManifestFile"
     Set-Content -Path $newManifestFile -Value $manifestFileContent
     # apply the manifest file
