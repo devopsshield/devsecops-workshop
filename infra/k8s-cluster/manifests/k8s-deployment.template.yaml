@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pygoat-app
+  labels:
+    app: pygoat-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: pygoat-app
+  template:
+    metadata:
+      labels:
+        app: pygoat-app
+    spec:
+      containers:
+        - image: #{image}#:#{tag}#
+          name: pygoat-app
+          ports:
+            - containerPort: 8000
